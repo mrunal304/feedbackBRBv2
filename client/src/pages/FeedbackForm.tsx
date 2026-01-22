@@ -1,0 +1,250 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
+import { motion } from "framer-motion";
+import { Star, Coffee, Utensils, Users, Sparkles, Heart } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { insertFeedbackSchema, type InsertFeedback } from "@shared/schema";
+
+const categories = [
+  { key: "interior", label: "Interior", icon: Sparkles },
+  { key: "food", label: "Food", icon: Utensils },
+  { key: "service", label: "Service", icon: Coffee },
+  { key: "staff", label: "Staff", icon: Users },
+  { key: "hygiene", label: "Hygiene", icon: Heart },
+] as const;
+
+function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [hover, setHover] = useState(0);
+
+  return (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          className="p-1 focus:outline-none"
+          onMouseEnter={() => setHover(star)}
+          onMouseLeave={() => setHover(0)}
+          onClick={() => onChange(star)}
+          data-testid={`star-${star}`}
+        >
+          <Star
+            className={`w-8 h-8 transition-colors ${
+              star <= (hover || value)
+                ? "fill-amber-400 text-amber-400"
+                : "text-muted-foreground/30"
+            }`}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export default function FeedbackForm() {
+  const [, navigate] = useLocation();
+  const { toast } = useToast();
+
+  const form = useForm<InsertFeedback>({
+    resolver: zodResolver(insertFeedbackSchema),
+    defaultValues: {
+      name: "",
+      phoneNumber: "",
+      ratings: {
+        interior: 0,
+        food: 0,
+        service: 0,
+        staff: 0,
+        hygiene: 0,
+      },
+      note: "",
+    },
+  });
+
+  const submitMutation = useMutation({
+    mutationFn: async (data: InsertFeedback) => {
+      const response = await apiRequest("POST", "/api/feedback", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      navigate("/thank-you");
+    },
+    onError: (error: any) => {
+      if (error.message?.includes("already submitted")) {
+        toast({
+          title: "Already Submitted",
+          description: "You have already submitted feedback today. Please try again tomorrow.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to submit feedback",
+          variant: "destructive",
+        });
+      }
+    },
+  });
+
+  const onSubmit = (data: InsertFeedback) => {
+    const hasAllRatings = Object.values(data.ratings).every((r) => r >= 1);
+    if (!hasAllRatings) {
+      toast({
+        title: "Missing Ratings",
+        description: "Please rate all categories before submitting",
+        variant: "destructive",
+      });
+      return;
+    }
+    submitMutation.mutate(data);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-lg mx-auto"
+      >
+        <div className="text-center mb-8">
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring" }}
+          >
+            <Coffee className="w-16 h-16 mx-auto text-primary mb-4" />
+          </motion.div>
+          <h1 className="text-3xl font-bold text-foreground">Bomb Rolland Bowls</h1>
+          <p className="text-muted-foreground mt-2">We value your feedback</p>
+        </div>
+
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Share Your Experience</CardTitle>
+            <CardDescription>
+              Help us serve you better by rating your visit
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your name"
+                          {...field}
+                          data-testid="input-name"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="+1 234 567 8900"
+                          {...field}
+                          data-testid="input-phone"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-4">
+                  <Label className="text-base font-medium">Rate Your Experience</Label>
+                  {categories.map(({ key, label, icon: Icon }) => (
+                    <FormField
+                      key={key}
+                      control={form.control}
+                      name={`ratings.${key}`}
+                      render={({ field }) => (
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 * categories.indexOf({ key, label, icon: Icon } as any) }}
+                          className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon className="w-5 h-5 text-primary" />
+                            <span className="font-medium">{label}</span>
+                          </div>
+                          <StarRating
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </motion.div>
+                      )}
+                    />
+                  ))}
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="note"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Additional Comments (Optional)</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Tell us more about your experience..."
+                          className="resize-none"
+                          maxLength={500}
+                          rows={4}
+                          {...field}
+                          data-testid="input-note"
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground text-right">
+                        {(field.value?.length || 0)}/500
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
+                  disabled={submitMutation.isPending}
+                  data-testid="button-submit"
+                >
+                  {submitMutation.isPending ? "Submitting..." : "Submit Feedback"}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Thank you for dining with us
+        </p>
+      </motion.div>
+    </div>
+  );
+}
