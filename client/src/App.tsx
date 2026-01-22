@@ -8,16 +8,22 @@ import ThankYou from "@/pages/ThankYou";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import NotFound from "@/pages/not-found";
+import { Footer } from "@/components/Footer";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={FeedbackForm} />
-      <Route path="/thank-you" component={ThankYou} />
-      <Route path="/login" component={AdminLogin} />
-      <Route path="/admin" component={AdminDashboard} />
-      <Route component={NotFound} />
-    </Switch>
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-grow">
+        <Switch>
+          <Route path="/" component={FeedbackForm} />
+          <Route path="/thank-you" component={ThankYou} />
+          <Route path="/login" component={AdminLogin} />
+          <Route path="/admin" component={AdminDashboard} />
+          <Route component={NotFound} />
+        </Switch>
+      </main>
+      <Footer />
+    </div>
   );
 }
 
