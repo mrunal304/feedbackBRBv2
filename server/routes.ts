@@ -107,12 +107,18 @@ export async function registerRoutes(
   // Get all feedback (admin only)
   app.get(api.feedback.list.path, requireAuth, async (req, res) => {
     try {
+      const search = typeof req.query.search === 'string' ? req.query.search : undefined;
+      const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : undefined;
+      const endDate = typeof req.query.endDate === 'string' ? req.query.endDate : undefined;
+      const minRatingStr = typeof req.query.minRating === 'string' ? req.query.minRating : undefined;
+      const status = typeof req.query.status === 'string' ? req.query.status as 'all' | 'contacted' | 'pending' : undefined;
+      
       const filters = {
-        search: req.query.search as string | undefined,
-        startDate: req.query.startDate as string | undefined,
-        endDate: req.query.endDate as string | undefined,
-        minRating: req.query.minRating as string | undefined,
-        status: req.query.status as 'all' | 'contacted' | 'pending' | undefined,
+        search,
+        startDate,
+        endDate,
+        minRating: minRatingStr ? parseInt(minRatingStr, 10) : undefined,
+        status,
       };
       
       const feedback = await storage.getAllFeedback(filters);
@@ -125,7 +131,8 @@ export async function registerRoutes(
 
   // Get single feedback
   app.get(api.feedback.get.path, requireAuth, async (req, res) => {
-    const feedback = await storage.getFeedback(req.params.id);
+    const id = req.params.id as string;
+    const feedback = await storage.getFeedback(id);
     if (!feedback) {
       return res.status(404).json({ message: "Feedback not found" });
     }
@@ -135,8 +142,9 @@ export async function registerRoutes(
   // Mark as contacted
   app.patch(api.feedback.contact.path, requireAuth, async (req, res) => {
     try {
+      const id = req.params.id as string;
       const { staffName } = api.feedback.contact.input.parse(req.body);
-      const feedback = await storage.markAsContacted(req.params.id, staffName);
+      const feedback = await storage.markAsContacted(id, staffName);
       
       if (!feedback) {
         return res.status(404).json({ message: "Feedback not found" });
