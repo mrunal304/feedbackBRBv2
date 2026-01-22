@@ -1,0 +1,105 @@
+Build a full-stack web application for "Bomb Rolland Bowls" cafe that manages customer feedback using QR codes. The system has two main parts: a customer-facing interface to submit feedback, and a modern Admin Dashboard for staff to analyze feedback and contact customers.
+
+Core Features
+1. Customer Experience
+1.1 Feedback Form
+Landing page with cafe branding where customers enter name, phone number (validated format), and ratings for: interior, food, service, staff, hygiene (1-5 stars each)
+
+Optional note textarea (max 500 characters)
+
+Validation: Block submissions from same phone number on same date (check database for existing feedback that day)
+
+1.2 Submission Flow
+Form validation with real-time feedback
+
+On submit → "Thank you for your feedback!" page with confetti animation and cafe branding
+
+Data saves instantly with timestamp
+
+2. Admin Dashboard (Professional UI)
+2.1 Authentication
+Simple login (default: admin/admin123) with persistent session handling
+
+2.2 Feedback Management
+Real-time feedback list with search/filter by phone/date/rating
+
+Individual feedback cards showing star ratings visually + full note
+
+Contact Action: "Contact Customer" button copies phone + marks as contacted (saves staff name/timestamp)
+
+2.3 Weekly Analytics Panel
+KPI Cards:
+
+Total feedback this week, Average rating (overall), Top category, Response rate (% contacted)
+
+Interactive Graphs (using Recharts):
+
+"Weekly Rating Trends" (line chart: daily averages for each category)
+
+"Category Performance" (bar chart: avg ratings comparison)
+
+"Feedback Volume" (Total vs Contacted vs Pending)
+
+Time Filters:
+
+Toggle views for "This Week", "Last Week", "This Month"
+
+Data Table:
+
+Sortable table with all feedback: name, phone, ratings summary, note preview, status, actions
+
+Technical Requirements
+3.1 Backend
+Node.js/Express server
+
+MongoDB (using Mongoose) to store feedback entries with fields:
+
+javascript
+{
+  name: String (required),
+  phoneNumber: String (required, validated),
+  ratings: {
+    interior: Number (1-5),
+    food: Number (1-5),
+    service: Number (1-5),
+    staff: Number (1-5),
+    hygiene: Number (1-5)
+  },
+  note: String,
+  createdAt: Date,
+  contactedAt: Date,
+  contactedBy: String,
+  dateKey: String // YYYY-MM-DD for daily validation
+}
+Validation API: Check phone+date before allowing new feedback
+
+REST APIs: POST /api/feedback (with validation), GET /api/feedback, PATCH /api/feedback/:id/contact, GET /api/analytics
+
+3.2 Frontend
+React with Vite
+
+Tailwind CSS
+
+Shadcn UI components (Form, StarRating, DataTable, Card, Charts)
+
+3.3 State Management
+TanStack Query for data fetching, mutations, real-time polling (15s for new feedback)
+
+3.4 Animations
+Framer Motion for form transitions, dashboard updates, success animations
+
+Design Guidelines
+4.1 Color Palette
+Premium "Cafe" aesthetic: Soft browns (#8B4513), creams (#F5F5DC), greens (#228B22)
+
+4.2 Responsive Design
+Customer form optimized for mobile (large touch targets)
+
+Admin panel works on desktop/tablet (collapsible sidebar)
+
+4.3 Modern UI
+Rounded corners (rounded-2xl)
+
+Subtle shadows (shadow-lg/xl)
+
+Clear typography (Inter font)
