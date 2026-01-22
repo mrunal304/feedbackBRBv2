@@ -118,14 +118,16 @@ export default function AdminDashboard() {
     }
   }, [authCheck, authLoading, navigate]);
 
+  const feedbackUrl = `/api/feedback?search=${encodeURIComponent(searchQuery)}&status=${statusFilter}`;
   const { data: feedback = [], refetch: refetchFeedback } = useQuery<Feedback[]>({
-    queryKey: ["/api/feedback", { search: searchQuery, status: statusFilter }],
+    queryKey: [feedbackUrl],
     enabled: !!(authCheck as any)?.authenticated,
     refetchInterval: 15000,
   });
 
+  const analyticsUrl = `/api/analytics?period=${period}`;
   const { data: analytics } = useQuery<Analytics>({
-    queryKey: ["/api/analytics", { period }],
+    queryKey: [analyticsUrl],
     enabled: !!(authCheck as any)?.authenticated,
   });
 
@@ -148,8 +150,11 @@ export default function AdminDashboard() {
         title: "Customer Contacted",
         description: "The customer has been marked as contacted",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/feedback"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/analytics"] });
+      refetchFeedback();
+      queryClient.invalidateQueries({ predicate: (query) => {
+        const key = query.queryKey[0] as string;
+        return key?.startsWith("/api/feedback") || key?.startsWith("/api/analytics");
+      }});
       setContactDialogOpen(false);
       setSelectedFeedback(null);
       setStaffName("");
