@@ -11,54 +11,55 @@
   --opaque-button-border-intensity: -8; /* In terms of percentages */
 
   /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: #d59e9d;
+  --elevate-2: #b4635d;
+  --hover-gradient: linear-gradient(135deg, #d59e9d, #f4d3d1);
 
-  --background: 40 33% 98%;
-  --foreground: 25 30% 15%;
+  --background: 0 0% 100%;
+  --foreground: 2 61% 44%;
 
-  --border: 30 20% 85%;
+  --border: 2 61% 44% / 0.1;
 
-  --card: 40 40% 97%;
-  --card-foreground: 25 30% 15%;
-  --card-border: 30 20% 88%;
+  --card: 0 0% 100%;
+  --card-foreground: 2 61% 44%;
+  --card-border: 2 61% 44% / 0.1;
 
-  --sidebar: 30 25% 95%;
-  --sidebar-foreground: 25 30% 20%;
-  --sidebar-border: 30 20% 85%;
-  --sidebar-primary: 25 60% 35%;
-  --sidebar-primary-foreground: 40 40% 98%;
-  --sidebar-accent: 30 30% 90%;
-  --sidebar-accent-foreground: 25 30% 20%;
-  --sidebar-ring: 25 60% 35%;
+  --sidebar: 2 61% 44%;
+  --sidebar-foreground: 0 0% 99%;
+  --sidebar-border: 2 61% 44%;
+  --sidebar-primary: 45 93% 53%;
+  --sidebar-primary-foreground: 2 61% 44%;
+  --sidebar-accent: 359 34% 72%;
+  --sidebar-accent-foreground: 0 0% 99%;
+  --sidebar-ring: 45 93% 53%;
 
-  --popover: 40 40% 99%;
-  --popover-foreground: 25 30% 15%;
-  --popover-border: 30 20% 85%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 2 61% 44%;
+  --popover-border: 2 61% 44% / 0.1;
 
-  --primary: 25 60% 35%;
-  --primary-foreground: 40 40% 98%;
+  --primary: 2 61% 44%;
+  --primary-foreground: 0 0% 99%;
 
-  --secondary: 80 35% 92%;
-  --secondary-foreground: 80 50% 25%;
+  --secondary: 45 93% 53%;
+  --secondary-foreground: 2 61% 44%;
 
-  --muted: 30 20% 93%;
-  --muted-foreground: 25 15% 45%;
+  --muted: 359 34% 72% / 0.1;
+  --muted-foreground: 359 34% 72%;
 
-  --accent: 120 35% 35%;
-  --accent-foreground: 120 20% 98%;
+  --accent: 45 93% 53%;
+  --accent-foreground: 2 61% 44%;
 
-  --destructive: 0 65% 50%;
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 
-  --input: 30 20% 80%;
-  --ring: 25 60% 35%;
+  --input: 0 0% 99%;
+  --ring: 2 61% 44%;
 
-  --chart-1: 25 60% 35%;
-  --chart-2: 120 35% 35%;
-  --chart-3: 40 70% 55%;
-  --chart-4: 80 45% 45%;
-  --chart-5: 0 55% 55%;
+  --chart-1: 2 61% 44%;
+  --chart-2: 45 93% 53%;
+  --chart-3: 359 34% 72%;
+  --chart-4: 2 31% 54%;
+  --chart-5: 4 57% 89%;
 
   --font-sans: 'Inter', sans-serif;
   --font-serif: Georgia, serif;
