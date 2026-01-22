@@ -62,7 +62,7 @@ export default function AdminLoginPage() {
       >
         <div className="text-center mb-8">
           <Coffee className="w-12 h-12 mx-auto text-primary mb-4" />
-          <h1 className="text-2xl font-bold text-foreground">Bomb Rolland Bowls</h1>
+          <h1 className="text-2xl font-bold text-foreground">Bomb Rolls and Bowls</h1>
           <p className="text-muted-foreground">Admin Dashboard</p>
         </div>
 

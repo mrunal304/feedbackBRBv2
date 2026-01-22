@@ -1,7 +1,7 @@
-# Bomb Rolland Bowls - Customer Feedback System
+# Bomb Rolls and Bowls - Customer Feedback System
 
 ## Overview
-A full-stack customer feedback management system for "Bomb Rolland Bowls" cafe. Customers can submit feedback via QR code, and staff can analyze feedback through an admin dashboard.
+A full-stack customer feedback management system for "Bomb Rolls and Bowls" cafe. Customers can submit feedback via QR code, and staff can analyze feedback through an admin dashboard.
 
 ## Features
 - **Customer Feedback Form**: Star ratings for interior, food, service, staff, and hygiene (1-5 stars each)

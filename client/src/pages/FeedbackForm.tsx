@@ -125,7 +125,7 @@ export default function FeedbackForm() {
           >
             <Coffee className="w-16 h-16 mx-auto text-primary mb-4" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-foreground">Bomb Rolland Bowls</h1>
+          <h1 className="text-3xl font-bold text-foreground">Bomb Rolls and Bowls</h1>
           <p className="text-muted-foreground mt-2">We value your feedback</p>
         </div>
 

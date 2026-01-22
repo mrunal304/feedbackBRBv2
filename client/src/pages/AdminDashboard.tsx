@@ -198,7 +198,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-3">
             <Coffee className="w-8 h-8 text-primary" />
             <div>
-              <h1 className="font-bold text-lg">Bomb Rolland Bowls</h1>
+              <h1 className="font-bold text-lg">Bomb Rolls and Bowls</h1>
               <p className="text-xs text-muted-foreground">Admin Dashboard</p>
             </div>
           </div>

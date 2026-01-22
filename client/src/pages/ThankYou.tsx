@@ -89,7 +89,7 @@ export default function ThankYou() {
         >
           <div className="p-4 rounded-lg bg-accent/10 border border-accent/20">
             <p className="text-sm text-foreground">
-              We hope to see you again soon at <strong>Bomb Rolland Bowls</strong>
+              We hope to see you again soon at <strong>Bomb Rolls and Bowls</strong>
             </p>
           </div>
 
