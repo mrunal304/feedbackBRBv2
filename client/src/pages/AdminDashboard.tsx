@@ -476,9 +476,33 @@ export default function AdminDashboard() {
                               </p>
                             </TableCell>
                             <TableCell>
-                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                <Calendar className="w-3 h-3" />
-                                {new Date(fb.createdAt).toLocaleDateString()}
+                              <div className="flex flex-col text-sm text-muted-foreground">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="w-3 h-3" />
+                                  {(() => {
+                                    try {
+                                      const [year, month, day] = fb.visitDate.split("-");
+                                      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                                      return `${day} ${months[parseInt(month) - 1]} ${year}`;
+                                    } catch (e) {
+                                      return fb.visitDate;
+                                    }
+                                  })()}
+                                </div>
+                                <div className="flex items-center gap-1 mt-0.5">
+                                  <span className="text-[10px] opacity-70">🕒</span>
+                                  {(() => {
+                                    try {
+                                      const [hours, minutes] = fb.visitTime.split(":");
+                                      const h = parseInt(hours);
+                                      const ampm = h >= 12 ? "PM" : "AM";
+                                      const h12 = h % 12 || 12;
+                                      return `${h12}:${minutes} ${ampm}`;
+                                    } catch (e) {
+                                      return fb.visitTime;
+                                    }
+                                  })()}
+                                </div>
                               </div>
                             </TableCell>
                             <TableCell>

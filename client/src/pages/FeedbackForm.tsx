@@ -121,7 +121,16 @@ export default function FeedbackForm() {
       });
       return;
     }
-    submitMutation.mutate(data);
+
+    // Automatically set current date and time
+    const now = new Date();
+    const automatedData = {
+      ...data,
+      visitDate: now.toISOString().split('T')[0],
+      visitTime: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+    };
+
+    submitMutation.mutate(automatedData);
   };
 
   return (
@@ -239,36 +248,6 @@ export default function FeedbackForm() {
                               <FormLabel className="font-normal">Take Out</FormLabel>
                             </FormItem>
                           </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="visitDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Day Visited:</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="visitTime"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Time Visited:</FormLabel>
-                        <FormControl>
-                          <Input type="time" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
