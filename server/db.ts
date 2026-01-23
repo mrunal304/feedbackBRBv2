@@ -15,6 +15,10 @@ mongoose.connect(process.env.MONGODB_URI)
 const feedbackSchema = new mongoose.Schema({
   name: { type: String, required: true },
   phoneNumber: { type: String, required: true },
+  location: { type: String, required: true },
+  diningOption: { type: String, enum: ["dine-in", "take-out"], required: true },
+  visitDate: { type: String, required: true },
+  visitTime: { type: String, required: true },
   ratings: {
     qualityOfService: { type: Number, required: true, min: 1, max: 5 },
     speedOfService: { type: Number, required: true, min: 1, max: 5 },

@@ -15,6 +15,10 @@ export const feedbackSchema = z.object({
   _id: z.string(),
   name: z.string().min(1, "Name is required"),
   phoneNumber: z.string().regex(/^\+?[\d\s-]{10,15}$/, "Invalid phone number format"),
+  location: z.string().min(1, "Location is required"),
+  diningOption: z.enum(["dine-in", "take-out"]),
+  visitDate: z.string(),
+  visitTime: z.string(),
   ratings: ratingsSchema,
   note: z.string().max(500).optional(),
   dateKey: z.string(), // YYYY-MM-DD for daily validation
@@ -26,6 +30,10 @@ export const feedbackSchema = z.object({
 export const insertFeedbackSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phoneNumber: z.string().regex(/^\+?[\d\s-]{10,15}$/, "Invalid phone number format"),
+  location: z.string().min(1, "Location is required"),
+  diningOption: z.enum(["dine-in", "take-out"]),
+  visitDate: z.string(),
+  visitTime: z.string(),
   ratings: ratingsSchema,
   note: z.string().max(500).optional(),
 });
@@ -49,11 +57,12 @@ export const analyticsSchema = z.object({
   responseRate: z.number(),
   weeklyTrends: z.array(z.object({
     date: z.string(),
-    interior: z.number(),
-    food: z.number(),
-    service: z.number(),
-    staff: z.number(),
-    hygiene: z.number(),
+    qualityOfService: z.number(),
+    speedOfService: z.number(),
+    friendliness: z.number(),
+    foodTemperature: z.number(),
+    menuExplanation: z.number(),
+    likelyToReturn: z.number(),
   })),
   categoryPerformance: z.array(z.object({
     category: z.string(),
