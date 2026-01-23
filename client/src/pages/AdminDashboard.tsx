@@ -452,8 +452,9 @@ export default function AdminDashboard() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="h-11 w-11 rounded-full text-primary hover:text-primary hover:bg-primary/10 transition-colors"
+                                  className="h-11 w-11 rounded-full text-primary no-default-hover-elevate no-default-active-elevate"
                                   asChild
+                                  style={{ opacity: 1 }}
                                   data-testid={`button-contact-tel-${fb._id}`}
                                 >
                                   <a href={`tel:${fb.phoneNumber.replace(/\s+/g, '')}`}>
@@ -507,11 +508,13 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell>
                               {fb.contactedAt ? (
-                                <Badge variant="secondary" className="bg-accent/20 text-accent">
+                                <Badge variant="secondary" className="bg-accent/20 text-accent no-default-hover-elevate no-default-active-elevate">
                                   Contacted
                                 </Badge>
                               ) : (
-                                <Badge variant="outline">Pending</Badge>
+                                <Badge variant="outline" className="no-default-hover-elevate no-default-active-elevate" style={{ opacity: 1 }}>
+                                  Pending
+                                </Badge>
                               )}
                             </TableCell>
                             <TableCell>
@@ -519,6 +522,8 @@ export default function AdminDashboard() {
                                 <Button
                                   size="sm"
                                   variant="outline"
+                                  className="no-default-hover-elevate no-default-active-elevate"
+                                  style={{ opacity: 1 }}
                                   onClick={() => handleViewDetails(fb)}
                                   data-testid={`button-view-details-${fb._id}`}
                                 >
@@ -528,6 +533,8 @@ export default function AdminDashboard() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
+                                  className="no-default-hover-elevate no-default-active-elevate"
+                                  style={{ opacity: 1 }}
                                   onClick={() => handleCopyPhone(fb.phoneNumber)}
                                   data-testid={`button-copy-${fb._id}`}
                                 >
@@ -537,6 +544,8 @@ export default function AdminDashboard() {
                                   <Button
                                     size="sm"
                                     variant="outline"
+                                    className="no-default-hover-elevate no-default-active-elevate"
+                                    style={{ opacity: 1 }}
                                     onClick={() => handleContactCustomer(fb)}
                                     data-testid={`button-contact-mark-${fb._id}`}
                                   >
