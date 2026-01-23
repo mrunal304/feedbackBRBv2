@@ -160,6 +160,23 @@ export async function registerRoutes(
     }
   });
 
+  // Get customer feedback history by normalized name
+  app.get(api.feedback.customerHistory.path, requireAuth, async (req, res) => {
+    try {
+      const normalizedName = decodeURIComponent(req.params.normalizedName as string);
+      const customerHistory = await storage.getCustomerHistory(normalizedName);
+      
+      if (!customerHistory) {
+        return res.status(404).json({ message: "Customer not found" });
+      }
+      
+      res.json(customerHistory);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
   // === ANALYTICS ROUTES ===
   app.get(api.analytics.get.path, requireAuth, async (req, res) => {
     try {
