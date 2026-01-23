@@ -2,11 +2,12 @@ import { z } from "zod";
 
 // === FEEDBACK RATINGS SCHEMA ===
 export const ratingsSchema = z.object({
-  interior: z.number().min(1).max(5),
-  food: z.number().min(1).max(5),
-  service: z.number().min(1).max(5),
-  staff: z.number().min(1).max(5),
-  hygiene: z.number().min(1).max(5),
+  qualityOfService: z.number().min(1).max(5),
+  speedOfService: z.number().min(1).max(5),
+  friendliness: z.number().min(1).max(5),
+  foodTemperature: z.number().min(1).max(5),
+  menuExplanation: z.number().min(1).max(5),
+  likelyToReturn: z.number().min(1).max(5),
 });
 
 // === FEEDBACK SCHEMAS ===
