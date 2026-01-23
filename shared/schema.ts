@@ -14,6 +14,7 @@ export const ratingsSchema = z.object({
 export const feedbackSchema = z.object({
   _id: z.string(),
   name: z.string().min(1, "Name is required"),
+  normalizedName: z.string().optional(), // lowercase version for case-insensitive matching
   phoneNumber: z.string().regex(/^\+?[\d\s-]{10,15}$/, "Invalid phone number format"),
   location: z.string().min(1, "Location is required"),
   diningOption: z.enum(["dine-in", "take-out"]),
@@ -25,6 +26,14 @@ export const feedbackSchema = z.object({
   createdAt: z.string(),
   contactedAt: z.string().nullable().optional(),
   contactedBy: z.string().nullable().optional(),
+});
+
+// === CUSTOMER HISTORY SCHEMAS ===
+export const customerHistorySchema = z.object({
+  customerName: z.string(),
+  normalizedName: z.string(),
+  totalVisits: z.number(),
+  feedbackHistory: z.array(feedbackSchema),
 });
 
 export const insertFeedbackSchema = z.object({
@@ -82,6 +91,7 @@ export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
 export type AdminLogin = z.infer<typeof adminLoginSchema>;
 export type ContactCustomer = z.infer<typeof contactCustomerSchema>;
 export type Analytics = z.infer<typeof analyticsSchema>;
+export type CustomerHistory = z.infer<typeof customerHistorySchema>;
 
 // === REQUEST/RESPONSE TYPES ===
 export type CreateFeedbackRequest = InsertFeedback;

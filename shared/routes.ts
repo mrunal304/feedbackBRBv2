@@ -4,7 +4,8 @@ import {
   feedbackSchema, 
   adminLoginSchema, 
   contactCustomerSchema,
-  analyticsSchema 
+  analyticsSchema,
+  customerHistorySchema
 } from './schema';
 
 // === ERROR SCHEMAS ===
@@ -75,6 +76,14 @@ export const api = {
       input: z.object({ phoneNumber: z.string() }),
       responses: {
         200: z.object({ canSubmit: z.boolean(), message: z.string().optional() }),
+      },
+    },
+    customerHistory: {
+      method: 'GET' as const,
+      path: '/api/feedback/customer-history/:normalizedName',
+      responses: {
+        200: customerHistorySchema,
+        404: errorSchemas.notFound,
       },
     },
   },

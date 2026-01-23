@@ -14,6 +14,7 @@ mongoose.connect(process.env.MONGODB_URI)
 // Define Feedback Schema
 const feedbackSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  normalizedName: { type: String, required: true }, // lowercase version for case-insensitive matching
   phoneNumber: { type: String, required: true },
   location: { type: String, required: true },
   diningOption: { type: String, enum: ["dine-in", "take-out"], required: true },
@@ -36,6 +37,8 @@ const feedbackSchema = new mongoose.Schema({
 
 // Create index for phone number + date validation
 feedbackSchema.index({ phoneNumber: 1, dateKey: 1 }, { unique: true });
+// Create index for normalized name for efficient customer history lookups
+feedbackSchema.index({ normalizedName: 1 });
 
 export const FeedbackModel = mongoose.model('Feedback', feedbackSchema);
 export { mongoose };

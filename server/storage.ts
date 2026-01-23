@@ -1,5 +1,5 @@
 import { FeedbackModel } from "./db";
-import type { InsertFeedback, Feedback, Analytics } from "@shared/schema";
+import type { InsertFeedback, Feedback, Analytics, CustomerHistory } from "@shared/schema";
 
 export interface IStorage {
   getAllFeedback(filters?: {
@@ -14,12 +14,14 @@ export interface IStorage {
   markAsContacted(id: string, staffName: string): Promise<Feedback | null>;
   checkPhoneSubmittedToday(phoneNumber: string): Promise<boolean>;
   getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics>;
+  getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null>;
 }
 
 function formatFeedback(doc: any): Feedback {
   return {
     _id: doc._id.toString(),
     name: doc.name,
+    normalizedName: doc.normalizedName,
     phoneNumber: doc.phoneNumber,
     location: doc.location,
     diningOption: doc.diningOption,
@@ -32,6 +34,10 @@ function formatFeedback(doc: any): Feedback {
     contactedAt: doc.contactedAt ? doc.contactedAt.toISOString() : null,
     contactedBy: doc.contactedBy || null,
   };
+}
+
+function normalizeName(name: string): string {
+  return name.toLowerCase().trim();
 }
 
 function getDateKey(): string {
@@ -125,9 +131,28 @@ export class MongoStorage implements IStorage {
   async createFeedback(feedback: InsertFeedback): Promise<Feedback> {
     const doc = await FeedbackModel.create({
       ...feedback,
+      normalizedName: normalizeName(feedback.name),
       dateKey: getDateKey(),
     });
     return formatFeedback(doc);
+  }
+
+  async getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null> {
+    const docs = await FeedbackModel.find({ normalizedName: normalizedName.toLowerCase().trim() })
+      .sort({ createdAt: -1 });
+    
+    if (docs.length === 0) {
+      return null;
+    }
+    
+    const feedbacks = docs.map(formatFeedback);
+    
+    return {
+      customerName: feedbacks[0].name,
+      normalizedName: normalizedName.toLowerCase().trim(),
+      totalVisits: feedbacks.length,
+      feedbackHistory: feedbacks,
+    };
   }
 
   async markAsContacted(id: string, staffName: string): Promise<Feedback | null> {
