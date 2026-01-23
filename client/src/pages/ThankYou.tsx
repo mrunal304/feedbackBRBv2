@@ -96,6 +96,7 @@ export default function ThankYou() {
 
           <Button
             variant="outline"
+            className="no-default-hover-elevate no-default-active-elevate"
             onClick={() => navigate("/")}
             data-testid="button-back-home"
           >
