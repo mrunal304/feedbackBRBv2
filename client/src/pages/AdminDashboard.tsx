@@ -444,9 +444,22 @@ export default function AdminDashboard() {
                         filteredFeedback.map((fb) => (
                           <TableRow key={fb._id} data-testid={`row-feedback-${fb._id}`}>
                             <TableCell>
-                              <div>
-                                <p className="font-medium">{fb.name}</p>
-                                <p className="text-sm text-muted-foreground">{fb.phoneNumber}</p>
+                              <div className="flex items-center justify-between group">
+                                <div>
+                                  <p className="font-medium">{fb.name}</p>
+                                  <p className="text-sm text-muted-foreground">{fb.phoneNumber}</p>
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-11 w-11 rounded-full text-primary hover:text-primary hover:bg-primary/10 transition-colors"
+                                  asChild
+                                  data-testid={`button-contact-tel-${fb._id}`}
+                                >
+                                  <a href={`tel:${fb.phoneNumber.replace(/\s+/g, '')}`}>
+                                    <Phone className="w-5 h-5" />
+                                  </a>
+                                </Button>
                               </div>
                             </TableCell>
                             <TableCell>
@@ -496,25 +509,14 @@ export default function AdminDashboard() {
                                 >
                                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                                 </Button>
-                                <Button
-                                  size="sm"
-                                  className="min-h-11 bg-primary text-primary-foreground hover:bg-primary/90"
-                                  asChild
-                                  data-testid={`button-contact-tel-${fb._id}`}
-                                >
-                                  <a href={`tel:${fb.phoneNumber.replace(/\s+/g, '')}`}>
-                                    <Phone className="w-4 h-4 mr-2" />
-                                    Contact
-                                  </a>
-                                </Button>
                                 {!fb.contactedAt && (
                                   <Button
                                     size="sm"
+                                    variant="outline"
                                     onClick={() => handleContactCustomer(fb)}
-                                    data-testid={`button-contact-${fb._id}`}
+                                    data-testid={`button-contact-mark-${fb._id}`}
                                   >
-                                    <Phone className="w-4 h-4 mr-1" />
-                                    Contact
+                                    Mark Contacted
                                   </Button>
                                 )}
                               </div>
