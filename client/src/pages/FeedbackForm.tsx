@@ -134,7 +134,7 @@ export default function FeedbackForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 px-4">
+    <div className="min-h-screen bg-[#FFF8F5] py-8 px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
