@@ -516,14 +516,6 @@ export default function AdminDashboard() {
                         <DialogHeader>
                           <DialogTitle className="text-2xl font-bold flex items-center justify-between">
                             Feedback Details
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8 rounded-full"
-                              onClick={() => setIsDetailsOpen(false)}
-                            >
-                              <X className="h-5 w-5" />
-                            </Button>
                           </DialogTitle>
                           <DialogDescription className="text-white/70">
                             Submitted on {format(new Date(selectedFeedback.createdAt), 'MMMM d, yyyy h:mm a')}
