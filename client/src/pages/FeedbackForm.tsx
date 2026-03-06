@@ -45,7 +45,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
           <Star
             className={`w-8 h-8 transition-colors ${
               star <= (hover || value)
-                ? "fill-amber-400 text-amber-400"
+                ? "fill-[#F5A623] text-[#F5A623]"
                 : "text-muted-foreground/30"
             }`}
           />
@@ -143,13 +143,13 @@ export default function FeedbackForm() {
           >
             <Logo className="w-32 h-32 mx-auto mb-4" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-foreground">Bomb Rolls and Bowls</h1>
-          <p className="text-muted-foreground mt-2">We value your feedback</p>
+          <h1 className="text-3xl font-bold text-[#8B1A1A]">Bomb Rolls and Bowls</h1>
+          <p className="text-[#8B1A1A]/70 mt-2">We value your feedback</p>
         </div>
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Share Your Experience</CardTitle>
+            <CardTitle className="text-[#8B1A1A] font-playfair italic">Share Your Experience</CardTitle>
             <CardDescription>
               Help us serve you better by rating your visit
             </CardDescription>
@@ -162,12 +162,13 @@ export default function FeedbackForm() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Name</FormLabel>
+                      <FormLabel className="text-[#3b1a1a] font-poppins">Your Name</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter your name"
                           {...field}
                           data-testid="input-name"
+                          className="border-[#8B1A1A] focus-visible:ring-[#F5A623]"
                         />
                       </FormControl>
                       <FormMessage />
@@ -180,12 +181,13 @@ export default function FeedbackForm() {
                   name="phoneNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel className="text-[#3b1a1a] font-poppins">Phone Number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="+1 234 567 8900"
                           {...field}
                           data-testid="input-phone"
+                          className="border-[#8B1A1A] focus-visible:ring-[#F5A623]"
                         />
                       </FormControl>
                       <FormMessage />
@@ -199,12 +201,12 @@ export default function FeedbackForm() {
                     name="location"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Location You Visited:</FormLabel>
+                        <FormLabel className="text-[#3b1a1a] font-poppins">Location You Visited:</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             readOnly
-                            className="bg-muted cursor-not-allowed"
+                            className="bg-muted cursor-not-allowed border-[#8B1A1A] focus-visible:ring-[#F5A623]"
                             data-testid="input-location"
                           />
                         </FormControl>
@@ -218,7 +220,7 @@ export default function FeedbackForm() {
                     name="diningOption"
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        <FormLabel>Dine In / Take Out:</FormLabel>
+                        <FormLabel className="text-[#3b1a1a] font-poppins">Dine In / Take Out:</FormLabel>
                         <FormControl>
                           <RadioGroup
                             onValueChange={field.onChange}
@@ -227,15 +229,15 @@ export default function FeedbackForm() {
                           >
                             <FormItem className="flex items-center space-x-3 space-y-0">
                               <FormControl>
-                                <RadioGroupItem value="dine-in" />
+                                <RadioGroupItem value="dine-in" className="border-[#8B1A1A] text-[#8B1A1A]" />
                               </FormControl>
-                              <FormLabel className="font-normal">Dine In</FormLabel>
+                              <FormLabel className="font-normal text-[#5c3317]">Dine In</FormLabel>
                             </FormItem>
                             <FormItem className="flex items-center space-x-3 space-y-0">
                               <FormControl>
-                                <RadioGroupItem value="take-out" />
+                                <RadioGroupItem value="take-out" className="border-[#8B1A1A] text-[#8B1A1A]" />
                               </FormControl>
-                              <FormLabel className="font-normal">Take Out</FormLabel>
+                              <FormLabel className="font-normal text-[#5c3317]">Take Out</FormLabel>
                             </FormItem>
                           </RadioGroup>
                         </FormControl>
@@ -246,7 +248,7 @@ export default function FeedbackForm() {
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="text-base font-medium">Rate Your Experience</Label>
+                  <Label className="text-base font-playfair italic text-[#8B1A1A]">Rate Your Experience</Label>
                   {categories.map(({ key, label, icon: Icon }) => (
                     <FormField
                       key={key}
@@ -260,8 +262,8 @@ export default function FeedbackForm() {
                           className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                         >
                           <div className="flex items-center gap-3">
-                            <Icon className="w-5 h-5 text-primary" />
-                            <span className="font-medium">{label}</span>
+                            <Icon className="w-5 h-5 text-[#8B1A1A]" />
+                            <span className="font-medium text-[#5c3317]">{label}</span>
                           </div>
                           <StarRating
                             value={field.value}
@@ -278,11 +280,11 @@ export default function FeedbackForm() {
                   name="note"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Additional Comments (Optional)</FormLabel>
+                      <FormLabel className="text-[#3b1a1a] font-poppins">Additional Comments (Optional)</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Tell us more about your experience..."
-                          className="resize-none"
+                          className="resize-none border-[#8B1A1A] focus-visible:ring-[#F5A623]"
                           maxLength={500}
                           rows={4}
                           {...field}
@@ -299,9 +301,8 @@ export default function FeedbackForm() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#b52d2a] text-white no-default-hover-elevate no-default-active-elevate"
+                  className="w-full bg-[#8B1A1A] hover:bg-[#A52020] text-white font-poppins"
                   size="lg"
-                  style={{ opacity: 1 }}
                   disabled={submitMutation.isPending}
                   data-testid="button-submit"
                 >
