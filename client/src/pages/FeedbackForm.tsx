@@ -4,9 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Star, Coffee, Utensils, Users, Sparkles, Heart } from "lucide-react";
-import { Logo } from "@/components/Logo";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,60 +11,20 @@ import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { insertFeedbackSchema, type InsertFeedback } from "@shared/schema";
-
-const categories = [
-  { key: "qualityOfService", label: "How would you rate the quality of service?", icon: Coffee },
-  { key: "speedOfService", label: "How satisfied were you with the speed of service?", icon: Sparkles },
-  { key: "friendliness", label: "How would you rate the friendliness of our service?", icon: Users },
-  { key: "foodTemperature", label: "How would you rate the temperature of the food on arrival?", icon: Utensils },
-  { key: "menuExplanation", label: "How well were the menu and specials explained to you?", icon: Heart },
-  { key: "likelyToReturn", label: "How likely are you to return based on the service?", icon: Coffee },
-] as const;
-
-function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  const [hover, setHover] = useState(0);
-
-  return (
-    <div className="flex gap-1">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          className="p-1 focus:outline-none"
-          onMouseEnter={() => setHover(star)}
-          onMouseLeave={() => setHover(0)}
-          onClick={() => onChange(star)}
-          data-testid={`star-${star}`}
-        >
-          <Star
-            className={`w-8 h-8 transition-colors ${
-              star <= (hover || value)
-                ? "fill-[#F5A623] text-[#F5A623]"
-                : "text-muted-foreground/30"
-            }`}
-          />
-        </button>
-      ))}
-    </div>
-  );
-}
 
 export default function FeedbackForm() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const [step, setStep] = useState(1);
 
   const form = useForm<InsertFeedback>({
     resolver: zodResolver(insertFeedbackSchema),
     defaultValues: {
       name: "",
-      phoneNumber: "",
+      phone: "",
       location: "Bomb Rolls and Bowls",
-      diningOption: "dine-in",
-      visitDate: new Date().toISOString().split('T')[0],
-      visitTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+      visitType: "dine_in",
       ratings: {
         qualityOfService: 0,
         speedOfService: 0,
@@ -76,7 +33,9 @@ export default function FeedbackForm() {
         menuExplanation: 0,
         likelyToReturn: 0,
       },
-      note: "",
+      favouriteDish: "",
+      visitAgain: undefined,
+      comments: "",
     },
   });
 
@@ -86,7 +45,8 @@ export default function FeedbackForm() {
       return response.json();
     },
     onSuccess: () => {
-      navigate("/thank-you");
+      const name = form.getValues("name");
+      navigate(`/thank-you?name=${encodeURIComponent(name)}`);
     },
     onError: (error: any) => {
       if (error.message?.includes("already submitted")) {
@@ -115,100 +75,165 @@ export default function FeedbackForm() {
       });
       return;
     }
-
-    // Automatically set current date and time
-    const now = new Date();
-    const automatedData = {
-      ...data,
-      visitDate: now.toISOString().split('T')[0],
-      visitTime: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
-    };
-
-    submitMutation.mutate(automatedData);
+    submitMutation.mutate(data);
   };
 
+  const handleNextStep = async () => {
+    if (step === 1) {
+      const valid = await form.trigger(["name", "phone", "location", "visitType"]);
+      if (valid) setStep(2);
+    } else if (step === 2) {
+      const ratings = form.getValues("ratings");
+      const hasAllRatings = Object.values(ratings).every((r) => r >= 1);
+      if (hasAllRatings) {
+        setStep(3);
+      } else {
+        toast({
+          title: "Missing Ratings",
+          description: "Please rate all categories before proceeding",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  const ratingQuestions = [
+    { key: "qualityOfService", label: "Quality of Service", icon: "⭐" },
+    { key: "speedOfService", label: "Speed of Service", icon: "⚡" },
+    { key: "friendliness", label: "Friendliness", icon: "😊" },
+    { key: "foodTemperature", label: "Food Temperature", icon: "🔥" },
+    { key: "menuExplanation", label: "Menu Explanation", icon: "📋" },
+    { key: "likelyToReturn", label: "Likely to Return", icon: "💫" },
+  ] as const;
+
+  const dishOptions = [
+    "Loaded Nachos",
+    "Angara Salad",
+    "Spring Rolls",
+    "Bomb Bowl",
+    "Cheese Rolls",
+    "Other",
+  ];
+
   return (
-    <div className="min-h-screen bg-[#FFF8F5] py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-[#C0001A] via-[#8B0000] to-[#3D0000] py-8 px-4 flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-lg mx-auto"
+        className="w-full max-w-[520px]"
       >
         <div className="text-center mb-8">
           <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring" }}
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-6xl mb-4"
           >
-            <Logo className="w-32 h-32 mx-auto mb-4" />
+            💣
           </motion.div>
-          <h1 className="text-3xl font-bold text-[#8B1A1A]">Bomb Rolls and Bowls</h1>
-          <p className="text-[#8B1A1A]/70 mt-2">We value your feedback</p>
+          <h1 className="text-4xl font-bold text-white font-sans" style={{ fontFamily: "Bangers, cursive" }}>
+            BOMB ROLLS & BOWLS
+          </h1>
+          <p className="text-amber-200 mt-2">We value your feedback</p>
         </div>
 
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-[#8B1A1A] font-playfair italic">Share Your Experience</CardTitle>
-            <CardDescription>
-              Help us serve you better by rating your visit
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-[#3b1a1a] font-poppins">Your Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter your name"
-                          {...field}
-                          data-testid="input-name"
-                          className="border-[#8B1A1A] focus-visible:ring-[#F5A623]"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        {/* Progress Bar */}
+        <div className="mb-8 bg-white/10 rounded-full h-2 overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-amber-300 to-yellow-400"
+            initial={{ width: "33.33%" }}
+            animate={{ width: step === 1 ? "33.33%" : step === 2 ? "66.66%" : "100%" }}
+            transition={{ duration: 0.3 }}
+          />
+        </div>
 
-                <FormField
-                  control={form.control}
-                  name="phoneNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-[#3b1a1a] font-poppins">Phone Number</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="+1 234 567 8900"
-                          {...field}
-                          data-testid="input-phone"
-                          className="border-[#8B1A1A] focus-visible:ring-[#F5A623]"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        <div className="flex justify-between text-xs text-white/70 mb-6">
+          <span className={step >= 1 ? "text-amber-300 font-bold" : ""}>Your Info</span>
+          <span className={step >= 2 ? "text-amber-300 font-bold" : ""}>Rate Us</span>
+          <span className={step >= 3 ? "text-amber-300 font-bold" : ""}>Final Thoughts</span>
+        </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-3xl p-8 shadow-2xl">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* STEP 1: Personal Info */}
+              {step === 1 && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-6"
+                >
+                  <h2 className="text-2xl font-bold text-[#8B0000] font-sans" style={{ fontFamily: "Bangers, cursive" }}>
+                    Your Info
+                  </h2>
+
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-bold">Your Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your name"
+                            {...field}
+                            data-testid="input-name"
+                            className="border-2 border-[#8B0000] rounded-lg"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-bold">Phone Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="+1 234 567 8900"
+                            {...field}
+                            data-testid="input-phone"
+                            className="border-2 border-[#8B0000] rounded-lg"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <FormField
                     control={form.control}
                     name="location"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#3b1a1a] font-poppins">Location You Visited:</FormLabel>
+                        <FormLabel className="text-gray-700 font-bold">Location</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            readOnly
-                            className="bg-muted cursor-not-allowed border-[#8B1A1A] focus-visible:ring-[#F5A623]"
-                            data-testid="input-location"
-                          />
+                          <div className="flex flex-wrap gap-2">
+                            {["Bomb Rolls and Bowls", "Ambernath Branch", "Other Branch"].map((loc) => (
+                              <button
+                                key={loc}
+                                type="button"
+                                onClick={() => field.onChange(loc)}
+                                className={`px-4 py-2 rounded-lg font-bold transition-all ${
+                                  field.value === loc
+                                    ? "bg-[#8B0000] text-white"
+                                    : "border-2 border-[#8B0000] text-[#8B0000]"
+                                }`}
+                                data-testid={`button-location-${loc}`}
+                              >
+                                {loc}
+                              </button>
+                            ))}
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -217,105 +242,236 @@ export default function FeedbackForm() {
 
                   <FormField
                     control={form.control}
-                    name="diningOption"
+                    name="visitType"
                     render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormLabel className="text-[#3b1a1a] font-poppins">Dine In / Take Out:</FormLabel>
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-bold">Dine In / Take Out</FormLabel>
                         <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="flex flex-col space-y-1"
-                          >
-                            <FormItem className="flex items-center space-x-3 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="dine-in" className="border-[#8B1A1A] text-[#8B1A1A]" />
-                              </FormControl>
-                              <FormLabel className="font-normal text-[#5c3317]">Dine In</FormLabel>
-                            </FormItem>
-                            <FormItem className="flex items-center space-x-3 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="take-out" className="border-[#8B1A1A] text-[#8B1A1A]" />
-                              </FormControl>
-                              <FormLabel className="font-normal text-[#5c3317]">Take Out</FormLabel>
-                            </FormItem>
-                          </RadioGroup>
+                          <div className="flex gap-4">
+                            <button
+                              type="button"
+                              onClick={() => field.onChange("dine_in")}
+                              className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                                field.value === "dine_in"
+                                  ? "bg-[#8B0000] text-white"
+                                  : "border-2 border-[#8B0000] text-[#8B0000]"
+                              }`}
+                              data-testid="button-dine-in"
+                            >
+                              🍽 Dine In
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => field.onChange("take_out")}
+                              className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                                field.value === "take_out"
+                                  ? "bg-[#8B0000] text-white"
+                                  : "border-2 border-[#8B0000] text-[#8B0000]"
+                              }`}
+                              data-testid="button-take-out"
+                            >
+                              🥡 Take Out
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>
+                </motion.div>
+              )}
 
-                <div className="space-y-4">
-                  <Label className="text-base font-playfair italic text-[#8B1A1A]">Rate Your Experience</Label>
-                  {categories.map(({ key, label, icon: Icon }) => (
+              {/* STEP 2: Star Ratings */}
+              {step === 2 && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-6"
+                >
+                  <h2 className="text-2xl font-bold text-[#8B0000] font-sans" style={{ fontFamily: "Bangers, cursive" }}>
+                    Rate Your Experience
+                  </h2>
+
+                  {ratingQuestions.map(({ key, label, icon }) => (
                     <FormField
                       key={key}
                       control={form.control}
                       name={`ratings.${key}`}
                       render={({ field }) => (
-                        <motion.div
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.1 * categories.indexOf({ key, label, icon: Icon } as any) }}
-                          className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                        >
-                          <div className="flex items-center gap-3">
-                            <Icon className="w-5 h-5 text-[#8B1A1A]" />
-                            <span className="font-medium text-[#5c3317]">{label}</span>
-                          </div>
-                          <StarRating
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </motion.div>
+                        <FormItem>
+                          <FormLabel className="text-gray-700 font-bold">
+                            {icon} {label}
+                          </FormLabel>
+                          <FormControl>
+                            <div className="flex gap-2">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                  key={star}
+                                  type="button"
+                                  onClick={() => field.onChange(star)}
+                                  className="transition-all"
+                                  data-testid={`star-${key}-${star}`}
+                                >
+                                  <span
+                                    className={`text-3xl transition-all ${
+                                      star <= field.value ? "scale-125" : "scale-100"
+                                    }`}
+                                  >
+                                    {star <= field.value ? "⭐" : "☆"}
+                                  </span>
+                                </button>
+                              ))}
+                            </div>
+                          </FormControl>
+                        </FormItem>
                       )}
                     />
                   ))}
-                </div>
+                </motion.div>
+              )}
 
-                <FormField
-                  control={form.control}
-                  name="note"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-[#3b1a1a] font-poppins">Additional Comments (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Tell us more about your experience..."
-                          className="resize-none border-[#8B1A1A] focus-visible:ring-[#F5A623]"
-                          maxLength={500}
-                          rows={4}
-                          {...field}
-                          data-testid="input-note"
-                        />
-                      </FormControl>
-                      <p className="text-xs text-muted-foreground text-right">
-                        {(field.value?.length || 0)}/500
-                      </p>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Button
-                  type="submit"
-                  className="w-full bg-[#8B1A1A] hover:bg-[#A52020] text-white font-poppins"
-                  size="lg"
-                  disabled={submitMutation.isPending}
-                  data-testid="button-submit"
+              {/* STEP 3: Final Thoughts */}
+              {step === 3 && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-6"
                 >
-                  {submitMutation.isPending ? "Submitting..." : "Submit Feedback"}
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+                  <h2 className="text-2xl font-bold text-[#8B0000] font-sans" style={{ fontFamily: "Bangers, cursive" }}>
+                    Final Thoughts
+                  </h2>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          Thank you for dining with us
-        </p>
+                  <FormField
+                    control={form.control}
+                    name="favouriteDish"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-bold">Favorite Dish</FormLabel>
+                        <FormControl>
+                          <div className="flex flex-wrap gap-2">
+                            {dishOptions.map((dish) => (
+                              <button
+                                key={dish}
+                                type="button"
+                                onClick={() => field.onChange(field.value === dish ? "" : dish)}
+                                className={`px-4 py-2 rounded-full font-bold transition-all ${
+                                  field.value === dish
+                                    ? "bg-[#8B0000] text-white"
+                                    : "border-2 border-[#8B0000] text-[#8B0000]"
+                                }`}
+                                data-testid={`chip-dish-${dish}`}
+                              >
+                                {dish}
+                              </button>
+                            ))}
+                          </div>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="visitAgain"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-bold">Will You Visit Again?</FormLabel>
+                        <FormControl>
+                          <div className="flex gap-4">
+                            <button
+                              type="button"
+                              onClick={() => field.onChange(true)}
+                              className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                                field.value === true
+                                  ? "bg-[#8B0000] text-white"
+                                  : "border-2 border-[#8B0000] text-[#8B0000]"
+                              }`}
+                              data-testid="button-visit-yes"
+                            >
+                              🔥 Definitely!
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => field.onChange(false)}
+                              className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                                field.value === false
+                                  ? "bg-[#8B0000] text-white"
+                                  : "border-2 border-[#8B0000] text-[#8B0000]"
+                              }`}
+                              data-testid="button-visit-no"
+                            >
+                              😐 Maybe not
+                            </button>
+                          </div>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="comments"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-bold">Comments (Optional)</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Tell us more about your experience..."
+                            className="border-2 border-[#8B0000] rounded-lg resize-none"
+                            maxLength={500}
+                            rows={4}
+                            {...field}
+                            data-testid="input-comments"
+                          />
+                        </FormControl>
+                        <p className="text-xs text-gray-500 text-right">
+                          {(field.value?.length || 0)}/500
+                        </p>
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+              )}
+
+              {/* Buttons */}
+              <div className="flex gap-4 pt-6">
+                {step > 1 && (
+                  <Button
+                    type="button"
+                    onClick={handlePrevStep}
+                    variant="outline"
+                    className="flex-1 border-2 border-[#8B0000] text-[#8B0000] font-bold rounded-lg"
+                    data-testid="button-prev"
+                  >
+                    ← Back
+                  </Button>
+                )}
+
+                {step < 3 ? (
+                  <Button
+                    type="button"
+                    onClick={handleNextStep}
+                    className="flex-1 bg-gradient-to-r from-[#8B0000] to-[#C0001A] text-white font-bold rounded-lg"
+                    data-testid="button-next"
+                  >
+                    Next →
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    disabled={submitMutation.isPending}
+                    className="flex-1 bg-gradient-to-r from-amber-300 to-yellow-400 text-[#8B0000] font-bold rounded-lg"
+                    data-testid="button-submit"
+                  >
+                    {submitMutation.isPending ? "Submitting..." : "🚀 Submit"}
+                  </Button>
+                )}
+              </div>
+            </form>
+          </Form>
+        </div>
       </motion.div>
     </div>
   );

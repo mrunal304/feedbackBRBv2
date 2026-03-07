@@ -14,37 +14,33 @@ export const ratingsSchema = z.object({
 export const feedbackSchema = z.object({
   _id: z.string(),
   name: z.string().min(1, "Name is required"),
-  normalizedName: z.string().optional(), // lowercase version for case-insensitive matching
-  phoneNumber: z.string().regex(/^\+?[\d\s-]{10,15}$/, "Invalid phone number format"),
+  phone: z.string().regex(/^\+?[\d\s-]{10,15}$/, "Invalid phone number format"),
   location: z.string().min(1, "Location is required"),
-  diningOption: z.enum(["dine-in", "take-out"]),
-  visitDate: z.string(),
-  visitTime: z.string(),
+  visitType: z.enum(["dine_in", "take_out"]),
   ratings: ratingsSchema,
-  note: z.string().max(500).optional(),
-  dateKey: z.string(), // YYYY-MM-DD for daily validation
+  favouriteDish: z.string().optional(),
+  visitAgain: z.boolean().optional(),
+  comments: z.string().optional(),
+  status: z.enum(["pending", "contacted"]),
   createdAt: z.string(),
-  contactedAt: z.string().nullable().optional(),
-  contactedBy: z.string().nullable().optional(),
 });
 
 // === CUSTOMER HISTORY SCHEMAS ===
 export const customerHistorySchema = z.object({
   customerName: z.string(),
-  normalizedName: z.string(),
   totalVisits: z.number(),
   feedbackHistory: z.array(feedbackSchema),
 });
 
 export const insertFeedbackSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  phoneNumber: z.string().regex(/^\+?[\d\s-]{10,15}$/, "Invalid phone number format"),
+  phone: z.string().regex(/^\+?[\d\s-]{10,15}$/, "Invalid phone number format"),
   location: z.string().min(1, "Location is required"),
-  diningOption: z.enum(["dine-in", "take-out"]),
-  visitDate: z.string(),
-  visitTime: z.string(),
+  visitType: z.enum(["dine_in", "take_out"]),
   ratings: ratingsSchema,
-  note: z.string().max(500).optional(),
+  favouriteDish: z.string().optional(),
+  visitAgain: z.boolean().optional(),
+  comments: z.string().optional(),
 });
 
 // === ADMIN AUTH SCHEMAS ===

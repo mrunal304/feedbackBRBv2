@@ -13,32 +13,34 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Define Feedback Schema
 const feedbackSchema = new mongoose.Schema({
+  // Personal Info
   name: { type: String, required: true },
-  normalizedName: { type: String, required: true }, // lowercase version for case-insensitive matching
-  phoneNumber: { type: String, required: true },
-  location: { type: String, required: true },
-  diningOption: { type: String, enum: ["dine-in", "take-out"], required: true },
-  visitDate: { type: String, required: true },
-  visitTime: { type: String, required: true },
+  phone: { type: String, required: true },
+  location: { type: String, default: "Bomb Rolls and Bowls" },
+  visitType: { type: String, enum: ["dine_in", "take_out"], default: "dine_in" },
+
+  // Star Ratings (1-5)
   ratings: {
-    qualityOfService: { type: Number, required: true, min: 1, max: 5 },
-    speedOfService: { type: Number, required: true, min: 1, max: 5 },
-    friendliness: { type: Number, required: true, min: 1, max: 5 },
-    foodTemperature: { type: Number, required: true, min: 1, max: 5 },
-    menuExplanation: { type: Number, required: true, min: 1, max: 5 },
-    likelyToReturn: { type: Number, required: true, min: 1, max: 5 },
+    qualityOfService: { type: Number, min: 1, max: 5 },
+    speedOfService: { type: Number, min: 1, max: 5 },
+    friendliness: { type: Number, min: 1, max: 5 },
+    foodTemperature: { type: Number, min: 1, max: 5 },
+    menuExplanation: { type: Number, min: 1, max: 5 },
+    likelyToReturn: { type: Number, min: 1, max: 5 },
   },
-  note: { type: String, maxlength: 500 },
-  dateKey: { type: String, required: true }, // YYYY-MM-DD
+
+  // Final Thoughts
+  favouriteDish: { type: String },
+  visitAgain: { type: Boolean },
+  comments: { type: String },
+
+  // Auto fields
+  status: { type: String, enum: ["pending", "contacted"], default: "pending" },
   createdAt: { type: Date, default: Date.now },
-  contactedAt: { type: Date, default: null },
-  contactedBy: { type: String, default: null },
 });
 
 // Create index for phone number + date validation
-feedbackSchema.index({ phoneNumber: 1, dateKey: 1 }, { unique: true });
-// Create index for normalized name for efficient customer history lookups
-feedbackSchema.index({ normalizedName: 1 });
+feedbackSchema.index({ phone: 1, createdAt: 1 });
 
 export const FeedbackModel = mongoose.model('Feedback', feedbackSchema);
 export { mongoose };

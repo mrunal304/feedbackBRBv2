@@ -140,7 +140,7 @@ export default function AdminDashboard() {
   const filteredFeedback = feedback.filter((fb) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
-    return fb.name.toLowerCase().includes(query) || fb.phoneNumber.includes(query);
+    return fb.name.toLowerCase().includes(query) || fb.phone.includes(query);
   });
 
   const handleDateChange = (date: Date) => {
@@ -429,10 +429,10 @@ export default function AdminDashboard() {
                             <div className="flex items-center gap-3">
                               <div>
                                 <p className="font-bold text-[#3D2B1F]">{fb.name}</p>
-                                <p className="text-xs text-gray-500">{fb.phoneNumber}</p>
+                                <p className="text-xs text-gray-500">{fb.phone}</p>
                               </div>
                               <a
-                                href={`tel:${fb.phoneNumber}`}
+                                href={`tel:${fb.phone}`}
                                 className="w-8 h-8 rounded-full bg-[#fdf0f0] flex items-center justify-center text-[#8B1A1A] hover:bg-[#8B1A1A] hover:text-white transition-colors shadow-sm"
                                 title={`Call ${fb.name}`}
                                 data-testid={`button-call-${fb._id}`}
@@ -444,7 +444,7 @@ export default function AdminDashboard() {
                           <TableCell className="py-4">
                             <div className="text-xs text-gray-600 space-y-0.5">
                               <p className="font-medium text-[#3D2B1F]">{fb.location}</p>
-                              <p className="capitalize">{(fb.diningOption || "").replace('-', ' ')}</p>
+                              <p className="capitalize">{(fb.visitType || "").replace('_', ' ')}</p>
                             </div>
                           </TableCell>
                           <TableCell className="py-4">
@@ -478,7 +478,7 @@ export default function AdminDashboard() {
                             </div>
                           </TableCell>
                           <TableCell className="py-4">
-                            {fb.contactedAt ? (
+                            {fb.status === "contacted" ? (
                               <span className="text-xs font-bold text-green-600 uppercase tracking-tighter">CONTACTED</span>
                             ) : (
                               <span className="text-xs font-bold text-[#8B1A1A] uppercase tracking-tighter">PENDING</span>

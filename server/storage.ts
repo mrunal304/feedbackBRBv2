@@ -21,18 +21,15 @@ function formatFeedback(doc: any): Feedback {
   return {
     _id: doc._id.toString(),
     name: doc.name,
-    normalizedName: doc.normalizedName,
-    phoneNumber: doc.phoneNumber,
+    phone: doc.phone,
     location: doc.location,
-    diningOption: doc.diningOption,
-    visitDate: doc.visitDate,
-    visitTime: doc.visitTime,
+    visitType: doc.visitType,
     ratings: doc.ratings,
-    note: doc.note || undefined,
-    dateKey: doc.dateKey,
+    favouriteDish: doc.favouriteDish,
+    visitAgain: doc.visitAgain,
+    comments: doc.comments,
+    status: doc.status || "pending",
     createdAt: doc.createdAt.toISOString(),
-    contactedAt: doc.contactedAt ? doc.contactedAt.toISOString() : null,
-    contactedBy: doc.contactedBy || null,
   };
 }
 
@@ -79,22 +76,27 @@ export class MongoStorage implements IStorage {
     if (filters?.search) {
       query.$or = [
         { name: { $regex: filters.search, $options: 'i' } },
-        { phoneNumber: { $regex: filters.search, $options: 'i' } },
+        { phone: { $regex: filters.search, $options: 'i' } },
       ];
     }
     
-    if (filters?.startDate) {
-      query.dateKey = { ...query.dateKey, $gte: filters.startDate };
-    }
-    
-    if (filters?.endDate) {
-      query.dateKey = { ...query.dateKey, $lte: filters.endDate };
+    if (filters?.startDate || filters?.endDate) {
+      query.createdAt = {};
+      if (filters?.startDate) {
+        const start = new Date(filters.startDate);
+        query.createdAt.$gte = start;
+      }
+      if (filters?.endDate) {
+        const end = new Date(filters.endDate);
+        end.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = end;
+      }
     }
     
     if (filters?.status === 'contacted') {
-      query.contactedAt = { $ne: null };
+      query.status = 'contacted';
     } else if (filters?.status === 'pending') {
-      query.contactedAt = null;
+      query.status = 'pending';
     }
     
     const docs = await FeedbackModel.find(query).sort({ createdAt: -1 });
@@ -131,14 +133,13 @@ export class MongoStorage implements IStorage {
   async createFeedback(feedback: InsertFeedback): Promise<Feedback> {
     const doc = await FeedbackModel.create({
       ...feedback,
-      normalizedName: normalizeName(feedback.name),
-      dateKey: getDateKey(),
+      status: "pending",
     });
     return formatFeedback(doc);
   }
 
   async getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null> {
-    const docs = await FeedbackModel.find({ normalizedName: normalizedName.toLowerCase().trim() })
+    const docs = await FeedbackModel.find({ name: { $regex: normalizedName, $options: 'i' } })
       .sort({ createdAt: -1 });
     
     if (docs.length === 0) {
@@ -149,7 +150,6 @@ export class MongoStorage implements IStorage {
     
     return {
       customerName: feedbacks[0].name,
-      normalizedName: normalizedName.toLowerCase().trim(),
       totalVisits: feedbacks.length,
       feedbackHistory: feedbacks,
     };
@@ -159,7 +159,7 @@ export class MongoStorage implements IStorage {
     try {
       const doc = await FeedbackModel.findByIdAndUpdate(
         id,
-        { contactedAt: new Date(), contactedBy: staffName },
+        { status: "contacted" },
         { new: true }
       );
       return doc ? formatFeedback(doc) : null;
@@ -169,8 +169,15 @@ export class MongoStorage implements IStorage {
   }
 
   async checkPhoneSubmittedToday(phoneNumber: string): Promise<boolean> {
-    const dateKey = getDateKey();
-    const existing = await FeedbackModel.findOne({ phoneNumber, dateKey });
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const existing = await FeedbackModel.findOne({ 
+      phone: phoneNumber,
+      createdAt: { $gte: today, $lt: tomorrow }
+    });
     return !!existing;
   }
 
@@ -183,7 +190,7 @@ export class MongoStorage implements IStorage {
     
     const feedbacks = docs.map(formatFeedback);
     const total = feedbacks.length;
-    const contacted = feedbacks.filter(f => f.contactedAt).length;
+    const contacted = feedbacks.filter(f => f.status === "contacted").length;
     
     // Calculate average rating
     let totalRating = 0;

@@ -1,0 +1,109 @@
+I want to redesign the customer feedback form UI and update the MongoDB schema to match the new UI fields. The Admin Panel logic, routes, and design must stay exactly the same.
+STEP 1 - Read existing code first:
+
+Read the current feedback form component
+Read the current Mongoose schema/model file
+Read the existing POST route for feedback submission
+Read the Admin Panel component and GET routes
+Note everything before making any changes
+
+STEP 2 - Update MongoDB Schema to match new UI:
+Update the Mongoose model with these exact fields:
+javascriptconst feedbackSchema = new mongoose.Schema({
+  // Personal Info
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
+  location: { type: String, default: "Bomb Rolls and Bowls" },
+  visitType: { type: String, enum: ["dine_in", "take_out"], default: "dine_in" },
+
+  // Star Ratings (1-5)
+  ratings: {
+    qualityOfService: { type: Number, min: 1, max: 5 },
+    speedOfService: { type: Number, min: 1, max: 5 },
+    friendliness: { type: Number, min: 1, max: 5 },
+    foodTemperature: { type: Number, min: 1, max: 5 },
+    menuExplanation: { type: Number, min: 1, max: 5 },
+    likelyToReturn: { type: Number, min: 1, max: 5 },
+  },
+
+  // Final Thoughts
+  favouriteDish: { type: String },
+  visitAgain: { type: Boolean },
+  comments: { type: String },
+
+  // Auto fields
+  status: { type: String, enum: ["pending", "contacted"], default: "pending" },
+  createdAt: { type: Date, default: Date.now },
+});
+STEP 3 - Update POST /api/feedback route:
+
+Map all new form fields correctly to the updated schema
+Keep the same endpoint URL /api/feedback — do NOT change it
+Keep the same response format { success: true, data: savedFeedback }
+Keep status defaulting to "pending" on every new submission
+
+STEP 4 - Redesign feedback form UI only:
+FONTS: Bangers + Nunito from Google Fonts
+PAGE: linear-gradient(135deg, #C0001A 0%, #8B0000 40%, #3D0000 100%) background
+WHITE CARD: centered, max-width 520px, border-radius 24px
+HEADER (dark red, 4px gold border bottom):
+
+💣 float animation + "BOMB ROLLS & BOWLS" Bangers font gold
+Progress bar with 3 steps: "Your Info" → "Rate Us" → "Final Thoughts"
+
+STEP 1 - Personal Info:
+
+Name input, Phone input
+Location dropdown: Bomb Rolls and Bowls, Ambernath Branch, Other Branch
+Dine In 🍽 / Take Out 🥡 toggle — active = dark red bg + gold text
+Next button: dark red gradient, gold text
+
+STEP 2 - Star Ratings:
+
+6 questions with icons, each with 5 stars:
+
+⭐ Quality of Service
+⚡ Speed of Service
+😊 Friendliness
+🔥 Food Temperature
+📋 Menu Explanation
+💫 Likely to Return
+
+
+Stars turn gold + scale on hover/select
+Next disabled until all 6 rated
+
+STEP 3 - Final Thoughts:
+
+Dish chips: Loaded Nachos, Angara Salad, Spring Rolls, Bomb Bowl, Cheese Rolls, Other
+Visit Again: "🔥 Definitely!" / "😐 Maybe not"
+Comments textarea
+🚀 Submit button: gold gradient, dark red text
+
+SUCCESS SCREEN:
+
+🎉 float + 💣 spin animations
+"You're Bomb!" Bangers 48px red
+"Thanks for the feedback, [name]!"
+Gold badge: "See you next time! 👋"
+
+STEP 5 - Admin Panel — DO NOT CHANGE ANYTHING:
+
+Do NOT touch Admin Panel component files
+Do NOT touch Admin Panel UI or design
+Do NOT change GET /api/feedback route response format
+Do NOT change how Admin Panel reads status, name, phone, ratings, createdAt
+Admin Panel should continue working exactly as before with the updated MongoDB data
+Only ensure the field names in the GET response still match what Admin Panel expects:
+
+name, phone, status, createdAt, ratings (as nested object) must remain the same
+
+
+
+STEP 6 - Final verification:
+
+Form submits → data saves to MongoDB with all new fields
+Admin Panel GET route fetches data → displays correctly in dashboard
+Charts, graphs, ratings averages in Admin Panel all still work
+No console errors
+Mobile responsive on feedback form"**
