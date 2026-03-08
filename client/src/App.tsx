@@ -10,7 +10,6 @@ import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import AdminPanelMobile from "@/pages/AdminPanelMobile";
 import NotFound from "@/pages/not-found";
-import { Footer } from "@/components/Footer";
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -41,7 +40,6 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </main>
-      {!isMobile && <Footer />}
     </div>
   );
 }
