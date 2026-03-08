@@ -217,22 +217,8 @@ export default function FeedbackForm() {
                       <FormItem>
                         <FormLabel className="text-gray-700 font-bold">Location</FormLabel>
                         <FormControl>
-                          <div className="flex flex-wrap gap-2">
-                            {["Bomb Rolls and Bowls", "Ambernath Branch", "Other Branch"].map((loc) => (
-                              <button
-                                key={loc}
-                                type="button"
-                                onClick={() => field.onChange(loc)}
-                                className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                                  field.value === loc
-                                    ? "bg-[#8B0000] text-white"
-                                    : "border-2 border-[#8B0000] text-[#8B0000]"
-                                }`}
-                                data-testid={`button-location-${loc}`}
-                              >
-                                {loc}
-                              </button>
-                            ))}
+                          <div className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-bold" data-testid="text-location">
+                            Bomb Rolls and Bowls
                           </div>
                         </FormControl>
                         <FormMessage />
