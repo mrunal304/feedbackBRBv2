@@ -21,26 +21,21 @@ const feedbackSchema = new mongoose.Schema({
 
   // Star Ratings (1-5)
   ratings: {
-    qualityOfService: { type: Number, min: 1, max: 5 },
-    speedOfService: { type: Number, min: 1, max: 5 },
-    friendliness: { type: Number, min: 1, max: 5 },
+    foodTaste: { type: Number, min: 1, max: 5 },
     foodTemperature: { type: Number, min: 1, max: 5 },
-    menuExplanation: { type: Number, min: 1, max: 5 },
-    likelyToReturn: { type: Number, min: 1, max: 5 },
+    portionSize: { type: Number, min: 1, max: 5 },
+    valueForMoney: { type: Number, min: 1, max: 5 },
+    presentation: { type: Number, min: 1, max: 5 },
+    overallService: { type: Number, min: 1, max: 5 },
   },
 
-  // Final Thoughts
-  favouriteDish: { type: String },
-  visitAgain: { type: Boolean },
+  // Comments
   comments: { type: String },
 
   // Auto fields
   status: { type: String, enum: ["pending", "contacted"], default: "pending" },
   createdAt: { type: Date, default: Date.now },
 });
-
-// Create index for phone number + date validation
-feedbackSchema.index({ phone: 1, createdAt: 1 });
 
 export const FeedbackModel = mongoose.model('Feedback', feedbackSchema);
 export { mongoose };

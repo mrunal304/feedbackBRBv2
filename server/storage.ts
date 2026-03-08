@@ -12,7 +12,6 @@ export interface IStorage {
   getFeedback(id: string): Promise<Feedback | null>;
   createFeedback(feedback: InsertFeedback): Promise<Feedback>;
   markAsContacted(id: string, staffName: string): Promise<Feedback | null>;
-  checkPhoneSubmittedToday(phoneNumber: string): Promise<boolean>;
   getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics>;
   getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null>;
 }
@@ -164,19 +163,6 @@ export class MongoStorage implements IStorage {
     } catch {
       return null;
     }
-  }
-
-  async checkPhoneSubmittedToday(phoneNumber: string): Promise<boolean> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    const existing = await FeedbackModel.findOne({ 
-      phone: phoneNumber,
-      createdAt: { $gte: today, $lt: tomorrow }
-    });
-    return !!existing;
   }
 
   async getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics> {

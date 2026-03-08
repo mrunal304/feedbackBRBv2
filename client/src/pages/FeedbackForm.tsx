@@ -48,19 +48,11 @@ export default function FeedbackForm() {
       navigate(`/thank-you?name=${encodeURIComponent(name)}`);
     },
     onError: (error: any) => {
-      if (error.message?.includes("already submitted")) {
-        toast({
-          title: "Already Submitted",
-          description: "You have already submitted feedback today. Please try again tomorrow.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to submit feedback",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit feedback",
+        variant: "destructive",
+      });
     },
   });
 

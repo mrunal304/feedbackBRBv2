@@ -57,36 +57,10 @@ export async function registerRoutes(
 
   // === FEEDBACK ROUTES ===
   
-  // Validate phone (check if already submitted today)
-  app.post(api.feedback.validatePhone.path, async (req, res) => {
-    try {
-      const { phoneNumber } = api.feedback.validatePhone.input.parse(req.body);
-      const alreadySubmitted = await storage.checkPhoneSubmittedToday(phoneNumber);
-      
-      if (alreadySubmitted) {
-        res.json({ canSubmit: false, message: "You have already submitted feedback today. Please try again tomorrow." });
-      } else {
-        res.json({ canSubmit: true });
-      }
-    } catch (err) {
-      res.json({ canSubmit: true });
-    }
-  });
-
   // Create feedback
   app.post(api.feedback.create.path, async (req, res) => {
     try {
       const input = api.feedback.create.input.parse(req.body);
-      
-      // Check if phone already submitted today
-      const alreadySubmitted = await storage.checkPhoneSubmittedToday(input.phoneNumber);
-      if (alreadySubmitted) {
-        return res.status(409).json({ 
-          message: "You have already submitted feedback today",
-          canSubmit: false 
-        });
-      }
-      
       const feedback = await storage.createFeedback(input);
       res.status(201).json(feedback);
     } catch (err) {
@@ -96,11 +70,29 @@ export async function registerRoutes(
           field: err.errors[0].path.join('.') 
         });
       } else if ((err as any).code === 11000) {
-        // MongoDB duplicate key error
-        res.status(409).json({ 
-          message: "You have already submitted feedback today",
-          canSubmit: false 
-        });
+        // Duplicate key error - but we allow unlimited submissions now
+        // Try to create with slightly modified data or just save it anyway
+        try {
+          const input = api.feedback.create.input.parse(req.body);
+          const doc = await (await import("./db")).FeedbackModel.create({
+            ...input,
+            status: "pending",
+          });
+          const formatted = {
+            _id: doc._id.toString(),
+            name: doc.name,
+            phone: doc.phone,
+            location: doc.location,
+            visitType: doc.visitType,
+            ratings: doc.ratings,
+            comments: doc.comments,
+            status: doc.status || "pending",
+            createdAt: doc.createdAt.toISOString(),
+          };
+          res.status(201).json(formatted);
+        } catch {
+          res.status(500).json({ message: "Server error" });
+        }
       } else {
         console.error(err);
         res.status(500).json({ message: "Server error" });
