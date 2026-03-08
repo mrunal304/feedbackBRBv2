@@ -1,0 +1,59 @@
+Apply these styles consistently to EVERY card/section across all 3 steps:
+CARD STYLE:
+
+Background: pure white #FFFFFF
+Border radius: 16px
+Box shadow: 0 4px 20px rgba(0,0,0,0.08) — clean subtle shadow, not heavy
+Padding: 24px
+Border: 1px solid rgba(0,0,0,0.06) — very light border
+
+TYPOGRAPHY — follow this font hierarchy strictly everywhere:
+
+Page title "BOMB ROLLS & BOWLS": Bangers font, #FFFFFF, letter-spacing 3px
+Step titles ("Your Info", "Rate Us", "Final Thoughts"): Bangers font, #8B0000, 28px
+Field labels ("Your Name", "Phone Number" etc): Nunito font, 700 weight, #444444, 13px, uppercase, letter-spacing 0.5px
+Input placeholder text: Nunito, 400 weight, #BBBBBB
+Input typed text: Nunito, 600 weight, #333333, 15px
+Button text: Nunito, 800 weight
+Rating question labels: Nunito, 700 weight, #333333, 14px
+Rating question subtitles: Nunito, 400 weight, #999999, 12px
+Dish chip text: Nunito, 700 weight, 13px
+Success screen title "You're Bomb!": Bangers, #C0001A, 48px
+Success screen body text: Nunito, 400 weight, #777777, 14px
+
+INPUT FIELDS:
+
+Border: 2px solid #EEEEEE
+Border radius: 12px
+Background: #FAFAFA
+Font: Nunito 600, 15px, #333333
+Focus state: border #FFD700, box-shadow 0 0 0 3px rgba(255,215,0,0.2)
+Padding: 12px 16px
+
+BUTTONS:
+
+Next/Submit buttons: Nunito 800, no mix of fonts
+Toggle buttons (Dine In/Take Out): Nunito 700, 14px
+Dish chips: Nunito 700, 13px, border-radius 99px
+All button transitions: 0.2s ease
+
+RATING ROWS:
+
+Clean white background
+Subtle 1px solid #F0F0F0 divider between each row
+Icon size: 24px
+Consistent left alignment of icon + label + subtitle
+
+PROGRESS BAR:
+
+Track: rgba(255,255,255,0.2)
+Fill: #FFD700
+Height: 6px, border-radius 99px
+Step labels: Nunito 700, 11px
+
+OVERALL RULE:
+
+Use ONLY Bangers and Nunito fonts — no other fonts anywhere
+No mixed font sizes — follow the hierarchy above strictly
+Every element should look clean, readable, and consistent across all 3 steps and success screen
+Do NOT change Admin Panel, MongoDB schema, or any backend logic"*

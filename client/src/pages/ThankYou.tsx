@@ -38,42 +38,36 @@ export default function ThankYou() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F5F5DC] flex items-center justify-center px-4 font-poppins">
+    <div className="min-h-screen bg-gradient-to-b from-[#C0001A] via-[#8B0000] to-[#3D0000] flex items-center justify-center px-4 font-nunito">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white rounded-[16px] shadow-lg w-full max-w-[420px] p-8 flex flex-col items-center text-center"
+        className="bg-white rounded-[16px] w-full max-w-[520px] p-6 flex flex-col items-center text-center border border-black/6" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}
       >
-        <div className="mb-4">
-          <Logo className="w-24 h-24" />
-        </div>
-
-        <div className="w-full flex items-center justify-center relative mb-8">
-          <div className="w-full h-[1px] bg-gray-100" />
-          <div className="absolute w-2 h-2 rounded-full bg-[#F5A623]" />
+        <div className="mb-6">
+          <Logo className="w-20 h-20" />
         </div>
 
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-          className="w-20 h-20 rounded-full bg-[#e8f5e9] flex items-center justify-center mb-6"
+          className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-6"
         >
-          <Check size={40} strokeWidth={3} className="text-[#22a34a]" />
+          <Check size={40} strokeWidth={3} className="text-green-600" />
         </motion.div>
 
-        <h1 className="text-[2rem] font-playfair font-bold mb-4">
-          <span className="text-[#3b1a1a]">Thank You</span>
-          <span className="text-[#F5A623]">!</span>
+        <h1 className="text-[48px] font-bold font-bangers text-[#C0001A] mb-4">
+          You're Bomb!
         </h1>
 
-        <p className="text-[#5c3317] text-base leading-relaxed mb-8">
-          Your feedback has been submitted successfully. We truly appreciate your time!
+        <p className="text-[14px] font-nunito font-normal text-[#777777] leading-relaxed mb-6 max-w-[420px]">
+          Your feedback has been submitted successfully. We truly appreciate your time and value your opinion!
         </p>
 
-        <div className="w-full bg-[#fdf6ec] border border-[#e8d5b0] rounded-[12px] p-4 mb-8">
-          <p className="text-[#8B1A1A] font-bold">
+        <div className="w-full bg-[#FAFAFA] border border-[#EEEEEE] rounded-[12px] p-4 mb-8">
+          <p className="text-[14px] text-[#8B0000] font-nunito font-semibold">
             We hope to see you again soon at Bomb Rolls and Bowls!
           </p>
         </div>
@@ -81,15 +75,15 @@ export default function ThankYou() {
         <Button
           onClick={() => navigate("/")}
           data-testid="button-back-home"
-          className="w-full bg-[#8B1A1A] hover:bg-[#a51d1d] text-white font-bold h-auto py-[14px] rounded-[10px] flex items-center justify-between px-6 transition-colors no-default-hover-elevate no-default-active-elevate"
+          className="w-full bg-[#8B0000] hover:bg-[#a51d1d] text-white font-nunito font-bold text-[14px] h-auto py-3 rounded-[12px] flex items-center justify-between px-6 transition-all duration-200"
         >
           <Home size={20} />
           <span>Back to Home</span>
           <ArrowRight size={20} />
         </Button>
 
-        <p className="mt-8 text-[10px] tracking-widest font-bold text-[#8B1A1A] uppercase">
-          HAVE A WONDERFUL DAY!
+        <p className="mt-8 text-[11px] tracking-widest font-bold text-white/60 uppercase font-nunito">
+          Have a wonderful day!
         </p>
       </motion.div>
     </div>

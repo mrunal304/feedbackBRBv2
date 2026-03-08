@@ -86,6 +86,8 @@ export default {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
+        bangers: ["var(--font-bangers)"],
+        nunito: ["var(--font-nunito)"],
       },
       keyframes: {
         "accordion-down": {
