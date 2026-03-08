@@ -1,0 +1,69 @@
+The mobile responsive Admin Panel is not showing customer details properly. I want to separate the desktop and mobile Admin Panel into 2 completely separate files.
+STEP 1 - Check existing files:
+
+Read the current Admin Panel component file
+Check if desktop and mobile are in the same file or separate
+If they are in the same file, separate them out
+
+STEP 2 - Create 2 separate files:
+File 1: AdminPanelDesktop.jsx
+
+Keep the exact current desktop design as is
+Full sidebar + table layout
+All columns: CUSTOMER, VISIT INFO, RATINGS, NOTE, DATE, STATUS, ACTIONS
+View Details modal with all details
+Only show on screens wider than 768px
+
+File 2: AdminPanelMobile.jsx
+
+Completely new mobile-specific design
+Show on screens 768px and below only
+Each customer card should show ALL these details clearly:
+
+Customer Name (bold, large)
+Phone Number below name
+Visit Type (Dine In / Take Out) with icon
+Date & Time of submission
+Star ratings with average score
+Status badge (PENDING / CONTACTED)
+"View Details" button — opens full detail bottom sheet or modal showing:
+
+Name, Phone
+Visit Type
+Date & Time
+All 6 individual ratings with labels
+Overall average rating
+Comments
+Mark as Contacted button
+
+
+"Mark Contacted" button directly on card
+
+
+
+Mobile card style:
+
+White card, border-radius 16px, box-shadow 0 2px 12px rgba(0,0,0,0.08)
+Padding 16px
+Name: Nunito 800, 18px, #1A1A1A
+Phone: Nunito 600, 14px, #666666
+Status badge: red for PENDING, green for CONTACTED
+Rating stars: gold #FFD700, 16px
+Divider between each card: 8px gap
+Bottom tab bar: Overview + Feedback tabs
+
+STEP 3 - Update main App/Router file:
+javascriptimport { useMediaQuery } from 'react-responsive'
+// OR use window.innerWidth check
+
+const isMobile = window.innerWidth <= 768
+
+return isMobile ? <AdminPanelMobile /> : <AdminPanelDesktop />
+STEP 4 - Make sure both files:
+
+Connect to the same MongoDB backend
+Use the same GET /api/feedback route
+Use the same PATCH route for Mark as Contacted
+Share no UI code with each other — completely independent files
+
+Do NOT change the feedback form, backend routes, or MongoDB schema
