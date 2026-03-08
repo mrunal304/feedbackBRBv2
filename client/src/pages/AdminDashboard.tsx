@@ -544,17 +544,17 @@ export default function AdminDashboard() {
                             </div>
                             <div>
                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">PHONE NUMBER</label>
-                              <p className="text-lg font-bold text-[#3D2B1F]">{selectedFeedback.phoneNumber}</p>
+                              <p className="text-lg font-bold text-[#3D2B1F]">{selectedFeedback.phone}</p>
                             </div>
                           </div>
                           <div className="space-y-4">
                             <div>
                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">LOCATION & OPTION</label>
-                              <p className="text-[#3D2B1F]"><span className="font-bold">{selectedFeedback.location}</span> • <span className="capitalize">{(selectedFeedback.diningOption || "").replace('-', ' ')}</span></p>
+                              <p className="text-[#3D2B1F]"><span className="font-bold">{selectedFeedback.location || "Bomb Rolls and Bowls"}</span> • <span className="capitalize">{selectedFeedback.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}</span></p>
                             </div>
                             <div>
                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">VISIT TIME</label>
-                              <p className="text-[#3D2B1F]">{selectedFeedback.visitDate} at {selectedFeedback.visitTime}</p>
+                              <p className="text-[#3D2B1F]">{new Date(selectedFeedback.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</p>
                             </div>
                           </div>
                         </div>
@@ -589,6 +589,13 @@ export default function AdminDashboard() {
                                 ))}
                               </div>
                             </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">COMMENTS</label>
+                          <div className="bg-[#FAFAFA] p-4 rounded-xl border border-[#EEEEEE]">
+                            <p className="text-sm font-normal text-[#333333]">{selectedFeedback.comments || "No comments provided"}</p>
                           </div>
                         </div>
 
