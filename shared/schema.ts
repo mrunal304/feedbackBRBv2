@@ -2,12 +2,12 @@ import { z } from "zod";
 
 // === FEEDBACK RATINGS SCHEMA ===
 export const ratingsSchema = z.object({
-  qualityOfService: z.number().min(1).max(5),
-  speedOfService: z.number().min(1).max(5),
-  friendliness: z.number().min(1).max(5),
+  foodTaste: z.number().min(1).max(5),
   foodTemperature: z.number().min(1).max(5),
-  menuExplanation: z.number().min(1).max(5),
-  likelyToReturn: z.number().min(1).max(5),
+  portionSize: z.number().min(1).max(5),
+  valueForMoney: z.number().min(1).max(5),
+  presentation: z.number().min(1).max(5),
+  overallService: z.number().min(1).max(5),
 });
 
 // === FEEDBACK SCHEMAS ===
@@ -58,12 +58,12 @@ export const analyticsSchema = z.object({
   responseRate: z.number(),
   weeklyTrends: z.array(z.object({
     date: z.string(),
-    qualityOfService: z.number(),
-    speedOfService: z.number(),
-    friendliness: z.number(),
+    foodTaste: z.number(),
     foodTemperature: z.number(),
-    menuExplanation: z.number(),
-    likelyToReturn: z.number(),
+    portionSize: z.number(),
+    valueForMoney: z.number(),
+    presentation: z.number(),
+    overallService: z.number(),
   })),
   categoryPerformance: z.array(z.object({
     category: z.string(),

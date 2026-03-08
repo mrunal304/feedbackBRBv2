@@ -128,12 +128,12 @@ export default function AdminDashboard() {
 
   const getAverageRating = (ratings: Feedback["ratings"]) => {
     const sum = 
-      ratings.qualityOfService + 
-      ratings.speedOfService + 
-      ratings.friendliness + 
+      ratings.foodTaste + 
       ratings.foodTemperature + 
-      ratings.menuExplanation + 
-      ratings.likelyToReturn;
+      ratings.portionSize + 
+      ratings.valueForMoney + 
+      ratings.presentation + 
+      ratings.overallService;
     return (sum / 6).toFixed(1);
   };
 
@@ -266,12 +266,12 @@ export default function AdminDashboard() {
                           <YAxis domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 12}} dx={-10} />
                           <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                           <Legend iconType="circle" />
-                          <Line type="monotone" dataKey="qualityOfService" stroke={CHART_COLORS[0]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="speedOfService" stroke={CHART_COLORS[1]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="friendliness" stroke={CHART_COLORS[2]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="foodTemperature" stroke={CHART_COLORS[3]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="menuExplanation" stroke={CHART_COLORS[4]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="likelyToReturn" stroke="#f8c216" strokeWidth={3} dot={false} />
+                          <Line type="monotone" dataKey="foodTaste" stroke={CHART_COLORS[0]} strokeWidth={3} dot={false} />
+                          <Line type="monotone" dataKey="foodTemperature" stroke={CHART_COLORS[1]} strokeWidth={3} dot={false} />
+                          <Line type="monotone" dataKey="portionSize" stroke={CHART_COLORS[2]} strokeWidth={3} dot={false} />
+                          <Line type="monotone" dataKey="valueForMoney" stroke={CHART_COLORS[3]} strokeWidth={3} dot={false} />
+                          <Line type="monotone" dataKey="presentation" stroke={CHART_COLORS[4]} strokeWidth={3} dot={false} />
+                          <Line type="monotone" dataKey="overallService" stroke="#f8c216" strokeWidth={3} dot={false} />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>

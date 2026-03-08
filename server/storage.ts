@@ -105,12 +105,12 @@ export class MongoStorage implements IStorage {
       const minRating = Number(filters.minRating);
       results = results.filter(f => {
         const avg = (
-          f.ratings.qualityOfService + 
-          f.ratings.speedOfService + 
-          f.ratings.friendliness + 
+          f.ratings.foodTaste + 
           f.ratings.foodTemperature + 
-          f.ratings.menuExplanation + 
-          f.ratings.likelyToReturn
+          f.ratings.portionSize + 
+          f.ratings.valueForMoney + 
+          f.ratings.presentation + 
+          f.ratings.overallService
         ) / 6;
         return avg >= minRating;
       });
@@ -193,22 +193,22 @@ export class MongoStorage implements IStorage {
     // Calculate average rating
     let totalRating = 0;
     const categoryTotals: Record<string, number> = {
-      qualityOfService: 0,
-      speedOfService: 0,
-      friendliness: 0,
+      foodTaste: 0,
       foodTemperature: 0,
-      menuExplanation: 0,
-      likelyToReturn: 0,
+      portionSize: 0,
+      valueForMoney: 0,
+      presentation: 0,
+      overallService: 0,
     };
     
     feedbacks.forEach(f => {
       const ratingCategories = [
-        'qualityOfService', 
-        'speedOfService', 
-        'friendliness', 
+        'foodTaste', 
         'foodTemperature', 
-        'menuExplanation', 
-        'likelyToReturn'
+        'portionSize', 
+        'valueForMoney', 
+        'presentation', 
+        'overallService'
       ] as const;
       ratingCategories.forEach(cat => {
         categoryTotals[cat] += f.ratings[cat];
@@ -219,7 +219,7 @@ export class MongoStorage implements IStorage {
     const avgRating = total > 0 ? totalRating / (total * 6) : 0;
     
     // Find top category
-    let topCategory = 'qualityOfService';
+    let topCategory = 'foodTaste';
     let topAvg = 0;
     Object.entries(categoryTotals).forEach(([cat, sum]) => {
       const avg = total > 0 ? sum / total : 0;
@@ -238,43 +238,43 @@ export class MongoStorage implements IStorage {
     // Weekly trends (group by date)
     const trendMap: Record<string, { 
       count: number; 
-      qualityOfService: number;
-      speedOfService: number;
-      friendliness: number;
+      foodTaste: number;
       foodTemperature: number;
-      menuExplanation: number;
-      likelyToReturn: number;
+      portionSize: number;
+      valueForMoney: number;
+      presentation: number;
+      overallService: number;
     }> = {};
     
     feedbacks.forEach(f => {
       if (!trendMap[f.dateKey]) {
         trendMap[f.dateKey] = { 
           count: 0, 
-          qualityOfService: 0,
-          speedOfService: 0,
-          friendliness: 0,
+          foodTaste: 0,
           foodTemperature: 0,
-          menuExplanation: 0,
-          likelyToReturn: 0
+          portionSize: 0,
+          valueForMoney: 0,
+          presentation: 0,
+          overallService: 0
         };
       }
       trendMap[f.dateKey].count++;
-      trendMap[f.dateKey].qualityOfService += f.ratings.qualityOfService;
-      trendMap[f.dateKey].speedOfService += f.ratings.speedOfService;
-      trendMap[f.dateKey].friendliness += f.ratings.friendliness;
+      trendMap[f.dateKey].foodTaste += f.ratings.foodTaste;
       trendMap[f.dateKey].foodTemperature += f.ratings.foodTemperature;
-      trendMap[f.dateKey].menuExplanation += f.ratings.menuExplanation;
-      trendMap[f.dateKey].likelyToReturn += f.ratings.likelyToReturn;
+      trendMap[f.dateKey].portionSize += f.ratings.portionSize;
+      trendMap[f.dateKey].valueForMoney += f.ratings.valueForMoney;
+      trendMap[f.dateKey].presentation += f.ratings.presentation;
+      trendMap[f.dateKey].overallService += f.ratings.overallService;
     });
     
     const weeklyTrends = Object.entries(trendMap).map(([date, data]) => ({
       date,
-      qualityOfService: Math.round((data.qualityOfService / data.count) * 10) / 10,
-      speedOfService: Math.round((data.speedOfService / data.count) * 10) / 10,
-      friendliness: Math.round((data.friendliness / data.count) * 10) / 10,
+      foodTaste: Math.round((data.foodTaste / data.count) * 10) / 10,
       foodTemperature: Math.round((data.foodTemperature / data.count) * 10) / 10,
-      menuExplanation: Math.round((data.menuExplanation / data.count) * 10) / 10,
-      likelyToReturn: Math.round((data.likelyToReturn / data.count) * 10) / 10,
+      portionSize: Math.round((data.portionSize / data.count) * 10) / 10,
+      valueForMoney: Math.round((data.valueForMoney / data.count) * 10) / 10,
+      presentation: Math.round((data.presentation / data.count) * 10) / 10,
+      overallService: Math.round((data.overallService / data.count) * 10) / 10,
     }));
     
     return {

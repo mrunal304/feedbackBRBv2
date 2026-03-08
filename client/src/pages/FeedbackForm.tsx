@@ -27,12 +27,12 @@ export default function FeedbackForm() {
       location: "Bomb Rolls and Bowls",
       visitType: "dine_in",
       ratings: {
-        qualityOfService: 0,
-        speedOfService: 0,
-        friendliness: 0,
+        foodTaste: 0,
         foodTemperature: 0,
-        menuExplanation: 0,
-        likelyToReturn: 0,
+        portionSize: 0,
+        valueForMoney: 0,
+        presentation: 0,
+        overallService: 0,
       },
       comments: "",
     },
@@ -89,12 +89,12 @@ export default function FeedbackForm() {
   };
 
   const ratingQuestions = [
-    { key: "qualityOfService", label: "Quality of Service", icon: "⭐" },
-    { key: "speedOfService", label: "Speed of Service", icon: "⚡" },
-    { key: "friendliness", label: "Friendliness", icon: "😊" },
-    { key: "foodTemperature", label: "Food Temperature", icon: "🔥" },
-    { key: "menuExplanation", label: "Menu Explanation", icon: "📋" },
-    { key: "likelyToReturn", label: "Likely to Return", icon: "💫" },
+    { key: "foodTaste", label: "Food Taste — How did the food taste overall?", icon: "😋" },
+    { key: "foodTemperature", label: "Food Temperature — Was your food served at the right temperature?", icon: "🌡️" },
+    { key: "portionSize", label: "Portion Size — Were you satisfied with the portion size?", icon: "🍽️" },
+    { key: "valueForMoney", label: "Value for Money — Was the food worth the price?", icon: "💰" },
+    { key: "presentation", label: "Presentation — How well was the food presented?", icon: "✨" },
+    { key: "overallService", label: "Overall Service — How was your overall experience with our staff?", icon: "🤝" },
   ] as const;
 
   return (
