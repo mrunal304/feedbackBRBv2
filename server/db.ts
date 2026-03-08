@@ -13,13 +13,11 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Define Feedback Schema
 const feedbackSchema = new mongoose.Schema({
-  // Personal Info
   name: { type: String, required: true },
   phone: { type: String, required: true },
-  location: { type: String, default: "Bomb Rolls and Bowls" },
-  visitType: { type: String, enum: ["dine_in", "take_out"], default: "dine_in" },
-
-  // Star Ratings (1-5)
+  phoneNumber: { type: String }, // Keep for backwards compatibility with existing index
+  dateKey: { type: String }, // Keep for backwards compatibility with existing index
+  visitType: { type: String, enum: ['dine_in', 'take_out'], default: 'dine_in' },
   ratings: {
     foodTaste: { type: Number, min: 1, max: 5 },
     foodTemperature: { type: Number, min: 1, max: 5 },
@@ -28,13 +26,16 @@ const feedbackSchema = new mongoose.Schema({
     presentation: { type: Number, min: 1, max: 5 },
     overallService: { type: Number, min: 1, max: 5 },
   },
-
-  // Comments
-  comments: { type: String },
-
-  // Auto fields
-  status: { type: String, enum: ["pending", "contacted"], default: "pending" },
+  comments: { type: String, default: '' },
+  status: { type: String, enum: ['pending', 'contacted'], default: 'pending' },
   createdAt: { type: Date, default: Date.now },
+});
+
+// Pre-save middleware to populate fields for backwards compatibility
+feedbackSchema.pre('save', function() {
+  this.phoneNumber = this.phone;
+  // Use timestamp to make each submission unique, allowing unlimited submissions
+  this.dateKey = new Date().toISOString().split('T')[0] + '-' + Date.now();
 });
 
 export const FeedbackModel = mongoose.model('Feedback', feedbackSchema);

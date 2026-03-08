@@ -1,0 +1,71 @@
+The feedback form is showing a 500 Server Error when clicking Submit. Fix this completely.
+STEP 1 - Check the backend POST route for feedback:
+
+Open the feedback POST route (e.g. /api/feedback)
+Add console.log(req.body) at the very start of the route to see what data is coming in
+Add a try/catch block around the entire route if not already there
+Log the exact error: console.error('Feedback error:', error.message, error.stack)
+
+STEP 2 - Check MongoDB schema vs what frontend is sending:
+
+Read the current Mongoose schema field names exactly
+Read what the frontend is sending in the POST request body
+Make sure EVERY field the frontend sends EXISTS in the Mongoose schema
+If schema has old field names like qualityOfService, speedOfService, friendliness, menuExplanation — update them to match current frontend fields:
+
+foodTaste
+foodTemperature
+portionSize
+valueForMoney
+presentation
+overallService
+comments
+name
+phone
+visitType
+
+
+
+STEP 3 - Update the Mongoose schema to exactly this:
+javascriptconst feedbackSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
+  visitType: { type: String, enum: ['dine_in', 'take_out'], default: 'dine_in' },
+  ratings: {
+    foodTaste: { type: Number, min: 1, max: 5 },
+    foodTemperature: { type: Number, min: 1, max: 5 },
+    portionSize: { type: Number, min: 1, max: 5 },
+    valueForMoney: { type: Number, min: 1, max: 5 },
+    presentation: { type: Number, min: 1, max: 5 },
+    overallService: { type: Number, min: 1, max: 5 },
+  },
+  comments: { type: String, default: '' },
+  status: { type: String, enum: ['pending', 'contacted'], default: 'pending' },
+  createdAt: { type: Date, default: Date.now },
+});
+STEP 4 - Update the POST route to exactly this:
+javascriptrouter.post('/', async (req, res) => {
+  try {
+    const { name, phone, visitType, ratings, comments } = req.body;
+    const feedback = new Feedback({
+      name, phone, visitType, ratings, comments
+    });
+    const saved = await feedback.save();
+    res.status(201).json({ success: true, data: saved });
+  } catch (error) {
+    console.error('Feedback save error:', error.message);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+STEP 5 - Update Admin Panel GET route only (NOT design):
+
+Make sure GET /api/feedback still returns all entries correctly
+Make sure Admin Panel reads ratings.foodTaste, ratings.foodTemperature etc. correctly
+Do NOT change Admin Panel UI or design
+
+STEP 6 - Test after fix:
+
+Submit the form and confirm 201 success response
+Check MongoDB has the new entry saved
+Check Admin Panel shows the new entry
+No 500 error should appear"**

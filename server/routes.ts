@@ -60,43 +60,29 @@ export async function registerRoutes(
   // Create feedback
   app.post(api.feedback.create.path, async (req, res) => {
     try {
-      const input = api.feedback.create.input.parse(req.body);
-      const feedback = await storage.createFeedback(input);
-      res.status(201).json(feedback);
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        res.status(400).json({ 
-          message: err.errors[0].message,
-          field: err.errors[0].path.join('.') 
-        });
-      } else if ((err as any).code === 11000) {
-        // Duplicate key error - but we allow unlimited submissions now
-        // Try to create with slightly modified data or just save it anyway
-        try {
-          const input = api.feedback.create.input.parse(req.body);
-          const doc = await (await import("./db")).FeedbackModel.create({
-            ...input,
-            status: "pending",
-          });
-          const formatted = {
-            _id: doc._id.toString(),
-            name: doc.name,
-            phone: doc.phone,
-            location: doc.location,
-            visitType: doc.visitType,
-            ratings: doc.ratings,
-            comments: doc.comments,
-            status: doc.status || "pending",
-            createdAt: doc.createdAt.toISOString(),
-          };
-          res.status(201).json(formatted);
-        } catch {
-          res.status(500).json({ message: "Server error" });
-        }
-      } else {
-        console.error(err);
-        res.status(500).json({ message: "Server error" });
-      }
+      const { name, phone, visitType, ratings, comments } = req.body;
+      
+      const { FeedbackModel } = await import("./db");
+      const feedback = new FeedbackModel({
+        name, phone, visitType, ratings, comments
+      });
+      const saved = await feedback.save();
+      
+      const response = {
+        _id: saved._id.toString(),
+        name: saved.name,
+        phone: saved.phone,
+        visitType: saved.visitType,
+        ratings: saved.ratings,
+        comments: saved.comments,
+        status: saved.status,
+        createdAt: saved.createdAt.toISOString(),
+      };
+      
+      res.status(201).json(response);
+    } catch (error: any) {
+      console.error('Feedback save error:', error.message, error.stack);
+      res.status(500).json({ message: 'Server error', error: error.message });
     }
   });
 
