@@ -18,8 +18,6 @@ export const feedbackSchema = z.object({
   location: z.string().min(1, "Location is required"),
   visitType: z.enum(["dine_in", "take_out"]),
   ratings: ratingsSchema,
-  favouriteDish: z.string().optional(),
-  visitAgain: z.boolean().optional(),
   comments: z.string().optional(),
   status: z.enum(["pending", "contacted"]),
   createdAt: z.string(),
@@ -38,8 +36,6 @@ export const insertFeedbackSchema = z.object({
   location: z.string().min(1, "Location is required"),
   visitType: z.enum(["dine_in", "take_out"]),
   ratings: ratingsSchema,
-  favouriteDish: z.string().optional(),
-  visitAgain: z.boolean().optional(),
   comments: z.string().optional(),
 });
 

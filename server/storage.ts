@@ -25,8 +25,6 @@ function formatFeedback(doc: any): Feedback {
     location: doc.location,
     visitType: doc.visitType,
     ratings: doc.ratings,
-    favouriteDish: doc.favouriteDish,
-    visitAgain: doc.visitAgain,
     comments: doc.comments,
     status: doc.status || "pending",
     createdAt: doc.createdAt.toISOString(),

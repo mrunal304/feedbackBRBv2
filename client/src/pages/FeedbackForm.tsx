@@ -34,8 +34,6 @@ export default function FeedbackForm() {
         menuExplanation: 0,
         likelyToReturn: 0,
       },
-      favouriteDish: "",
-      visitAgain: undefined,
       comments: "",
     },
   });
@@ -83,18 +81,6 @@ export default function FeedbackForm() {
     if (step === 1) {
       const valid = await form.trigger(["name", "phone", "location", "visitType"]);
       if (valid) setStep(2);
-    } else if (step === 2) {
-      const ratings = form.getValues("ratings");
-      const hasAllRatings = Object.values(ratings).every((r) => r >= 1);
-      if (hasAllRatings) {
-        setStep(3);
-      } else {
-        toast({
-          title: "Missing Ratings",
-          description: "Please rate all categories before proceeding",
-          variant: "destructive",
-        });
-      }
     }
   };
 
@@ -110,15 +96,6 @@ export default function FeedbackForm() {
     { key: "menuExplanation", label: "Menu Explanation", icon: "📋" },
     { key: "likelyToReturn", label: "Likely to Return", icon: "💫" },
   ] as const;
-
-  const dishOptions = [
-    "Loaded Nachos",
-    "Angara Salad",
-    "Spring Rolls",
-    "Bomb Bowl",
-    "Cheese Rolls",
-    "Other",
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#C0001A] via-[#8B0000] to-[#3D0000] py-8 px-4 flex items-center justify-center">
@@ -146,8 +123,8 @@ export default function FeedbackForm() {
         <div className="mb-8 bg-white/20 rounded-full h-1.5 overflow-hidden">
           <motion.div
             className="h-full bg-[#FFD700]"
-            initial={{ width: "33.33%" }}
-            animate={{ width: step === 1 ? "33.33%" : step === 2 ? "66.66%" : "100%" }}
+            initial={{ width: "50%" }}
+            animate={{ width: step === 1 ? "50%" : "100%" }}
             transition={{ duration: 0.3 }}
           />
         </div>
@@ -155,7 +132,6 @@ export default function FeedbackForm() {
         <div className="flex justify-between text-[11px] text-white/70 mb-6 font-nunito font-bold">
           <span className={step >= 1 ? "text-[#FFD700]" : ""}>Your Info</span>
           <span className={step >= 2 ? "text-[#FFD700]" : ""}>Rate Us</span>
-          <span className={step >= 3 ? "text-[#FFD700]" : ""}>Final Thoughts</span>
         </div>
 
         <div className="bg-white rounded-[16px] p-6 shadow-md border border-black/6" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
@@ -268,137 +244,60 @@ export default function FeedbackForm() {
                 </motion.div>
               )}
 
-              {/* STEP 2: Star Ratings */}
+              {/* STEP 2: Star Ratings & Comments */}
               {step === 2 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-0"
-                >
-                  <h2 className="text-[28px] font-bold text-[#8B0000] font-bangers mb-6">
-                    Rate Your Experience
-                  </h2>
-
-                  {ratingQuestions.map(({ key, label, icon }, idx) => (
-                    <div key={key} className={idx < ratingQuestions.length - 1 ? "pb-4 border-b border-[#F0F0F0]" : "pb-4"}>
-                      <FormField
-                        control={form.control}
-                        name={`ratings.${key}`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-[14px] font-bold text-[#333333] font-nunito flex items-center gap-2">
-                              <span className="text-lg">{icon}</span>
-                              {label}
-                            </FormLabel>
-                            <FormControl>
-                              <div className="flex gap-2 mt-2">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <button
-                                    key={star}
-                                    type="button"
-                                    onClick={() => field.onChange(star)}
-                                    className="transition-all duration-200"
-                                    data-testid={`star-${key}-${star}`}
-                                  >
-                                    <span
-                                      className={`text-3xl transition-all ${
-                                        star <= field.value ? "scale-125" : "scale-100 opacity-40"
-                                      }`}
-                                    >
-                                      {star <= field.value ? "⭐" : "☆"}
-                                    </span>
-                                  </button>
-                                ))}
-                              </div>
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  ))}
-                </motion.div>
-              )}
-
-              {/* STEP 3: Final Thoughts */}
-              {step === 3 && (
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-6"
                 >
-                  <h2 className="text-[28px] font-bold text-[#8B0000] font-bangers">
-                    Final Thoughts
+                  <h2 className="text-[28px] font-bold text-[#8B0000] font-bangers mb-6">
+                    Rate Us
                   </h2>
 
-                  <FormField
-                    control={form.control}
-                    name="favouriteDish"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-[13px] font-bold text-[#444444] uppercase tracking-widest font-nunito">Favorite Dish</FormLabel>
-                        <FormControl>
-                          <div className="flex flex-wrap gap-2">
-                            {dishOptions.map((dish) => (
-                              <button
-                                key={dish}
-                                type="button"
-                                onClick={() => field.onChange(field.value === dish ? "" : dish)}
-                                className={`px-4 py-2 rounded-full font-nunito font-bold text-[13px] transition-all duration-200 ${
-                                  field.value === dish
-                                    ? "bg-[#8B0000] text-white"
-                                    : "border-2 border-[#EEEEEE] text-[#333333] bg-white hover:border-[#8B0000]"
-                                }`}
-                                data-testid={`chip-dish-${dish}`}
-                              >
-                                {dish}
-                              </button>
-                            ))}
-                          </div>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                  {/* All Rating Questions */}
+                  <div className="space-y-0">
+                    {ratingQuestions.map(({ key, label, icon }, idx) => (
+                      <div key={key} className={idx < ratingQuestions.length - 1 ? "pb-4 border-b border-[#F0F0F0]" : "pb-4"}>
+                        <FormField
+                          control={form.control}
+                          name={`ratings.${key}`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-[14px] font-bold text-[#333333] font-nunito flex items-center gap-2">
+                                <span className="text-lg">{icon}</span>
+                                {label}
+                              </FormLabel>
+                              <FormControl>
+                                <div className="flex gap-2 mt-2">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                      key={star}
+                                      type="button"
+                                      onClick={() => field.onChange(star)}
+                                      className="transition-all duration-200"
+                                      data-testid={`star-${key}-${star}`}
+                                    >
+                                      <span
+                                        className={`text-3xl transition-all ${
+                                          star <= field.value ? "scale-125" : "scale-100 opacity-40"
+                                        }`}
+                                      >
+                                        {star <= field.value ? "⭐" : "☆"}
+                                      </span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    ))}
+                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="visitAgain"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-[13px] font-bold text-[#444444] uppercase tracking-widest font-nunito">Will You Visit Again?</FormLabel>
-                        <FormControl>
-                          <div className="flex gap-4">
-                            <button
-                              type="button"
-                              onClick={() => field.onChange(true)}
-                              className={`flex-1 py-3 rounded-[12px] font-nunito font-bold text-[14px] transition-all duration-200 ${
-                                field.value === true
-                                  ? "bg-[#8B0000] text-white"
-                                  : "border-2 border-[#EEEEEE] text-[#333333] bg-white hover:border-[#8B0000]"
-                              }`}
-                              data-testid="button-visit-yes"
-                            >
-                              🔥 Definitely!
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => field.onChange(false)}
-                              className={`flex-1 py-3 rounded-[12px] font-nunito font-bold text-[14px] transition-all duration-200 ${
-                                field.value === false
-                                  ? "bg-[#8B0000] text-white"
-                                  : "border-2 border-[#EEEEEE] text-[#333333] bg-white hover:border-[#8B0000]"
-                              }`}
-                              data-testid="button-visit-no"
-                            >
-                              😐 Maybe not
-                            </button>
-                          </div>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-
+                  {/* Comments Section */}
                   <FormField
                     control={form.control}
                     name="comments"
@@ -408,7 +307,7 @@ export default function FeedbackForm() {
                         <FormControl>
                           <Textarea
                             placeholder="Tell us more about your experience..."
-                            className={`${formInputClass} resize-none`}
+                            className="border-2 border-[#EEEEEE] bg-[#FAFAFA] rounded-[12px] font-nunito font-semibold text-[15px] text-[#333333] placeholder-[#BBBBBB] px-4 py-3 focus:border-[#FFD700] focus:outline-none focus:ring-4 focus:ring-yellow-300/20 transition-all resize-none"
                             maxLength={500}
                             rows={4}
                             {...field}
@@ -437,7 +336,7 @@ export default function FeedbackForm() {
                   </Button>
                 )}
 
-                {step < 3 ? (
+                {step < 2 ? (
                   <Button
                     type="button"
                     onClick={handleNextStep}
@@ -450,7 +349,7 @@ export default function FeedbackForm() {
                   <Button
                     type="submit"
                     disabled={submitMutation.isPending}
-                    className="flex-1 bg-[#FFD700] text-[#8B0000] font-nunito font-bold rounded-[12px] hover:bg-yellow-500 transition-all duration-200"
+                    className="flex-1 bg-gradient-to-r from-[#FFD700] to-[#FFC700] text-[#8B0000] font-nunito font-black rounded-[12px] hover:from-yellow-500 hover:to-yellow-400 transition-all duration-200"
                     data-testid="button-submit"
                   >
                     {submitMutation.isPending ? "Submitting..." : "🚀 Submit"}
