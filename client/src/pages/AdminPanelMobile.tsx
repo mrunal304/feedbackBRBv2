@@ -476,7 +476,7 @@ export default function AdminPanelMobile() {
                 </DialogHeader>
               </div>
 
-              <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
+              <div className="p-4 space-y-4 max-h-[85vh] overflow-y-auto">
                 <div className="space-y-3">
                   <div>
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">CUSTOMER NAME</label>
@@ -513,6 +513,13 @@ export default function AdminPanelMobile() {
                       <span className="text-lg font-bold text-[#8B1A1A]">{getAverageRating(selectedFeedback.ratings)}</span>
                       <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                     </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">COMMENTS</label>
+                  <div className="bg-[#FAFAFA] p-3 rounded-lg border border-[#EEEEEE]">
+                    <p className="text-xs font-normal text-[#333333]">{selectedFeedback.comments || "No comments provided"}</p>
                   </div>
                 </div>
 
