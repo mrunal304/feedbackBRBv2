@@ -110,12 +110,12 @@ export default function FeedbackForm() {
             />
           </motion.div>
           <h1 
-            className="font-fredoka text-[2rem] text-white tracking-[2px] uppercase text-center mt-2 mb-1 max-[480px]:text-[1.4rem] max-[480px]:tracking-[1px]"
-            style={{ textShadow: "2px 3px 6px rgba(0,0,0,0.4)" }}
+            className="font-lilita text-[2.2rem] text-white tracking-[2px] uppercase text-center mt-2 mb-1 max-[480px]:text-[1.6rem]"
+            style={{ textShadow: "3px 3px 6px rgba(0,0,0,0.5)" }}
           >
             BOMB ROLLS & BOWLS
           </h1>
-          <p className="text-amber-200 mt-2 font-nunito text-sm">We value your feedback</p>
+          <p className="text-[#FFD700] mt-2 font-nunito text-[1.2rem] font-bold tracking-[1px] max-[480px]:text-[1rem]">We value your feedback</p>
         </div>
 
         {/* Progress Bar */}
@@ -128,9 +128,9 @@ export default function FeedbackForm() {
           />
         </div>
 
-        <div className="flex justify-between text-[11px] text-white/70 mb-6 font-nunito font-bold">
-          <span className={step >= 1 ? "text-[#FFD700]" : ""}>Your Info</span>
-          <span className={step >= 2 ? "text-[#FFD700]" : ""}>Rate Us</span>
+        <div className="flex justify-between text-[1rem] text-[#FFD700] mb-6 font-nunito font-[800]">
+          <span className={step >= 1 ? "opacity-100" : "opacity-70"}>Your Info</span>
+          <span className={step >= 2 ? "opacity-100" : "opacity-70"}>Rate Us</span>
         </div>
 
         <div className="bg-white rounded-[16px] p-6 shadow-md border border-black/6" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
@@ -144,7 +144,7 @@ export default function FeedbackForm() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-6"
                 >
-                  <h2 className="text-[28px] font-bold text-[#8B0000] font-bangers">
+                  <h2 className="text-[1.6rem] font-lilita text-[#B30000] max-[480px]:text-[1.3rem]">
                     Your Info
                   </h2>
 
@@ -251,7 +251,7 @@ export default function FeedbackForm() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-6"
                 >
-                  <h2 className="text-[28px] font-bold text-[#8B0000] font-bangers mb-6">
+                  <h2 className="text-[1.6rem] font-lilita text-[#B30000] mb-6 max-[480px]:text-[1.3rem]">
                     Rate Us
                   </h2>
 
