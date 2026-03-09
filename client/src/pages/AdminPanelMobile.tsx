@@ -251,12 +251,26 @@ export default function AdminPanelMobile() {
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={analytics?.weeklyTrends || []}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
-                      <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 10}} dy={5} />
+                      <XAxis 
+                        dataKey="date" 
+                        axisLine={false} 
+                        tickLine={false} 
+                        tick={{fill: '#9CA3AF', fontSize: 10}} 
+                        dy={5}
+                        tickFormatter={(date) => {
+                          try {
+                            const d = new Date(date + 'T00:00:00');
+                            return d.toLocaleDateString('en-US', { weekday: 'short' });
+                          } catch {
+                            return date;
+                          }
+                        }}
+                      />
                       <YAxis domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 10}} dx={-5} width={35} />
                       <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                      <Line type="monotone" dataKey="qualityOfService" stroke={CHART_COLORS[0]} strokeWidth={2} dot={false} />
-                      <Line type="monotone" dataKey="speedOfService" stroke={CHART_COLORS[1]} strokeWidth={2} dot={false} />
-                      <Line type="monotone" dataKey="friendliness" stroke={CHART_COLORS[2]} strokeWidth={2} dot={false} />
+                      <Line type="monotone" dataKey="foodTaste" stroke={CHART_COLORS[0]} strokeWidth={2} dot={false} />
+                      <Line type="monotone" dataKey="foodTemperature" stroke={CHART_COLORS[1]} strokeWidth={2} dot={false} />
+                      <Line type="monotone" dataKey="portionSize" stroke={CHART_COLORS[2]} strokeWidth={2} dot={false} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

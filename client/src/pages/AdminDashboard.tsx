@@ -285,7 +285,15 @@ export default function AdminDashboard() {
                               axisLine={false} 
                               tickLine={false} 
                               tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 10 : 12}} 
-                              dy={10} 
+                              dy={10}
+                              tickFormatter={(date) => {
+                                try {
+                                  const d = new Date(date + 'T00:00:00');
+                                  return d.toLocaleDateString('en-US', { weekday: 'short' });
+                                } catch {
+                                  return date;
+                                }
+                              }}
                             />
                             <YAxis 
                               domain={[0, 5]} 

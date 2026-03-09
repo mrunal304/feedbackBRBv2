@@ -261,15 +261,19 @@ export class MongoStorage implements IStorage {
       trendMap[f.dateKey].overallService += f.ratings.overallService;
     });
     
-    const weeklyTrends = Object.entries(trendMap).map(([date, data]) => ({
-      date,
-      foodTaste: Math.round((data.foodTaste / data.count) * 10) / 10,
-      foodTemperature: Math.round((data.foodTemperature / data.count) * 10) / 10,
-      portionSize: Math.round((data.portionSize / data.count) * 10) / 10,
-      valueForMoney: Math.round((data.valueForMoney / data.count) * 10) / 10,
-      presentation: Math.round((data.presentation / data.count) * 10) / 10,
-      overallService: Math.round((data.overallService / data.count) * 10) / 10,
-    }));
+    const weeklyTrends = Object.entries(trendMap).map(([date, data]) => {
+      // Extract just the date part from dateKey (format: "2026-03-09-timestamp")
+      const dateOnly = date.split('-').slice(0, 3).join('-');
+      return {
+        date: dateOnly,
+        foodTaste: Math.round((data.foodTaste / data.count) * 10) / 10,
+        foodTemperature: Math.round((data.foodTemperature / data.count) * 10) / 10,
+        portionSize: Math.round((data.portionSize / data.count) * 10) / 10,
+        valueForMoney: Math.round((data.valueForMoney / data.count) * 10) / 10,
+        presentation: Math.round((data.presentation / data.count) * 10) / 10,
+        overallService: Math.round((data.overallService / data.count) * 10) / 10,
+      };
+    });
     
     return {
       totalFeedback: total,
