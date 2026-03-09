@@ -401,8 +401,8 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* STEP 6: Redesign Feedback Table */}
-              <Card className="border-none shadow-sm rounded-[12px] overflow-hidden">
+              {/* STEP 6: Redesign Feedback Table - Responsive Desktop Table */}
+              <Card className="border-none shadow-sm rounded-[12px] overflow-hidden hidden md:block">
                 <Table>
                   <TableHeader className="bg-gray-50/50">
                     <TableRow>
@@ -518,6 +518,116 @@ export default function AdminDashboard() {
                   </TableBody>
                 </Table>
               </Card>
+
+              {/* Mobile Card Layout */}
+              <div className="md:hidden space-y-4">
+                {filteredFeedback.length === 0 ? (
+                  <Card className="border-none shadow-sm rounded-[12px] p-8 text-center">
+                    <p className="text-gray-400">No feedback found</p>
+                  </Card>
+                ) : (
+                  filteredFeedback.map((fb) => (
+                    <Card key={fb._id} className="border-none shadow-sm rounded-[12px] overflow-hidden bg-white">
+                      <div className="bg-[#8B1A1A] px-4 py-3 flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <div>
+                            <p className="font-bold text-white">{fb.name}</p>
+                            <p className="text-xs text-white/80">{fb.phone}</p>
+                          </div>
+                          <a
+                            href={`tel:${fb.phone}`}
+                            className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+                            title={`Call ${fb.name}`}
+                            data-testid={`button-call-${fb._id}`}
+                          >
+                            <Phone className="w-4 h-4" />
+                          </a>
+                        </div>
+                        <div className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${fb.status === "contacted" ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {fb.status === "contacted" ? 'CONTACTED' : 'PENDING'}
+                        </div>
+                      </div>
+                      
+                      <div className="p-4 space-y-3">
+                        {/* Visit Info */}
+                        <div className="border-b border-gray-100 pb-3">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">VISIT INFO</label>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-[#3D2B1F]">{fb.location}</span>
+                            <span className="text-xs text-gray-500 capitalize">{(fb.visitType || "").replace('_', ' ')}</span>
+                          </div>
+                        </div>
+
+                        {/* Rating */}
+                        <div className="border-b border-gray-100 pb-3">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">RATING</label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl font-bold text-[#8B1A1A]">
+                              {isNaN(Number(getAverageRating(fb.ratings))) ? "N/A" : getAverageRating(fb.ratings)}
+                            </span>
+                            {!isNaN(Number(getAverageRating(fb.ratings))) && (
+                              <div className="flex gap-0.5">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <Star
+                                    key={star}
+                                    className={`w-3 h-3 ${
+                                      star <= Math.round(Number(getAverageRating(fb.ratings))) ? "fill-amber-400 text-amber-400" : "text-gray-200"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Date */}
+                        <div className="border-b border-gray-100 pb-3">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">DATE</label>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-[#3D2B1F]">{fb.visitDate}</span>
+                            <span className="text-xs text-gray-500">{fb.visitTime}</span>
+                          </div>
+                        </div>
+
+                        {/* Note */}
+                        {fb.note && (
+                          <div className="border-b border-gray-100 pb-3">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">NOTE</label>
+                            <p className="text-xs text-gray-500 italic">"{fb.note}"</p>
+                          </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="pt-2 space-y-2">
+                          <Button
+                            size="sm"
+                            className="w-full bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90"
+                            onClick={() => {
+                              setSelectedFeedback(fb);
+                              setIsDetailsOpen(true);
+                            }}
+                            data-testid={`button-view-details-${fb._id}`}
+                          >
+                            <Eye className="w-3.5 h-3.5 mr-2" />
+                            View Details
+                          </Button>
+                          {!fb.contactedAt && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="w-full border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5"
+                              onClick={() => handleContactCustomer(fb)}
+                              data-testid={`button-contact-mark-${fb._id}`}
+                            >
+                              Mark Contacted
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+                )}
+              </div>
 
               {/* Feedback Details Modal */}
               <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
