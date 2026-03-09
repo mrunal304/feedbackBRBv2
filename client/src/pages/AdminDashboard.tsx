@@ -271,23 +271,41 @@ export default function AdminDashboard() {
                     <CardTitle className="text-lg font-bold text-[#3D2B1F]">Weekly Rating Trends</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-[350px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={analytics?.weeklyTrends || []}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
-                          <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 12}} dy={10} />
-                          <YAxis domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 12}} dx={-10} />
-                          <RechartTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                          <Legend iconType="circle" />
-                          <Line type="monotone" dataKey="foodTaste" stroke={CHART_COLORS[0]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="foodTemperature" stroke={CHART_COLORS[1]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="portionSize" stroke={CHART_COLORS[2]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="valueForMoney" stroke={CHART_COLORS[3]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="presentation" stroke={CHART_COLORS[4]} strokeWidth={3} dot={false} />
-                          <Line type="monotone" dataKey="overallService" stroke="#f8c216" strokeWidth={3} dot={false} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
+                    {(analytics?.weeklyTrends || []).length === 0 ? (
+                      <div className="h-[250px] md:h-[350px] flex items-center justify-center text-gray-400">
+                        <p>No data available for this week</p>
+                      </div>
+                    ) : (
+                      <div className="w-full h-[250px] md:h-[350px] overflow-x-auto">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={300}>
+                          <LineChart data={analytics?.weeklyTrends || []}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+                            <XAxis 
+                              dataKey="date" 
+                              axisLine={false} 
+                              tickLine={false} 
+                              tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 10 : 12}} 
+                              dy={10} 
+                            />
+                            <YAxis 
+                              domain={[0, 5]} 
+                              axisLine={false} 
+                              tickLine={false} 
+                              tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 10 : 12}} 
+                              dx={-10} 
+                            />
+                            <RechartTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                            <Legend iconType="circle" wrapperStyle={{fontSize: window.innerWidth < 768 ? '12px' : '14px'}} />
+                            <Line type="monotone" dataKey="foodTaste" stroke={CHART_COLORS[0]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="foodTemperature" stroke={CHART_COLORS[1]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="portionSize" stroke={CHART_COLORS[2]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="valueForMoney" stroke={CHART_COLORS[3]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="presentation" stroke={CHART_COLORS[4]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="overallService" stroke="#f8c216" strokeWidth={2} dot={false} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -297,27 +315,33 @@ export default function AdminDashboard() {
                     <CardTitle className="text-lg font-bold text-[#3D2B1F]">Category Performance</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-[350px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart layout="vertical" data={analytics?.categoryPerformance || []}>
-                          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F0F0F0" />
-                          <XAxis type="number" domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 12}} dy={10} />
-                          <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 10}} width={120} />
-                          <RechartTooltip 
-                            cursor={{fill: '#F9FAFB'}}
-                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} 
-                          />
-                          <Bar dataKey="average" radius={[0, 4, 4, 0]} barSize={30}>
-                            {(analytics?.categoryPerformance || []).map((entry: any, index: number) => {
-                              let color = "#cc2200"; // Default red
-                              if (entry.average >= 4.0) color = "#22a34a";
-                              else if (entry.average >= 3.0) color = "#f5a623";
-                              return <Cell key={`cell-${index}`} fill={color} />;
-                            })}
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
+                    {(analytics?.categoryPerformance || []).length === 0 ? (
+                      <div className="h-[250px] md:h-[350px] flex items-center justify-center text-gray-400">
+                        <p>No data available</p>
+                      </div>
+                    ) : (
+                      <div className="w-full h-[250px] md:h-[350px] overflow-x-auto">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={300}>
+                          <BarChart layout="vertical" data={analytics?.categoryPerformance || []}>
+                            <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F0F0F0" />
+                            <XAxis type="number" domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 10 : 12}} dy={10} />
+                            <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 9 : 10}} width={window.innerWidth < 768 ? 80 : 120} />
+                            <RechartTooltip 
+                              cursor={{fill: '#F9FAFB'}}
+                              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} 
+                            />
+                            <Bar dataKey="average" radius={[0, 4, 4, 0]} barSize={30}>
+                              {(analytics?.categoryPerformance || []).map((entry: any, index: number) => {
+                                let color = "#cc2200"; // Default red
+                                if (entry.average >= 4.0) color = "#22a34a";
+                                else if (entry.average >= 3.0) color = "#f5a623";
+                                return <Cell key={`cell-${index}`} fill={color} />;
+                              })}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
