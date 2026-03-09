@@ -101,13 +101,14 @@ export default function FeedbackForm() {
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="text-6xl mb-4"
+            className="flex justify-center mb-4"
           >
-            💣
+            <img 
+              src="/logo_white_border.png" 
+              alt="Bomb Rolls & Bowls" 
+              style={{ width: "120px", height: "120px", objectFit: "contain" }}
+            />
           </motion.div>
-          <h1 className="text-4xl font-bold text-white font-bangers tracking-widest">
-            BOMB ROLLS & BOWLS
-          </h1>
           <p className="text-amber-200 mt-2 font-nunito text-sm">We value your feedback</p>
         </div>
 
