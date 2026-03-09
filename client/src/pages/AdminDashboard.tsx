@@ -23,7 +23,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartTooltip,
   Legend,
   ResponsiveContainer,
   PieChart,
@@ -55,6 +55,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
@@ -271,7 +277,7 @@ export default function AdminDashboard() {
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
                           <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 12}} dy={10} />
                           <YAxis domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 12}} dx={-10} />
-                          <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                          <RechartTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                           <Legend iconType="circle" />
                           <Line type="monotone" dataKey="foodTaste" stroke={CHART_COLORS[0]} strokeWidth={3} dot={false} />
                           <Line type="monotone" dataKey="foodTemperature" stroke={CHART_COLORS[1]} strokeWidth={3} dot={false} />
@@ -297,7 +303,7 @@ export default function AdminDashboard() {
                           <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F0F0F0" />
                           <XAxis type="number" domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 12}} dy={10} />
                           <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 10}} width={120} />
-                          <Tooltip 
+                          <RechartTooltip 
                             cursor={{fill: '#F9FAFB'}}
                             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} 
                           />
@@ -339,7 +345,7 @@ export default function AdminDashboard() {
                           <Cell fill="#22a34a" />
                           <Cell fill="#8B1A1A" />
                         </Pie>
-                        <Tooltip />
+                        <RechartTooltip />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -474,9 +480,22 @@ export default function AdminDashboard() {
                             </div>
                           </TableCell>
                           <TableCell className="py-4 max-w-[200px]">
-                            <p className="text-xs text-gray-500 line-clamp-2 italic">
-                              {fb.note ? `"${fb.note}"` : "-"}
-                            </p>
+                            {fb.comments ? (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <p className="text-xs text-gray-500 italic cursor-help line-clamp-1">
+                                      "{fb.comments.length > 20 ? fb.comments.substring(0, 20) + "..." : fb.comments}"
+                                    </p>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="left" className="max-w-xs">
+                                    <p className="text-sm">{fb.comments}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            ) : (
+                              <p className="text-xs text-gray-500 italic">-</p>
+                            )}
                           </TableCell>
                           <TableCell className="py-4">
                             <div className="text-xs text-gray-500 whitespace-nowrap">
