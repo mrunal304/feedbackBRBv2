@@ -21,6 +21,10 @@ export const feedbackSchema = z.object({
   comments: z.string().optional(),
   status: z.enum(["pending", "contacted"]),
   createdAt: z.string(),
+  visitDate: z.string(),
+  visitTime: z.string(),
+  contactedAt: z.string().optional(),
+  contactedBy: z.string().optional(),
 });
 
 // === CUSTOMER HISTORY SCHEMAS ===

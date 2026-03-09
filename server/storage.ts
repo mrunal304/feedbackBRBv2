@@ -17,6 +17,10 @@ export interface IStorage {
 }
 
 function formatFeedback(doc: any): Feedback {
+  const createdDate = new Date(doc.createdAt);
+  const visitDate = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const visitTime = createdDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  
   return {
     _id: doc._id.toString(),
     name: doc.name,
@@ -27,6 +31,10 @@ function formatFeedback(doc: any): Feedback {
     comments: doc.comments,
     status: doc.status || "pending",
     createdAt: doc.createdAt.toISOString(),
+    visitDate,
+    visitTime,
+    contactedAt: doc.contactedAt ? doc.contactedAt.toISOString() : undefined,
+    contactedBy: doc.contactedBy,
   };
 }
 
