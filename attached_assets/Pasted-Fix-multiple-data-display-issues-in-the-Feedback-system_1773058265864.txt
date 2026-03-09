@@ -1,0 +1,63 @@
+Fix multiple data display issues in the Feedback system. 
+There are 3 places with broken data:
+
+═══════════════════════════════════════
+ISSUE 1: OVERALL AVG shows "NaN ★"
+═══════════════════════════════════════
+In FeedbackDetails component, the overall average calculation is broken.
+
+Fix: Calculate average like this:
+const ratings = [foodTaste, foodTemperature, portionSize, 
+                 valueForMoney, presentation, overallService]
+const validRatings = ratings.filter(r => r !== null && 
+                     r !== undefined && !isNaN(Number(r)))
+const avg = validRatings.length > 0 
+  ? (validRatings.reduce((a,b) => a + Number(b), 0) / validRatings.length).toFixed(1)
+  : "N/A"
+
+═══════════════════════════════════════
+ISSUE 2: MOBILE CARD shows "N/A" rating and "•" for location  
+═══════════════════════════════════════
+Console.log the full feedback object in mobile card:
+  console.log("feedback data:", feedback)
+
+Then check and fix field name mismatches. Common mistakes:
+- rating vs ratings vs overall_rating vs averageRating
+- location vs address vs locationName vs place
+- phone vs phoneNumber vs phone_number vs contact
+- visitType vs visit_type vs visitInfo vs order_type
+- comment vs note vs notes vs message vs feedback_text
+
+Map ALL fields correctly from actual API response 
+to what the mobile card displays.
+
+═══════════════════════════════════════
+ISSUE 3: FEEDBACK DETAILS MODAL - missing fields
+═══════════════════════════════════════
+Fix these in FeedbackDetails/Modal component:
+
+1. PHONE NUMBER - not showing:
+   - Check field name: customer.phone / phoneNumber / contact
+   - Display with tel: link so it's clickable
+
+2. LOCATION - shows "•" instead of actual location:
+   - Check field: location / address / branch / locationName
+   - If it's an object, use location.name or location.address
+
+3. COMMENT/NOTE - not visible:
+   - Check field: comment / note / notes / message / feedback_text / description
+   - Show a placeholder "No comment provided" if empty
+
+═══════════════════════════════════════
+ROOT CAUSE - Do this first:
+═══════════════════════════════════════
+In your API call or data fetch, add:
+  console.log("RAW API RESPONSE:", JSON.stringify(data, null, 2))
+
+This will show EXACT field names from backend.
+Then update ALL components to use those exact field names.
+Also check if phone/location are nested inside a 
+customer object: data.customer.phone vs data.phone
+
+Fix all 3 issues using the actual field names from 
+the API response.

@@ -130,20 +130,27 @@ export default function AdminPanelMobile() {
   };
 
   const getAverageRating = (ratings: Feedback["ratings"]) => {
-    const sum = 
-      ratings.qualityOfService + 
-      ratings.speedOfService + 
-      ratings.friendliness + 
-      ratings.foodTemperature + 
-      ratings.menuExplanation + 
-      ratings.likelyToReturn;
-    return (sum / 6).toFixed(1);
+    const ratingsArray = [
+      ratings.foodTaste,
+      ratings.foodTemperature,
+      ratings.portionSize,
+      ratings.valueForMoney,
+      ratings.presentation,
+      ratings.overallService,
+    ];
+    const validRatings = ratingsArray.filter(
+      (r) => r !== null && r !== undefined && !isNaN(Number(r))
+    );
+    if (validRatings.length === 0) return "N/A";
+    const avg =
+      validRatings.reduce((a, b) => a + Number(b), 0) / validRatings.length;
+    return avg.toFixed(1);
   };
 
   const filteredFeedback = feedback.filter((fb) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
-    return fb.name.toLowerCase().includes(query) || fb.phoneNumber.includes(query);
+    return fb.name.toLowerCase().includes(query) || fb.phone.includes(query);
   });
 
   const handleDateChange = (date: Date) => {
@@ -383,7 +390,7 @@ export default function AdminPanelMobile() {
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <p className="font-bold text-sm text-[#3D2B1F]">{fb.name}</p>
-                            <p className="text-xs text-gray-500">{fb.phoneNumber}</p>
+                            <p className="text-xs text-gray-500">{fb.phone}</p>
                           </div>
                           <div className="text-xs font-bold uppercase tracking-tight">
                             {fb.contactedAt ? (
@@ -395,7 +402,7 @@ export default function AdminPanelMobile() {
                         </div>
 
                         <div className="text-xs text-gray-600">
-                          <p className="font-medium">{fb.location} • {(fb.diningOption || "").replace('-', ' ')}</p>
+                          <p className="font-medium">{fb.location || "Bomb Rolls and Bowls"} • <span className="capitalize">{fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}</span></p>
                           <p>{fb.visitDate} at {fb.visitTime}</p>
                         </div>
 
@@ -477,11 +484,11 @@ export default function AdminPanelMobile() {
                   </div>
                   <div>
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">PHONE NUMBER</label>
-                    <p className="text-base font-bold text-[#3D2B1F]">{selectedFeedback.phoneNumber}</p>
+                    <p className="text-base font-bold text-[#3D2B1F]">{selectedFeedback.phone}</p>
                   </div>
                   <div>
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">LOCATION</label>
-                    <p className="text-sm text-[#3D2B1F]">{selectedFeedback.location} • {(selectedFeedback.diningOption || "").replace('-', ' ')}</p>
+                    <p className="text-sm text-[#3D2B1F]">{selectedFeedback.location || "Bomb Rolls and Bowls"} • <span className="capitalize">{selectedFeedback.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}</span></p>
                   </div>
                 </div>
 

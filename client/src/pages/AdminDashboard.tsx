@@ -127,14 +127,21 @@ export default function AdminDashboard() {
   };
 
   const getAverageRating = (ratings: Feedback["ratings"]) => {
-    const sum = 
-      ratings.foodTaste + 
-      ratings.foodTemperature + 
-      ratings.portionSize + 
-      ratings.valueForMoney + 
-      ratings.presentation + 
-      ratings.overallService;
-    return (sum / 6).toFixed(1);
+    const ratingsArray = [
+      ratings.foodTaste,
+      ratings.foodTemperature,
+      ratings.portionSize,
+      ratings.valueForMoney,
+      ratings.presentation,
+      ratings.overallService,
+    ];
+    const validRatings = ratingsArray.filter(
+      (r) => r !== null && r !== undefined && !isNaN(Number(r))
+    );
+    if (validRatings.length === 0) return "N/A";
+    const avg =
+      validRatings.reduce((a, b) => a + Number(b), 0) / validRatings.length;
+    return avg.toFixed(1);
   };
 
   const filteredFeedback = feedback.filter((fb) => {
