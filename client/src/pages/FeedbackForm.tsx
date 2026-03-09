@@ -264,7 +264,7 @@ export default function FeedbackForm() {
                           name={`ratings.${key}`}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-[14px] font-bold text-[#333333] font-nunito flex items-center gap-2">
+                              <FormLabel className="rating-question text-[14px] font-bold text-[#333333] font-nunito flex items-center gap-2">
                                 <span className="text-lg">{icon}</span>
                                 {label}
                               </FormLabel>
