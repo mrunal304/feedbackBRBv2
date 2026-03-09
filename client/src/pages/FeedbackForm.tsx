@@ -275,15 +275,14 @@ export default function FeedbackForm() {
                                       key={star}
                                       type="button"
                                       onClick={() => field.onChange(star)}
-                                      className="transition-all duration-200"
+                                      className={`star ${star <= field.value ? "star-selected" : "star-empty"}`}
                                       data-testid={`star-${key}-${star}`}
                                     >
                                       <span
-                                        className={`text-3xl transition-all ${
-                                          star <= field.value ? "scale-125" : "scale-100 opacity-40"
-                                        }`}
+                                        className="transition-colors duration-200"
+                                        style={{ color: star <= field.value ? "#FFD700" : "#E0E0E0" }}
                                       >
-                                        {star <= field.value ? "⭐" : "☆"}
+                                        ★
                                       </span>
                                     </button>
                                   ))}
