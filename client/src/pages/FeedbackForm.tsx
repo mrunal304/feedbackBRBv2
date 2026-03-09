@@ -109,7 +109,10 @@ export default function FeedbackForm() {
               style={{ width: "120px", height: "120px", objectFit: "contain" }}
             />
           </motion.div>
-          <h1 className="text-[1.8rem] md:text-[2.5rem] font-bold text-[#FFD700] font-bangers tracking-[3px] uppercase mt-2 mb-1 leading-tight drop-shadow-[2px_2px_4px_rgba(0,0,0,0.5)]">
+          <h1 
+            className="font-fredoka text-[2rem] text-white tracking-[2px] uppercase text-center mt-2 mb-1 max-[480px]:text-[1.4rem] max-[480px]:tracking-[1px]"
+            style={{ textShadow: "2px 3px 6px rgba(0,0,0,0.4)" }}
+          >
             BOMB ROLLS & BOWLS
           </h1>
           <p className="text-amber-200 mt-2 font-nunito text-sm">We value your feedback</p>
