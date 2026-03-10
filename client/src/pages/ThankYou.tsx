@@ -38,12 +38,12 @@ export default function ThankYou() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#C0001A] via-[#8B0000] to-[#3D0000] flex items-center justify-center px-4 font-nunito">
+    <div className="bg-gradient-to-b from-[#C0001A] via-[#8B0000] to-[#3D0000] px-4 font-nunito" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", width: "100%" }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white rounded-[16px] w-full max-w-[520px] p-6 flex flex-col items-center text-center border border-black/6" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}
+        className="bg-white rounded-[16px] w-full max-w-[520px] p-6 flex flex-col items-center text-center border border-black/6" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.08)", margin: "auto" }}
       >
         <div className="mb-6">
           <Logo className="w-[120px] h-[120px] md:w-[140px] md:h-[140px]" style={{ objectFit: "contain" }} />
