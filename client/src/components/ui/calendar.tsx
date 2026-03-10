@@ -16,47 +16,46 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-3", className)}
+      className={cn("p-4 bg-white", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+        months: "flex flex-col space-y-4",
         month: "space-y-4",
-        caption: "flex justify-center pt-1 relative items-center",
-        caption_label: "text-sm font-medium",
-        nav: "space-x-1 flex items-center",
+        caption: "flex justify-between items-center pt-1 pb-4 relative",
+        caption_label: "text-sm font-semibold text-gray-900",
+        nav: "flex gap-1",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+          "h-8 w-8 bg-white hover:bg-gray-100 border-gray-200 p-0 rounded-md transition-colors"
         ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
+        nav_button_previous: "absolute left-2",
+        nav_button_next: "absolute right-2",
         table: "w-full border-collapse space-y-1",
-        head_row: "flex",
+        head_row: "flex gap-1 mb-2",
         head_cell:
-          "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
-        row: "flex w-full mt-2",
-        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+          "text-gray-600 rounded-md w-9 font-semibold text-[0.75rem] text-center",
+        row: "flex w-full gap-1",
+        cell: "h-9 w-9 text-center text-sm p-0 relative",
         day: cn(
-          buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
+          "h-9 w-9 rounded-md font-normal text-gray-700 hover:bg-gray-100 transition-colors",
+          "relative inline-flex items-center justify-center p-0"
         ),
         day_range_end: "day-range-end",
         day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-        day_today: "bg-accent text-accent-foreground",
+          "bg-[#8B1A1A] text-white hover:bg-[#8B1A1A] font-semibold",
+        day_today: "bg-gray-100 text-gray-900 font-semibold ring-2 ring-gray-300 ring-offset-1",
         day_outside:
-          "day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
-        day_disabled: "text-muted-foreground opacity-50",
-        day_range_middle:
-          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+          "text-gray-400",
+        day_disabled: "text-gray-300 opacity-50 cursor-not-allowed",
+        day_range_middle: "bg-gray-100",
         day_hidden: "invisible",
         ...classNames,
       }}
       components={{
         IconLeft: ({ className, ...props }) => (
-          <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
+          <ChevronLeft className={cn("h-5 w-5", className)} {...props} />
         ),
         IconRight: ({ className, ...props }) => (
-          <ChevronRight className={cn("h-4 w-4", className)} {...props} />
+          <ChevronRight className={cn("h-5 w-5", className)} {...props} />
         ),
       }}
       {...props}

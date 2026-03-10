@@ -466,23 +466,25 @@ export default function AdminDashboard() {
               <div className="bg-white p-4 rounded-xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <span className="text-[10px] font-bold text-gray-400 tracking-tighter uppercase">FILTER BY DATE:</span>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="flex items-center gap-2 px-3 py-1.5 border rounded-md text-sm text-gray-600 bg-gray-50/50">
-                        <CalendarIcon className="w-4 h-4 text-gray-400" />
-                        {format(new Date(selectedDate), 'MMM d, yyyy')}
-                        <ChevronDown className="w-4 h-4 text-gray-400" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={new Date(selectedDate)}
-                        onSelect={(date) => date && handleDateChange(date)}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <div className="relative">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="flex items-center gap-2 px-3 py-1.5 border rounded-md text-sm text-gray-600 bg-gray-50/50 hover:bg-gray-100">
+                          <CalendarIcon className="w-4 h-4 text-gray-400" />
+                          {format(new Date(selectedDate), 'MMM d, yyyy')}
+                          <ChevronDown className="w-4 h-4 text-gray-400" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start" sideOffset={8}>
+                        <Calendar
+                          mode="single"
+                          selected={new Date(selectedDate)}
+                          onSelect={(date) => date && handleDateChange(date)}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                   <div className="flex gap-2">
                     <Button 
                       size="sm" 

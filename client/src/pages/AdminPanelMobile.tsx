@@ -440,22 +440,24 @@ export default function AdminPanelMobile() {
                 >
                   Yesterday
                 </Button>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="flex items-center gap-1 px-2 h-7 text-xs border-[#8B1A1A] text-[#8B1A1A]">
-                      <CalendarIcon className="w-3 h-3" />
-                      {format(new Date(selectedDate), 'MMM d')}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={new Date(selectedDate)}
-                      onSelect={(date) => date && handleDateChange(date)}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <div className="relative">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="flex items-center gap-1 px-2 h-7 text-xs border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5">
+                        <CalendarIcon className="w-3 h-3" />
+                        {format(new Date(selectedDate), 'MMM d')}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start" sideOffset={8}>
+                      <Calendar
+                        mode="single"
+                        selected={new Date(selectedDate)}
+                        onSelect={(date) => date && handleDateChange(date)}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
               <div className="text-[#8B1A1A] font-bold text-xs">
                 {format(new Date(selectedDate), 'MMMM d, yyyy')}
