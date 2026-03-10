@@ -210,6 +210,16 @@ export default function AdminPanelMobile() {
     setSelectedDate(new Date().toISOString().split('T')[0]);
   };
 
+  const setToday = () => {
+    setSelectedDate(new Date().toISOString().split('T')[0]);
+  };
+
+  const setYesterday = () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    setSelectedDate(yesterday.toISOString().split('T')[0]);
+  };
+
   if (authLoading || !(authCheck as any)?.authenticated) {
     return null;
   }
@@ -417,6 +427,22 @@ export default function AdminPanelMobile() {
                   onSelect={handleDateChange}
                   onClear={handleClearDate}
                 />
+                <Button 
+                  size="sm" 
+                  onClick={setToday}
+                  className={selectedDate === new Date().toISOString().split('T')[0] ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 h-7 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 h-7 rounded"}
+                  variant={selectedDate === new Date().toISOString().split('T')[0] ? "default" : "outline"}
+                >
+                  Today
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={setYesterday}
+                  className={selectedDate === new Date(Date.now() - 86400000).toISOString().split('T')[0] ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 h-7 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 h-7 rounded"}
+                  variant={selectedDate === new Date(Date.now() - 86400000).toISOString().split('T')[0] ? "default" : "outline"}
+                >
+                  Yesterday
+                </Button>
               </div>
               <div className="text-[#8B1A1A] font-bold text-xs">
                 {format(new Date(selectedDate), 'MMMM d, yyyy')}
