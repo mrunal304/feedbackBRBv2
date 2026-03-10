@@ -209,7 +209,7 @@ export default function AdminDashboard() {
               <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0">
                 A
               </div>
-              <div className="flex-1 overflow-hidden min-w-0">
+              <div className="flex-1 min-w-0">
                 <p className="text-white font-medium text-[13px] truncate">admin</p>
                 <p className="text-pink-100/70 text-[11px]">Admin</p>
               </div>
