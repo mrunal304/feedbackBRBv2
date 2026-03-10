@@ -272,9 +272,9 @@ export default function AdminPanelMobile() {
       {/* Main Content */}
       <main className="flex-1 px-4 py-4 space-y-4">
         {activeTab === "analytics" && (
-          <div className="space-y-4">
-            {/* Dashboard Cards - Stacked Vertically */}
-            <div className="space-y-3">
+          <div className="space-y-6">
+            {/* Dashboard Cards - 2x2 Grid */}
+            <div className="grid grid-cols-2 gap-3">
               {[
                 { title: "TOTAL FEEDBACK", value: analytics?.totalFeedback || 0, icon: MessageSquare, sub: "Responses received", color: "bg-blue-50 text-blue-600" },
                 { title: "AVERAGE RATING", value: `${analytics?.averageRating || 0}/5`, icon: Star, sub: "Overall satisfaction", color: "bg-yellow-50 text-yellow-600" },
