@@ -52,3 +52,18 @@ Premium cafe aesthetic with soft browns (#8B4513), creams (#F5F5DC), and greens 
 - Uses **Tailwind CSS v4** via `@tailwindcss/vite` Vite plugin (not PostCSS)
 - `postcss.config.js` only includes `autoprefixer` (Tailwind is handled by Vite)
 - CSS uses v4 syntax: `@import "tailwindcss"`, `@theme`, `@plugin` directives
+
+## Floating Date Picker
+- **Component**: `client/src/components/FloatingDatePicker.tsx`
+- Clean floating calendar dropdown with dark red (#8B0000) color palette
+- Features:
+  - Month/Year header with left/right navigation arrows
+  - Days of week row (Su, Mo, Tu, We, Th, Fr, Sa)
+  - Date grid with proper spacing
+  - Clear and Today buttons at bottom
+  - Closes when clicking outside
+  - Selected date highlighted in dark red with white text
+  - Today's date has dark red outline/border
+  - Hover effect with light pink (#fef2f2) background
+  - Date input button has dark red border
+  - Used in both AdminDashboard and AdminPanelMobile for date filtering

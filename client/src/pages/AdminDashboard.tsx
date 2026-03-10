@@ -5,7 +5,6 @@ import {
   Star,
   TrendingUp,
   Phone,
-  Calendar as CalendarIcon,
   MessageSquare,
   BarChart3,
   ChevronDown,
@@ -16,6 +15,7 @@ import {
 } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import RatingStars from "@/components/RatingStars";
+import FloatingDatePicker from "@/components/FloatingDatePicker";
 import {
   LineChart,
   Line,
@@ -51,12 +51,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Tooltip,
   TooltipContent,
@@ -215,14 +209,8 @@ export default function AdminDashboard() {
     setSelectedDate(date.toISOString().split('T')[0]);
   };
 
-  const setToday = () => {
+  const handleClearDate = () => {
     setSelectedDate(new Date().toISOString().split('T')[0]);
-  };
-
-  const setYesterday = () => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    setSelectedDate(yesterday.toISOString().split('T')[0]);
   };
 
   if (authLoading || !(authCheck as any)?.authenticated) {
@@ -466,43 +454,11 @@ export default function AdminDashboard() {
               <div className="bg-white p-4 rounded-xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <span className="text-[10px] font-bold text-gray-400 tracking-tighter uppercase">FILTER BY DATE:</span>
-                  <div className="relative">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="flex items-center gap-2 px-3 py-1.5 border rounded-md text-sm text-gray-600 bg-gray-50/50 hover:bg-gray-100">
-                          <CalendarIcon className="w-4 h-4 text-gray-400" />
-                          {format(new Date(selectedDate), 'MMM d, yyyy')}
-                          <ChevronDown className="w-4 h-4 text-gray-400" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start" sideOffset={8}>
-                        <Calendar
-                          mode="single"
-                          selected={new Date(selectedDate)}
-                          onSelect={(date) => date && handleDateChange(date)}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      onClick={setToday}
-                      className={selectedDate === new Date().toISOString().split('T')[0] ? "bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 px-4" : "border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5 px-4"}
-                      variant={selectedDate === new Date().toISOString().split('T')[0] ? "default" : "outline"}
-                    >
-                      Today
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      onClick={setYesterday}
-                      className={selectedDate === new Date(Date.now() - 86400000).toISOString().split('T')[0] ? "bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 px-4" : "border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5 px-4"}
-                      variant={selectedDate === new Date(Date.now() - 86400000).toISOString().split('T')[0] ? "default" : "outline"}
-                    >
-                      Yesterday
-                    </Button>
-                  </div>
+                  <FloatingDatePicker
+                    selected={new Date(selectedDate)}
+                    onSelect={handleDateChange}
+                    onClear={handleClearDate}
+                  />
                 </div>
                 <div className="text-[#8B1A1A] font-bold text-sm">
                   Showing feedback for: <span className="ml-1">{format(new Date(selectedDate), 'MMMM d, yyyy')}</span>
