@@ -218,15 +218,18 @@ export default function AdminDashboard() {
               variant="ghost"
               className="w-full justify-start text-white hover:bg-white/10 py-2 h-auto text-[19px]"
               style={{
-                paddingLeft: '16px',
                 width: '100%',
+                paddingLeft: '16px',
                 boxSizing: 'border-box',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
                 overflow: 'visible'
               }}
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
             >
-              <LogOut className="w-4 h-4 mr-3 flex-shrink-0" />
+              <LogOut className="w-4 h-4 flex-shrink-0" />
               <span className="text-white">Sign Out</span>
             </Button>
           </div>

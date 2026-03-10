@@ -203,9 +203,12 @@ export default function AdminPanelMobile() {
             variant="ghost"
             className="w-full justify-start text-white hover:bg-white/10 text-[13px] py-2 h-auto"
             style={{
-              paddingLeft: '16px',
               width: '100%',
+              paddingLeft: '16px',
               boxSizing: 'border-box',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
               overflow: 'visible'
             }}
             onClick={() => {
@@ -214,7 +217,7 @@ export default function AdminPanelMobile() {
             }}
             data-testid="button-logout"
           >
-            <LogOut className="w-4 h-4 mr-3 flex-shrink-0" />
+            <LogOut className="w-4 h-4 flex-shrink-0" />
             <span className="text-white">Sign Out</span>
           </Button>
         </div>
