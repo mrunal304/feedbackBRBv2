@@ -534,9 +534,15 @@ export default function AdminPanelMobile() {
         <DialogContent className="max-w-sm bg-[#FDF8F6] border-none overflow-hidden p-0 rounded-2xl flex flex-col max-h-[90vh]">
           {selectedFeedback && (
             <>
-              {/* Close Button - Sticky at top right */}
-              <div className="absolute top-4 right-4 z-50">
-                <DialogClose className="p-1 text-gray-600 hover:bg-gray-100 rounded transition" data-testid="button-close-details">
+              {/* Header - Dark Red Background */}
+              <div className="bg-[#8B0000] p-4 text-white relative">
+                <div className="pr-12">
+                  <h2 className="text-xl font-bold">Feedback Details</h2>
+                  <p className="text-sm text-white/80 mt-1">
+                    Submitted on {format(new Date(selectedFeedback.createdAt), 'MMMM d, yyyy h:mm a')}
+                  </p>
+                </div>
+                <DialogClose className="absolute top-4 right-4 z-50 p-1 text-white hover:bg-white/20 rounded transition" data-testid="button-close-details">
                   <X className="w-6 h-6" />
                 </DialogClose>
               </div>
@@ -565,9 +571,7 @@ export default function AdminPanelMobile() {
                   <div>
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Location & Visit Type</label>
                     <div className="flex items-center gap-2 flex-wrap">
-                      {selectedFeedback.location && (
-                        <span className="text-sm font-medium text-[#3D2B1F]">{selectedFeedback.location}</span>
-                      )}
+                      <span className="text-sm font-medium text-[#3D2B1F]">{selectedFeedback.location || "Bomb Rolls and Bowls"}</span>
                       <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${selectedFeedback.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
                         {selectedFeedback.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
                       </span>
