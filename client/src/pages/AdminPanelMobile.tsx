@@ -13,6 +13,7 @@ import {
   Search,
   X,
   Menu,
+  PhoneCall,
 } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import RatingStars from "@/components/RatingStars";
@@ -51,6 +52,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -526,95 +528,118 @@ export default function AdminPanelMobile() {
 
       {/* Feedback Details Modal */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="max-w-sm bg-[#FDF8F6] border-none overflow-hidden p-0 rounded-2xl">
+        <DialogContent className="max-w-sm bg-[#FDF8F6] border-none overflow-hidden p-0 rounded-2xl flex flex-col max-h-[90vh]">
           {selectedFeedback && (
             <>
-              <div className="bg-[#8B1A1A] p-4 text-white relative">
-                <DialogHeader>
-                  <DialogTitle className="text-lg font-bold flex items-center justify-between">
-                    Feedback Details
-                  </DialogTitle>
-                  <DialogDescription className="text-white/70 text-xs">
-                    Submitted on {format(new Date(selectedFeedback.createdAt), 'MMM d, yyyy h:mm a')}
-                  </DialogDescription>
-                </DialogHeader>
+              {/* Header */}
+              <div className="bg-[#8B1A1A] p-4 text-white relative flex-shrink-0">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 pr-8">
+                    <h2 className="text-xl font-bold">Feedback Details</h2>
+                    <p className="text-sm text-white/70 mt-1">
+                      {format(new Date(selectedFeedback.createdAt), 'MMM d, yyyy • h:mm a')}
+                    </p>
+                  </div>
+                  <DialogClose className="absolute top-4 right-4 p-1 text-white hover:bg-white/10 rounded transition" data-testid="button-close-details">
+                    <X className="w-6 h-6" />
+                  </DialogClose>
+                </div>
               </div>
 
-              <div className="p-4 space-y-4 max-h-[85vh] overflow-y-auto">
-                <div className="space-y-3">
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-28">
+                {/* Section 1: Customer Info */}
+                <div className="bg-white rounded-lg shadow-sm p-4 space-y-3">
                   <div>
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">CUSTOMER NAME</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Customer Name</label>
                     <p className="text-base font-bold text-[#3D2B1F] capitalize">{selectedFeedback.name}</p>
                   </div>
+
                   <div>
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">PHONE NUMBER</label>
-                    <p className="text-base font-bold text-[#3D2B1F]">{selectedFeedback.phone}</p>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Phone Number</label>
+                    <a 
+                      href={`tel:${selectedFeedback.phone}`}
+                      className="flex items-center gap-2 text-base font-bold text-[#8B1A1A] hover:text-[#8B1A1A]/80 transition"
+                      data-testid={`button-call-phone-${selectedFeedback._id}`}
+                    >
+                      <PhoneCall className="w-4 h-4 flex-shrink-0" />
+                      {selectedFeedback.phone}
+                    </a>
                   </div>
+
                   <div>
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">LOCATION</label>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-[#3D2B1F] font-medium">{selectedFeedback.location || "Bomb Rolls and Bowls"}</span>
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${selectedFeedback.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Location & Visit Type</label>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {selectedFeedback.location && (
+                        <span className="text-sm font-medium text-[#3D2B1F]">{selectedFeedback.location}</span>
+                      )}
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${selectedFeedback.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
                         {selectedFeedback.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">DETAILED RATINGS</label>
-                  <div className="grid grid-cols-1 gap-2">
+                {/* Section 2: Detailed Ratings */}
+                <div className="bg-white rounded-lg shadow-sm p-4 space-y-3">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Detailed Ratings</label>
+                  
+                  <div className="space-y-2">
                     {Object.entries(selectedFeedback.ratings).map(([key, value]) => (
-                      <div key={key} className="bg-white p-2 rounded-lg shadow-sm flex items-center justify-between">
-                        <span className="text-xs font-medium text-gray-600 capitalize">
+                      <div key={key} className="flex items-center gap-2 py-1">
+                        <span className="text-xs font-medium text-gray-600 capitalize flex-shrink-0 w-20">
                           {key.replace(/([A-Z])/g, ' $1').trim()}
                         </span>
-                        <div className="flex items-center gap-0.5">
-                          <span className={`text-xs font-bold ${value <= 2 ? 'text-red-500' : 'text-[#3D2B1F]'}`}>{value}</span>
-                          <RatingStars rating={value} size="xxs" />
+                        <div className="flex-1 flex items-center justify-center">
+                          <RatingStars rating={value} size="xs" />
                         </div>
+                        <span className={`text-sm font-bold flex-shrink-0 w-6 text-right ${value <= 2 ? 'text-red-500' : 'text-[#3D2B1F]'}`}>
+                          {value}
+                        </span>
                       </div>
                     ))}
                   </div>
-                  <div className="bg-white p-3 rounded-lg shadow-sm flex items-center justify-between border-2 border-[#8B1A1A]/10 mt-2">
-                    <span className="font-bold text-xs text-[#3D2B1F]">OVERALL AVG</span>
-                    <div className="flex items-center gap-0.5">
+
+                  <div className="border-t border-gray-200 pt-3 mt-3 flex items-center justify-between">
+                    <span className="font-bold text-sm text-[#3D2B1F]">Overall Avg</span>
+                    <div className="flex items-center gap-2">
+                      <RatingStars rating={Number(getAverageRating(selectedFeedback.ratings))} size="xs" />
                       <span className="text-lg font-bold text-[#8B1A1A]">{getAverageRating(selectedFeedback.ratings)}</span>
-                      <RatingStars rating={Number(getAverageRating(selectedFeedback.ratings))} size="xxs" />
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">COMMENTS</label>
-                  <div className="bg-[#FAFAFA] p-3 rounded-lg border border-[#EEEEEE]">
-                    <p className="text-xs font-normal text-[#333333]">{selectedFeedback.comments || "No comments provided"}</p>
-                  </div>
+                {/* Section 3: Comments */}
+                <div className="bg-white rounded-lg shadow-sm p-4 space-y-2">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Comments</label>
+                  <p className={`text-sm ${selectedFeedback.comments ? 'text-[#333333]' : 'text-gray-400 italic'}`}>
+                    {selectedFeedback.comments || "No comments provided"}
+                  </p>
                 </div>
 
+                {/* Customer Note (if exists) */}
                 {selectedFeedback.note && (
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">CUSTOMER NOTE</label>
-                    <div className="bg-white p-3 rounded-lg shadow-sm italic text-xs text-gray-600 border-l-4 border-[#F5A623]">
-                      "{selectedFeedback.note}"
-                    </div>
+                  <div className="bg-white rounded-lg shadow-sm p-4 space-y-2 border-l-4 border-[#F5A623]">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Customer Note</label>
+                    <p className="text-sm text-gray-600 italic">"{selectedFeedback.note}"</p>
                   </div>
                 )}
+              </div>
 
-                <div className="pt-4 flex items-center justify-between border-t border-gray-100">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${selectedFeedback.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
-                    {selectedFeedback.contactedAt ? 'CONTACTED' : 'PENDING'}
-                  </span>
-                  {!selectedFeedback.contactedAt && (
-                    <Button 
-                      onClick={() => handleContactCustomer(selectedFeedback)}
-                      size="sm"
-                      className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 text-xs h-7"
-                    >
-                      Mark as Contacted
-                    </Button>
-                  )}
-                </div>
+              {/* Sticky Footer */}
+              <div className="bg-white border-t border-gray-200 p-4 flex items-center justify-between gap-3 flex-shrink-0">
+                <span className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap ${selectedFeedback.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
+                  {selectedFeedback.contactedAt ? 'Contacted' : 'Pending'}
+                </span>
+                {!selectedFeedback.contactedAt && (
+                  <Button 
+                    onClick={() => handleContactCustomer(selectedFeedback)}
+                    className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 text-sm flex-1"
+                    data-testid={`button-mark-contacted-modal-${selectedFeedback._id}`}
+                  >
+                    Mark as Contacted
+                  </Button>
+                )}
               </div>
             </>
           )}
