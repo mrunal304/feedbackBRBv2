@@ -216,7 +216,13 @@ export default function AdminDashboard() {
             </div>
             <Button
               variant="ghost"
-              className="w-full justify-start text-white hover:bg-white/10 px-4 py-2 h-auto text-[19px]"
+              className="w-full justify-start text-white hover:bg-white/10 py-2 h-auto text-[19px]"
+              style={{
+                paddingLeft: '16px',
+                width: '100%',
+                boxSizing: 'border-box',
+                overflow: 'visible'
+              }}
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
             >

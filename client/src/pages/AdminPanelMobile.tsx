@@ -201,7 +201,13 @@ export default function AdminPanelMobile() {
           </div>
           <Button
             variant="ghost"
-            className="w-full justify-start text-white hover:bg-white/10 text-[13px] py-2 h-auto pl-4"
+            className="w-full justify-start text-white hover:bg-white/10 text-[13px] py-2 h-auto"
+            style={{
+              paddingLeft: '16px',
+              width: '100%',
+              boxSizing: 'border-box',
+              overflow: 'visible'
+            }}
             onClick={() => {
               logoutMutation.mutate();
               setShowMenu(false);
