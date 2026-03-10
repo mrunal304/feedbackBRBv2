@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Logo } from "@/components/Logo";
-import { Lock } from "lucide-react";
+import { Lock, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,11 +12,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { adminLoginSchema, type AdminLogin } from "@shared/schema";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function AdminLoginPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { data: authCheck } = useQuery({
     queryKey: ["/api/auth/check"],
@@ -64,16 +65,16 @@ export default function AdminLoginPage() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <Logo className="w-24 h-24 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground">Bomb Rolls and Bowls</h1>
-          <p className="text-muted-foreground">Admin Dashboard</p>
+          <Logo className="w-[100px] h-[100px] mx-auto mb-4 object-contain" />
+          <h1 className="text-[1.6rem] font-bold text-foreground">Bomb Rolls and Bowls</h1>
+          <p className="text-base text-muted-foreground">Admin Dashboard</p>
         </div>
 
-        <Card className="shadow-lg">
+        <Card className="shadow-lg md:w-[480px] md:min-h-[420px] md:p-10">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Lock className="w-5 h-5 text-primary" />
-              <CardTitle>Staff Login</CardTitle>
+              <CardTitle className="text-[1.3rem]">Staff Login</CardTitle>
             </div>
             <CardDescription>
               Enter your credentials to access the dashboard
@@ -87,10 +88,11 @@ export default function AdminLoginPage() {
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Username</FormLabel>
+                      <FormLabel className="text-[0.95rem]">Username</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter username"
+                          className="placeholder:text-[0.95rem]"
                           {...field}
                           data-testid="input-username"
                         />
@@ -105,14 +107,29 @@ export default function AdminLoginPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel className="text-[0.95rem]">Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter password"
-                          {...field}
-                          data-testid="input-password"
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Enter password"
+                            className="placeholder:text-[0.95rem] pr-10"
+                            {...field}
+                            data-testid="input-password"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            data-testid="button-toggle-password"
+                          >
+                            {showPassword ? (
+                              <EyeOff className="w-5 h-5" />
+                            ) : (
+                              <Eye className="w-5 h-5" />
+                            )}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -121,7 +138,7 @@ export default function AdminLoginPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#b52d2a] text-white no-default-hover-elevate no-default-active-elevate"
+                  className="w-full bg-[#b52d2a] text-white no-default-hover-elevate no-default-active-elevate text-base font-bold"
                   size="lg"
                   style={{ opacity: 1 }}
                   disabled={loginMutation.isPending}
