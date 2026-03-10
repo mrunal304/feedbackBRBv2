@@ -67,7 +67,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
 import type { Feedback, Analytics } from "@shared/schema";
 
-const CHART_COLORS = ["#8B1A1A", "#f5a623", "#22a34a", "#b4635d", "#f4d3d1"];
+const CHART_COLORS = ["#8B1A1A", "#f5a623", "#22a34a", "#b4635d", "#FF8C8C"];
 
 const formatCamelCase = (str: string): string => {
   return str
@@ -393,7 +393,7 @@ export default function AdminDashboard() {
                           <BarChart layout="vertical" data={analytics?.categoryPerformance || []}>
                             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F0F0F0" />
                             <XAxis type="number" domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 10 : 12}} dy={10} />
-                            <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 9 : 10}} width={window.innerWidth < 768 ? 140 : 150} />
+                            <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{fill: '#6B7280', fontSize: 13, fontWeight: 500}} width={window.innerWidth < 768 ? 140 : 150} />
                             <RechartTooltip 
                               cursor={{fill: '#F9FAFB'}}
                               contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} 
