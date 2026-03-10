@@ -236,11 +236,11 @@ export default function AdminDashboard() {
             <h1 className="text-white font-bold text-[19px]">Admin Panel</h1>
           </div>
 
-          <nav className="flex-1 px-0 space-y-0 mt-2">
+          <nav className="flex-1 px-4 space-y-0 mt-2">
             <TabsList className="flex flex-col w-full bg-transparent h-auto p-0 space-y-0">
               <TabsTrigger
                 value="analytics"
-                className="w-full justify-start px-4 py-2.5 text-white data-[state=active]:bg-[#A52020] data-[state=active]:text-white data-[state=active]:rounded-lg hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none mx-2"
+                className="w-full justify-start px-3 py-2.5 text-white/70 data-[state=active]:bg-white/15 data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:rounded-lg hover:bg-white/10 transition-colors border-none shadow-none rounded-lg mx-0"
                 data-testid="tab-analytics"
               >
                 <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
@@ -248,7 +248,7 @@ export default function AdminDashboard() {
               </TabsTrigger>
               <TabsTrigger
                 value="feedback"
-                className="w-full justify-start px-4 py-2.5 text-white data-[state=active]:bg-[#A52020] data-[state=active]:text-white data-[state=active]:rounded-lg hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none mx-2"
+                className="w-full justify-start px-3 py-2.5 text-white/70 data-[state=active]:bg-white/15 data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:rounded-lg hover:bg-white/10 transition-colors border-none shadow-none rounded-lg mx-0"
                 data-testid="tab-feedback"
               >
                 <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
