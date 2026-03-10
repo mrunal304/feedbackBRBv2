@@ -266,7 +266,7 @@ export default function AdminDashboard() {
                         <stat.icon className="w-5 h-5" />
                       </div>
                       <div className="text-[24px] font-bold text-[#3D2B1F]">{stat.value}</div>
-                      <div className="text-[11px] text-gray-500">{stat.sub}</div>
+                      <div className="text-[13px] text-gray-500 font-medium">{stat.sub}</div>
                     </CardContent>
                   </Card>
                 ))}
@@ -275,7 +275,7 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className="border-none shadow-sm rounded-[12px]">
                   <CardHeader>
-                    <CardTitle className="text-lg font-bold text-[#3D2B1F]">Weekly Rating Trends</CardTitle>
+                    <CardTitle className="text-xl font-bold text-[#3D2B1F]">Weekly Rating Trends</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {(analytics?.weeklyTrends || []).length === 0 ? (
@@ -291,7 +291,7 @@ export default function AdminDashboard() {
                               dataKey="date" 
                               axisLine={false} 
                               tickLine={false} 
-                              tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 10 : 12}} 
+                              tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 13 : 14}} 
                               dy={10}
                               tickFormatter={(date) => {
                                 try {
@@ -306,11 +306,11 @@ export default function AdminDashboard() {
                               domain={[0, 5]} 
                               axisLine={false} 
                               tickLine={false} 
-                              tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 10 : 12}} 
+                              tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 13 : 14}} 
                               dx={-10} 
                             />
                             <RechartTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                            <Legend iconType="circle" wrapperStyle={{fontSize: window.innerWidth < 768 ? '12px' : '14px'}} />
+                            <Legend iconType="circle" wrapperStyle={{fontSize: window.innerWidth < 768 ? '13px' : '14px'}} />
                             <Line type="monotone" dataKey="foodTaste" stroke={CHART_COLORS[0]} strokeWidth={2} dot={false} />
                             <Line type="monotone" dataKey="foodTemperature" stroke={CHART_COLORS[1]} strokeWidth={2} dot={false} />
                             <Line type="monotone" dataKey="portionSize" stroke={CHART_COLORS[2]} strokeWidth={2} dot={false} />
@@ -327,7 +327,7 @@ export default function AdminDashboard() {
                 {/* STEP 4: Redesign Category Performance Chart */}
                 <Card className="border-none shadow-sm rounded-[12px]">
                   <CardHeader>
-                    <CardTitle className="text-lg font-bold text-[#3D2B1F]">Category Performance</CardTitle>
+                    <CardTitle className="text-xl font-bold text-[#3D2B1F]">Category Performance</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {(analytics?.categoryPerformance || []).length === 0 ? (

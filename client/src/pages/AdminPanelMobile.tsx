@@ -201,16 +201,7 @@ export default function AdminPanelMobile() {
           </div>
           <Button
             variant="ghost"
-            className="w-full justify-start text-white hover:bg-white/10 text-[13px] py-2 h-auto"
-            style={{
-              width: '100%',
-              paddingLeft: '16px',
-              boxSizing: 'border-box',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              overflow: 'visible'
-            }}
+            className="w-full justify-start text-white hover:bg-white/10 text-[13px] py-1.5 h-auto px-2"
             onClick={() => {
               logoutMutation.mutate();
               setShowMenu(false);
@@ -218,7 +209,7 @@ export default function AdminPanelMobile() {
             data-testid="button-logout"
           >
             <LogOut className="w-4 h-4 flex-shrink-0" />
-            <span className="text-white">Sign Out</span>
+            <span className="text-white text-[13px]">Sign Out</span>
           </Button>
         </div>
       )}
@@ -242,7 +233,7 @@ export default function AdminPanelMobile() {
                       <stat.icon className="w-4 h-4" />
                     </div>
                     <div className="text-[24px] font-bold text-[#3D2B1F]">{stat.value}</div>
-                    <div className="text-[11px] text-gray-500">{stat.sub}</div>
+                    <div className="text-[12px] text-gray-500 font-medium">{stat.sub}</div>
                   </CardContent>
                 </Card>
               ))}
@@ -251,7 +242,7 @@ export default function AdminPanelMobile() {
             {/* Charts - Full Width */}
             <Card className="border-none shadow-sm rounded-lg">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-bold text-[#3D2B1F]">Weekly Trends</CardTitle>
+                <CardTitle className="text-base font-bold text-[#3D2B1F]">Weekly Trends</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-48">
@@ -262,7 +253,7 @@ export default function AdminPanelMobile() {
                         dataKey="date" 
                         axisLine={false} 
                         tickLine={false} 
-                        tick={{fill: '#9CA3AF', fontSize: 10}} 
+                        tick={{fill: '#9CA3AF', fontSize: 13}} 
                         dy={5}
                         tickFormatter={(date) => {
                           try {
@@ -273,7 +264,7 @@ export default function AdminPanelMobile() {
                           }
                         }}
                       />
-                      <YAxis domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 10}} dx={-5} width={35} />
+                      <YAxis domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 13}} dx={-5} width={40} />
                       <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                       <Line type="monotone" dataKey="foodTaste" stroke={CHART_COLORS[0]} strokeWidth={2} dot={false} />
                       <Line type="monotone" dataKey="foodTemperature" stroke={CHART_COLORS[1]} strokeWidth={2} dot={false} />
@@ -286,7 +277,7 @@ export default function AdminPanelMobile() {
 
             <Card className="border-none shadow-sm rounded-lg">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-bold text-[#3D2B1F]">Category Performance</CardTitle>
+                <CardTitle className="text-base font-bold text-[#3D2B1F]">Category Performance</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-48">
@@ -312,7 +303,7 @@ export default function AdminPanelMobile() {
 
             <Card className="border-none shadow-sm rounded-lg">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-bold text-[#3D2B1F]">Feedback Volume</CardTitle>
+                <CardTitle className="text-base font-bold text-[#3D2B1F]">Feedback Volume</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-48">
