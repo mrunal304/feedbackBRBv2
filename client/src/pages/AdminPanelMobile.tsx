@@ -462,18 +462,18 @@ export default function AdminPanelMobile() {
                   <Card key={fb._id} className="border-none shadow-sm rounded-lg overflow-hidden">
                     <CardContent className="p-4">
                       <div className="space-y-3">
-                        {/* Row 1: Name + Phone on left | Status on right */}
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-bold text-sm text-[#3D2B1F] capitalize">{fb.name}</p>
-                            <p className="text-xs text-gray-600 font-medium">{fb.phone}</p>
-                          </div>
+                        {/* Row 1: Customer Name (bold, left) + Status badge (right) */}
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="font-bold text-sm text-[#3D2B1F] capitalize flex-1">{fb.name}</p>
                           <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest whitespace-nowrap flex-shrink-0 ${fb.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
                             {fb.contactedAt ? 'CONTACTED' : 'PENDING'}
                           </span>
                         </div>
 
-                        {/* Row 2: Visit badge on left | Date & Time on right */}
+                        {/* Row 2: Full phone number */}
+                        <p className="text-xs text-gray-600 font-medium">{fb.phone}</p>
+
+                        {/* Row 3: Visit badge (left) + Date & Time (right) */}
                         <div className="flex items-center justify-between gap-2">
                           <span className={`rounded-full px-2.5 py-1 text-xs font-semibold flex-shrink-0 ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
                             {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
@@ -481,7 +481,7 @@ export default function AdminPanelMobile() {
                           <p className="text-xs text-gray-600 font-medium text-right">{fb.visitDate} {fb.visitTime}</p>
                         </div>
 
-                        {/* Row 3: Rating + Stars on left | Eye + Mark Contacted buttons on right */}
+                        {/* Row 4: Rating + Stars (left) + Eye + Mark Contacted buttons (right) */}
                         <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100">
                           <div className="flex items-center gap-1.5">
                             <span className="text-base font-bold text-[#3D2B1F]">
@@ -643,27 +643,27 @@ export default function AdminPanelMobile() {
         <div className="flex">
           <button
             onClick={() => setActiveTab("analytics")}
-            className={`flex-1 py-3 flex flex-col items-center justify-center gap-1 transition ${
+            className={`flex-1 py-3 flex flex-col items-center justify-center gap-1.5 transition ${
               activeTab === "analytics"
                 ? "bg-[#8B1A1A]/5 text-[#8B1A1A]"
                 : "text-gray-500 hover:bg-gray-50"
             }`}
             data-testid="tab-analytics-mobile"
           >
-            <BarChart3 className="w-5 h-5" />
-            <span className="text-xs font-medium">Overview</span>
+            <BarChart3 className="w-6 h-6" />
+            <span className="text-sm font-medium">Overview</span>
           </button>
           <button
             onClick={() => setActiveTab("feedback")}
-            className={`flex-1 py-3 flex flex-col items-center justify-center gap-1 transition ${
+            className={`flex-1 py-3 flex flex-col items-center justify-center gap-1.5 transition ${
               activeTab === "feedback"
                 ? "bg-[#8B1A1A]/5 text-[#8B1A1A]"
                 : "text-gray-500 hover:bg-gray-50"
             }`}
             data-testid="tab-feedback-mobile"
           >
-            <MessageSquare className="w-5 h-5" />
-            <span className="text-xs font-medium">Feedback</span>
+            <MessageSquare className="w-6 h-6" />
+            <span className="text-sm font-medium">Feedback</span>
           </button>
         </div>
       </div>
