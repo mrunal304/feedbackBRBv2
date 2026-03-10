@@ -16,10 +16,11 @@ export interface IStorage {
   getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null>;
 }
 
-function formatFeedback(doc: any): Feedback {
+function formatFeedback(doc: any): Feedback & { dateKey?: string } {
   const createdDate = new Date(doc.createdAt);
   const visitDate = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   const visitTime = createdDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  const dateKey = createdDate.toISOString().split('T')[0];
   
   return {
     _id: doc._id.toString(),
@@ -35,6 +36,7 @@ function formatFeedback(doc: any): Feedback {
     visitTime,
     contactedAt: doc.contactedAt ? doc.contactedAt.toISOString() : undefined,
     contactedBy: doc.contactedBy,
+    dateKey,
   };
 }
 

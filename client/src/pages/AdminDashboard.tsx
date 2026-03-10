@@ -76,22 +76,29 @@ const formatCamelCase = (str: string): string => {
     .trim();
 };
 
+const parseChartDate = (dateStr: any, index: number = 0): string => {
+  if (!dateStr) return `Day ${index + 1}`;
+  
+  try {
+    // Try to parse as YYYY-MM-DD format
+    const d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d.getTime())) {
+      return `Day ${index + 1}`;
+    }
+    const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const monthDay = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `${dayName}, ${monthDay}`;
+  } catch {
+    return `Day ${index + 1}`;
+  }
+};
+
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload as any;
-    const dateStr = data?.date || label || 'Date';
-    const formattedDate = typeof dateStr === 'string' 
-      ? (() => {
-          try {
-            const d = new Date(dateStr + 'T00:00:00');
-            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-            const monthDay = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            return `${dayName}, ${monthDay}`;
-          } catch {
-            return dateStr;
-          }
-        })()
-      : dateStr;
+    const dateStr = data?.date || label;
+    const dataIndex = (payload[0].payload as any)?.__index || 0;
+    const formattedDate = parseChartDate(dateStr, dataIndex);
 
     return (
       <div style={{ 
@@ -340,13 +347,8 @@ export default function AdminDashboard() {
                               tickLine={false} 
                               tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 13 : 14}} 
                               dy={10}
-                              tickFormatter={(date) => {
-                                try {
-                                  const d = new Date(date + 'T00:00:00');
-                                  return d.toLocaleDateString('en-US', { weekday: 'short' });
-                                } catch {
-                                  return date;
-                                }
+                              tickFormatter={(date, index) => {
+                                return parseChartDate(date, index);
                               }}
                             />
                             <YAxis 
@@ -391,7 +393,7 @@ export default function AdminDashboard() {
                           <BarChart layout="vertical" data={analytics?.categoryPerformance || []}>
                             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F0F0F0" />
                             <XAxis type="number" domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 10 : 12}} dy={10} />
-                            <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 9 : 10}} width={window.innerWidth < 768 ? 80 : 120} />
+                            <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 9 : 10}} width={window.innerWidth < 768 ? 140 : 150} />
                             <RechartTooltip 
                               cursor={{fill: '#F9FAFB'}}
                               contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} 
