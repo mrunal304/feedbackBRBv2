@@ -97,11 +97,12 @@ export default function FeedbackForm() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-[520px]"
       >
-        <div className="text-center mb-4 pt-4 pb-2 max-[480px]:pt-3 max-[480px]:pb-1.5">
+        <div className="text-center mb-4 pt-[10px] pb-[6px] max-[480px]:pt-[8px] max-[480px]:pb-[4px]">
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="flex justify-center mb-2"
+            className="flex justify-center"
+            style={{ marginBottom: "4px" }}
           >
             <img 
               src="/logo_white_border.png" 
@@ -110,16 +111,16 @@ export default function FeedbackForm() {
             />
           </motion.div>
           <h1 
-            className="font-lilita text-[2.2rem] text-white tracking-[2px] uppercase text-center mt-1.5 mb-1 max-[480px]:text-[1.6rem]"
-            style={{ textShadow: "3px 3px 6px rgba(0,0,0,0.5)" }}
+            className="font-lilita text-[2.2rem] text-white tracking-[2px] uppercase text-center max-[480px]:text-[1.6rem]"
+            style={{ textShadow: "3px 3px 6px rgba(0,0,0,0.5)", marginTop: "4px", marginBottom: "2px" }}
           >
             BOMB ROLLS & BOWLS
           </h1>
-          <p className="text-[#FFD700] mt-0 mb-2 font-nunito text-[1.2rem] font-bold tracking-[1px] max-[480px]:text-[1rem]">We value your feedback</p>
+          <p className="text-[#FFD700] font-nunito text-[1.2rem] font-bold tracking-[1px] max-[480px]:text-[1rem]" style={{ marginBottom: "6px" }}>We value your feedback</p>
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-8 bg-white/20 rounded-full h-1.5 overflow-hidden">
+        <div className="bg-white/20 rounded-full h-1.5 overflow-hidden" style={{ marginTop: "6px" }}>
           <motion.div
             className="h-full bg-[#FFD700]"
             initial={{ width: "50%" }}
