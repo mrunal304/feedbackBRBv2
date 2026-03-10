@@ -230,7 +230,7 @@ export default function AdminDashboard() {
               data-testid="button-logout"
             >
               <LogOut className="w-4 h-4 flex-shrink-0" />
-              <span className="text-white">Sign Out</span>
+              <span className="text-white font-bold text-[19px]">Sign Out</span>
             </Button>
           </div>
         </aside>
