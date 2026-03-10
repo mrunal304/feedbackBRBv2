@@ -270,7 +270,7 @@ export default function FeedbackForm() {
                                 {label}
                               </FormLabel>
                               <FormControl>
-                                <div className="flex gap-2 mt-2">
+                                <div className="flex gap-2 max-[480px]:gap-2.5 mt-2">
                                   {[1, 2, 3, 4, 5].map((star) => (
                                     <button
                                       key={star}
@@ -278,10 +278,35 @@ export default function FeedbackForm() {
                                       onClick={() => field.onChange(star)}
                                       className={`star ${star <= field.value ? "star-selected" : "star-empty"}`}
                                       data-testid={`star-${key}-${star}`}
+                                      style={{
+                                        transition: "all 0.2s ease"
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform = "scale(1.2)";
+                                        e.currentTarget.style.color = "#FFC200";
+                                        const span = e.currentTarget.querySelector('span');
+                                        if (span) {
+                                          span.style.color = "#FFC200";
+                                          span.style.filter = "drop-shadow(0px 3px 5px rgba(255, 180, 0, 0.7))";
+                                        }
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = "scale(1)";
+                                        const span = e.currentTarget.querySelector('span');
+                                        if (span) {
+                                          span.style.color = star <= field.value ? "#FFD700" : "#D0D0D0";
+                                          span.style.filter = star <= field.value ? "drop-shadow(0px 2px 3px rgba(255, 180, 0, 0.5))" : "none";
+                                          span.style.opacity = star <= field.value ? "1" : "0.6";
+                                        }
+                                      }}
                                     >
                                       <span
                                         className="transition-colors duration-200"
-                                        style={{ color: star <= field.value ? "#FFD700" : "#E0E0E0" }}
+                                        style={{
+                                          color: star <= field.value ? "#FFD700" : "#D0D0D0",
+                                          filter: star <= field.value ? "drop-shadow(0px 2px 3px rgba(255, 180, 0, 0.5))" : "none",
+                                          opacity: star <= field.value ? 1 : 0.6
+                                        }}
                                       >
                                         ★
                                       </span>

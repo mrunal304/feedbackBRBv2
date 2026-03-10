@@ -124,46 +124,49 @@
 
 /* Star Rating Styles */
 .star, .star-filled, .star-empty, [class*="star"] {
-  font-size: 36px !important;
-  width: 36px !important;
-  height: 36px !important;
-  transition: transform 0.15s ease !important;
+  font-size: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+  cursor: pointer !important;
 }
 
 @media (max-width: 480px) {
   .star, .star-filled, .star-empty, [class*="star"] {
-    font-size: 30px !important;
-    width: 30px !important;
-    height: 30px !important;
+    font-size: 26px !important;
+    width: 26px !important;
+    height: 26px !important;
   }
 }
 
 .rating-question, [class*="question"], .question-label {
-  font-size: 18px !important;
+  font-size: 16px !important;
   font-weight: 600 !important;
 }
 
 @media (max-width: 480px) {
   .rating-question, [class*="question"], .question-label {
-    font-size: 15px !important;
+    font-size: 14px !important;
   }
 }
 
 .star:hover, [class*="star"]:hover {
-  transform: scale(1.15) !important;
+  transform: scale(1.2) !important;
+  transition: all 0.2s ease !important;
 }
 
 @keyframes starPop {
   0%   { transform: scale(1); }
-  40%  { transform: scale(1.3); }
-  70%  { transform: scale(0.9); }
+  50%  { transform: scale(1.35); }
   100% { transform: scale(1); }
 }
 
 .star-selected, .star-active, [class*="star"][class*="active"],
 [class*="star"][class*="selected"] {
-  animation: starPop 0.3s ease forwards;
+  animation: starPop 0.25s ease;
 }
