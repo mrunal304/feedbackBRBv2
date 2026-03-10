@@ -178,9 +178,9 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen bg-[#FDF8F6]">
       <Tabs defaultValue="analytics" className="flex w-full">
         {/* STEP 1: Left Sidebar */}
-        <aside className="w-[200px] bg-[#8B1A1A] flex flex-col fixed h-full z-50">
+        <aside className="w-[220px] bg-[#8B1A1A] flex flex-col fixed h-full z-50">
           <div className="px-4 pt-4">
-            <h1 className="text-white font-bold text-[16px]">Admin Panel</h1>
+            <h1 className="text-white font-bold text-[18px]">Admin Panel</h1>
           </div>
 
           <nav className="flex-1 px-0 space-y-0 mt-2">
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 ml-[200px] min-h-screen">
+        <main className="flex-1 ml-[220px] min-h-screen">
           <div className="p-8 max-w-7xl mx-auto space-y-8">
             <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
               {/* STEP 2: Overview Page Header */}
@@ -251,15 +251,13 @@ export default function AdminDashboard() {
                   { title: "RESPONSE RATE", value: `${analytics?.responseRate || 0}%`, icon: Phone, sub: "Customers contacted", color: "bg-purple-50 text-purple-600" }
                 ].map((stat, i) => (
                   <Card key={i} className="border-none shadow-sm rounded-[12px] overflow-hidden">
-                    <CardContent className="p-3">
-                      <div className="flex justify-between items-start mb-3">
-                        <span className="text-[11px] font-bold text-gray-400 tracking-wider whitespace-nowrap overflow-hidden">{stat.title}</span>
-                        <div className={`p-2 rounded-full flex-shrink-0 ${stat.color}`}>
-                          <stat.icon className="w-4 h-4" />
-                        </div>
+                    <CardContent className="p-4 space-y-3">
+                      <span className="text-[11px] font-semibold text-gray-500 tracking-widest uppercase block">{stat.title}</span>
+                      <div className={`w-10 h-10 p-2 rounded-full flex-shrink-0 ${stat.color} flex items-center justify-center`}>
+                        <stat.icon className="w-5 h-5" />
                       </div>
-                      <div className="text-[24px] font-bold text-[#3D2B1F] mb-1">{stat.value}</div>
-                      <div className="text-[11px] text-gray-400">{stat.sub}</div>
+                      <div className="text-[24px] font-bold text-[#3D2B1F]">{stat.value}</div>
+                      <div className="text-[11px] text-gray-500">{stat.sub}</div>
                     </CardContent>
                   </Card>
                 ))}

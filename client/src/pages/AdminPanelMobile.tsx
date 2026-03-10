@@ -175,7 +175,7 @@ export default function AdminPanelMobile() {
     <div className="flex flex-col min-h-screen bg-[#FDF8F6] pb-24">
       {/* Mobile Top Header */}
       <header className="sticky top-0 z-40 bg-[#8B1A1A] text-white px-4 py-4 flex items-center justify-between shadow-sm">
-        <h1 className="text-lg font-bold">Admin Panel</h1>
+        <h1 className="text-[18px] font-bold">Admin Panel</h1>
         <button
           onClick={() => setShowMenu(!showMenu)}
           className="p-2 hover:bg-white/10 rounded transition"
@@ -227,15 +227,13 @@ export default function AdminPanelMobile() {
                 { title: "RESPONSE RATE", value: `${analytics?.responseRate || 0}%`, icon: Phone, sub: "Customers contacted", color: "bg-purple-50 text-purple-600" }
               ].map((stat, i) => (
                 <Card key={i} className="border-none shadow-sm rounded-lg overflow-hidden">
-                  <CardContent className="p-3">
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="text-[11px] font-bold text-gray-400 tracking-wider whitespace-nowrap overflow-hidden">{stat.title}</span>
-                      <div className={`p-1.5 rounded-full flex-shrink-0 ${stat.color}`}>
-                        <stat.icon className="w-3 h-3" />
-                      </div>
+                  <CardContent className="p-3 space-y-2">
+                    <span className="text-[11px] font-semibold text-gray-500 tracking-widest uppercase block">{stat.title}</span>
+                    <div className={`w-8 h-8 p-1.5 rounded-full flex-shrink-0 ${stat.color} flex items-center justify-center`}>
+                      <stat.icon className="w-4 h-4" />
                     </div>
-                    <div className="text-[24px] font-bold text-[#3D2B1F] mb-1">{stat.value}</div>
-                    <div className="text-[11px] text-gray-400">{stat.sub}</div>
+                    <div className="text-[24px] font-bold text-[#3D2B1F]">{stat.value}</div>
+                    <div className="text-[11px] text-gray-500">{stat.sub}</div>
                   </CardContent>
                 </Card>
               ))}
