@@ -209,7 +209,7 @@ export default function AdminPanelMobile() {
             data-testid="button-logout"
           >
             <LogOut className="w-4 h-4 mr-3 flex-shrink-0" />
-            <span className="truncate">Sign Out</span>
+            <span className="text-white">Sign Out</span>
           </Button>
         </div>
       )}

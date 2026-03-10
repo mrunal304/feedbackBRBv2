@@ -187,19 +187,19 @@ export default function AdminDashboard() {
             <TabsList className="flex flex-col w-full bg-transparent h-auto p-0 space-y-0">
               <TabsTrigger
                 value="analytics"
-                className="w-full justify-start px-4 py-2.5 text-white text-[14px] data-[state=active]:bg-[#A52020] data-[state=active]:text-white data-[state=active]:rounded-lg hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none mx-2"
+                className="w-full justify-start px-4 py-2.5 text-white data-[state=active]:bg-[#A52020] data-[state=active]:text-white data-[state=active]:rounded-lg hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none mx-2"
                 data-testid="tab-analytics"
               >
                 <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
-                <span className="font-medium">Overview</span>
+                <span className="!text-[14px] !font-medium">Overview</span>
               </TabsTrigger>
               <TabsTrigger
                 value="feedback"
-                className="w-full justify-start px-4 py-2.5 text-white text-[14px] data-[state=active]:bg-[#A52020] data-[state=active]:text-white data-[state=active]:rounded-lg hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none mx-2"
+                className="w-full justify-start px-4 py-2.5 text-white data-[state=active]:bg-[#A52020] data-[state=active]:text-white data-[state=active]:rounded-lg hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none mx-2"
                 data-testid="tab-feedback"
               >
                 <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
-                <span className="font-medium">Feedback</span>
+                <span className="!text-[14px] !font-medium">Feedback</span>
               </TabsTrigger>
             </TabsList>
           </nav>
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
               data-testid="button-logout"
             >
               <LogOut className="w-4 h-4 mr-3 flex-shrink-0" />
-              <span className="truncate">Sign Out</span>
+              <span className="text-white">Sign Out</span>
             </Button>
           </div>
         </aside>
