@@ -460,54 +460,54 @@ export default function AdminPanelMobile() {
               <div className="space-y-3">
                 {filteredFeedback.map((fb) => (
                   <Card key={fb._id} className="border-none shadow-sm rounded-lg overflow-hidden">
-                    <CardContent className="p-3">
-                      <div className="space-y-2">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        {/* Row 1: Name + Phone on left | Status on right */}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
                             <p className="font-bold text-sm text-[#3D2B1F] capitalize">{fb.name}</p>
-                            <p className="text-sm text-gray-500">{fb.phone}</p>
+                            <p className="text-xs text-gray-600 font-medium">{fb.phone}</p>
                           </div>
-                          <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest ${fb.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
+                          <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest whitespace-nowrap flex-shrink-0 ${fb.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
                             {fb.contactedAt ? 'CONTACTED' : 'PENDING'}
                           </span>
                         </div>
 
-                        <div className="text-sm text-gray-600 space-y-1.5">
-                          <div className="flex items-center gap-2">
-                            {fb.location && <p className="font-medium">{fb.location}</p>}
-                            <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
-                              {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-500">{fb.visitDate} at {fb.visitTime}</p>
+                        {/* Row 2: Visit badge on left | Date & Time on right */}
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold flex-shrink-0 ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                            {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
+                          </span>
+                          <p className="text-xs text-gray-600 font-medium text-right">{fb.visitDate} {fb.visitTime}</p>
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                          <div className="flex items-center gap-0.5">
+                        {/* Row 3: Rating + Stars on left | Eye + Mark Contacted buttons on right */}
+                        <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100">
+                          <div className="flex items-center gap-1.5">
                             <span className="text-base font-bold text-[#3D2B1F]">
                               {isNaN(Number(getAverageRating(fb.ratings))) ? "N/A" : getAverageRating(fb.ratings)}
                             </span>
                             {!isNaN(Number(getAverageRating(fb.ratings))) && (
-                              <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xxs" />
+                              <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xs" />
                             )}
                           </div>
-                          <div className="flex gap-1">
+                          <div className="flex gap-2">
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-6 px-2 text-sm border-[#8B1A1A] text-[#8B1A1A]"
+                              className="h-11 w-11 px-0 flex items-center justify-center flex-shrink-0 border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5"
                               onClick={() => {
                                 setSelectedFeedback(fb);
                                 setIsDetailsOpen(true);
                               }}
                               data-testid={`button-view-details-${fb._id}`}
                             >
-                              <Eye className="w-3 h-3" />
+                              <Eye className="w-4 h-4" />
                             </Button>
                             {!fb.contactedAt && (
                               <Button
                                 size="sm"
-                                className="h-6 px-2 text-xs bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90"
+                                className="h-11 px-3 text-xs font-medium bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 flex-shrink-0"
                                 onClick={() => handleContactCustomer(fb)}
                                 data-testid={`button-contact-mark-${fb._id}`}
                               >
@@ -531,22 +531,14 @@ export default function AdminPanelMobile() {
         <DialogContent className="max-w-sm bg-[#FDF8F6] border-none overflow-hidden p-0 rounded-2xl flex flex-col max-h-[90vh]">
           {selectedFeedback && (
             <>
-              {/* Header */}
-              <div className="bg-[#8B1A1A] p-4 text-white relative flex-shrink-0">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 pr-8">
-                    <h2 className="text-xl font-bold">Feedback Details</h2>
-                    <p className="text-sm text-white/70 mt-1">
-                      {format(new Date(selectedFeedback.createdAt), 'MMM d, yyyy • h:mm a')}
-                    </p>
-                  </div>
-                  <DialogClose className="absolute top-4 right-4 p-1 text-white hover:bg-white/10 rounded transition" data-testid="button-close-details">
-                    <X className="w-6 h-6" />
-                  </DialogClose>
-                </div>
+              {/* Close Button - Sticky at top right */}
+              <div className="absolute top-4 right-4 z-50">
+                <DialogClose className="p-1 text-gray-600 hover:bg-gray-100 rounded transition" data-testid="button-close-details">
+                  <X className="w-6 h-6" />
+                </DialogClose>
               </div>
 
-              {/* Scrollable Content */}
+              {/* Scrollable Content - starts from top */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-28">
                 {/* Section 1: Customer Info */}
                 <div className="bg-white rounded-lg shadow-sm p-4 space-y-3">
@@ -627,14 +619,14 @@ export default function AdminPanelMobile() {
               </div>
 
               {/* Sticky Footer */}
-              <div className="bg-white border-t border-gray-200 p-4 flex items-center justify-between gap-3 flex-shrink-0">
-                <span className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap ${selectedFeedback.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
+              <div className="bg-white border-t border-gray-200 p-4 flex items-center justify-between gap-3 flex-shrink-0 min-h-[60px]">
+                <span className={`px-3 py-2 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap flex-shrink-0 ${selectedFeedback.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
                   {selectedFeedback.contactedAt ? 'Contacted' : 'Pending'}
                 </span>
                 {!selectedFeedback.contactedAt && (
                   <Button 
                     onClick={() => handleContactCustomer(selectedFeedback)}
-                    className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 text-sm flex-1"
+                    className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 text-sm h-11 flex-1"
                     data-testid={`button-mark-contacted-modal-${selectedFeedback._id}`}
                   >
                     Mark as Contacted
