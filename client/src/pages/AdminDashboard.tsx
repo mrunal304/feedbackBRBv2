@@ -542,12 +542,12 @@ export default function AdminDashboard() {
                             </div>
                           </TableCell>
                           <TableCell className="py-2.5">
-                            <div className="flex flex-col gap-1.5">
-                              <div className="text-base font-bold text-[#3D2B1F]">
+                            <div className="flex flex-col gap-0.5 items-center">
+                              <div className="text-sm font-bold text-[#3D2B1F]">
                                 {isNaN(Number(getAverageRating(fb.ratings))) ? "N/A" : getAverageRating(fb.ratings)}
                               </div>
                               {!isNaN(Number(getAverageRating(fb.ratings))) && (
-                                <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xs" />
+                                <RatingStars rating={Number(getAverageRating(fb.ratings))} size="compact" />
                               )}
                             </div>
                           </TableCell>

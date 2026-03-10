@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 
 interface RatingStarsProps {
   rating: number;
-  size?: "xs" | "sm" | "md";
+  size?: "xs" | "sm" | "md" | "compact";
   showLabel?: boolean;
   className?: string;
 }
@@ -11,6 +11,7 @@ const sizeMap = {
   xs: "w-2.5 h-2.5",
   sm: "w-3 h-3",
   md: "w-4 h-4",
+  compact: "w-3.5 h-3.5",
 };
 
 export default function RatingStars({
@@ -24,7 +25,7 @@ export default function RatingStars({
 
   return (
     <div className={`flex items-center gap-0.5 ${className}`}>
-      <div className="flex gap-0.5">
+      <div className="flex gap-0.25">
         {[1, 2, 3, 4, 5].map((starIndex) => {
           const fillPercentage = Math.max(
             0,
