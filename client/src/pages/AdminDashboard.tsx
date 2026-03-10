@@ -178,16 +178,16 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen bg-[#FDF8F6]">
       <Tabs defaultValue="analytics" className="flex w-full">
         {/* STEP 1: Left Sidebar */}
-        <aside className="w-[240px] bg-[#8B1A1A] flex flex-col fixed h-full z-50">
-          <div className="px-4 py-4">
-            <h1 className="text-white font-bold text-[15px]">Admin Panel</h1>
+        <aside className="w-[200px] bg-[#8B1A1A] flex flex-col fixed h-full z-50">
+          <div className="px-4 pt-4">
+            <h1 className="text-white font-bold text-[16px]">Admin Panel</h1>
           </div>
 
-          <nav className="flex-1 px-0 space-y-0 mt-0">
+          <nav className="flex-1 px-0 space-y-0 mt-2">
             <TabsList className="flex flex-col w-full bg-transparent h-auto p-0 space-y-0">
               <TabsTrigger
                 value="analytics"
-                className="w-full justify-start px-4 py-2.5 text-white text-[14px] data-[state=active]:bg-[#A52020] data-[state=active]:text-white hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none"
+                className="w-full justify-start px-4 py-2.5 text-white text-[14px] data-[state=active]:bg-[#A52020] data-[state=active]:text-white data-[state=active]:rounded-lg hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none mx-2"
                 data-testid="tab-analytics"
               >
                 <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
@@ -195,7 +195,7 @@ export default function AdminDashboard() {
               </TabsTrigger>
               <TabsTrigger
                 value="feedback"
-                className="w-full justify-start px-4 py-2.5 text-white text-[14px] data-[state=active]:bg-[#A52020] data-[state=active]:text-white hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none"
+                className="w-full justify-start px-4 py-2.5 text-white text-[14px] data-[state=active]:bg-[#A52020] data-[state=active]:text-white data-[state=active]:rounded-lg hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none mx-2"
                 data-testid="tab-feedback"
               >
                 <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 ml-[240px] min-h-screen">
+        <main className="flex-1 ml-[200px] min-h-screen">
           <div className="p-8 max-w-7xl mx-auto space-y-8">
             <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
               {/* STEP 2: Overview Page Header */}
@@ -252,8 +252,8 @@ export default function AdminDashboard() {
                 ].map((stat, i) => (
                   <Card key={i} className="border-none shadow-sm rounded-[12px] overflow-hidden">
                     <CardContent className="p-3">
-                      <div className="flex justify-between items-start mb-4">
-                        <span className="text-[11px] font-bold text-gray-400 tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">{stat.title}</span>
+                      <div className="flex justify-between items-start mb-3">
+                        <span className="text-[11px] font-bold text-gray-400 tracking-wider whitespace-nowrap overflow-hidden">{stat.title}</span>
                         <div className={`p-2 rounded-full flex-shrink-0 ${stat.color}`}>
                           <stat.icon className="w-4 h-4" />
                         </div>
