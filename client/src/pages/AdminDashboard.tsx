@@ -180,7 +180,7 @@ export default function AdminDashboard() {
         {/* STEP 1: Left Sidebar */}
         <aside className="w-[220px] bg-[#8B1A1A] flex flex-col fixed h-full z-50">
           <div className="px-4 pt-4">
-            <h1 className="text-white font-bold text-[18px]">Admin Panel</h1>
+            <h1 className="text-white font-bold text-[19px]">Admin Panel</h1>
           </div>
 
           <nav className="flex-1 px-0 space-y-0 mt-2">
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
                 data-testid="tab-analytics"
               >
                 <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
-                <span className="!text-[14px] !font-medium">Overview</span>
+                <span className="!text-[17px] !font-medium">Overview</span>
               </TabsTrigger>
               <TabsTrigger
                 value="feedback"
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
                 data-testid="tab-feedback"
               >
                 <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
-                <span className="!text-[14px] !font-medium">Feedback</span>
+                <span className="!text-[17px] !font-medium">Feedback</span>
               </TabsTrigger>
             </TabsList>
           </nav>
@@ -216,7 +216,7 @@ export default function AdminDashboard() {
             </div>
             <Button
               variant="ghost"
-              className="w-full justify-start text-white hover:bg-white/10 px-4 py-2 h-auto text-[13px]"
+              className="w-full justify-start text-white hover:bg-white/10 px-4 py-2 h-auto text-[19px]"
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
             >
