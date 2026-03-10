@@ -29,6 +29,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  TooltipProps,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,52 @@ import { format } from "date-fns";
 import type { Feedback, Analytics } from "@shared/schema";
 
 const CHART_COLORS = ["#8B1A1A", "#f5a623", "#22a34a", "#b4635d", "#f4d3d1"];
+
+const formatCamelCase = (str: string): string => {
+  return str
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (char) => char.toUpperCase())
+    .trim();
+};
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload as any;
+    const dateStr = data?.date || label || 'Date';
+    const formattedDate = typeof dateStr === 'string' 
+      ? (() => {
+          try {
+            const d = new Date(dateStr + 'T00:00:00');
+            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+            const monthDay = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            return `${dayName}, ${monthDay}`;
+          } catch {
+            return dateStr;
+          }
+        })()
+      : dateStr;
+
+    return (
+      <div style={{ 
+        backgroundColor: '#fff', 
+        padding: '8px 12px', 
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+      }}>
+        <p style={{ margin: '0 0 4px 0', fontSize: '12px', fontWeight: 'bold', color: '#3D2B1F' }}>
+          {formattedDate}
+        </p>
+        {payload.map((entry, index) => (
+          <p key={index} style={{ margin: '2px 0', fontSize: '12px', color: entry.color }}>
+            {formatCamelCase(entry.dataKey)}: {entry.value}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function AdminDashboard() {
   const [, navigate] = useLocation();
@@ -309,14 +356,18 @@ export default function AdminDashboard() {
                               tick={{fill: '#9CA3AF', fontSize: window.innerWidth < 768 ? 13 : 14}} 
                               dx={-10} 
                             />
-                            <RechartTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                            <Legend iconType="circle" wrapperStyle={{fontSize: window.innerWidth < 768 ? '13px' : '14px'}} />
-                            <Line type="monotone" dataKey="foodTaste" stroke={CHART_COLORS[0]} strokeWidth={2} dot={false} />
-                            <Line type="monotone" dataKey="foodTemperature" stroke={CHART_COLORS[1]} strokeWidth={2} dot={false} />
-                            <Line type="monotone" dataKey="portionSize" stroke={CHART_COLORS[2]} strokeWidth={2} dot={false} />
-                            <Line type="monotone" dataKey="valueForMoney" stroke={CHART_COLORS[3]} strokeWidth={2} dot={false} />
-                            <Line type="monotone" dataKey="presentation" stroke={CHART_COLORS[4]} strokeWidth={2} dot={false} />
-                            <Line type="monotone" dataKey="overallService" stroke="#f8c216" strokeWidth={2} dot={false} />
+                            <RechartTooltip content={<CustomTooltip />} />
+                            <Legend 
+                              iconType="circle" 
+                              wrapperStyle={{fontSize: window.innerWidth < 768 ? '13px' : '14px'}}
+                              formatter={(value) => formatCamelCase(value)}
+                            />
+                            <Line type="monotone" dataKey="foodTaste" name="Food Taste" stroke={CHART_COLORS[0]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="foodTemperature" name="Food Temperature" stroke={CHART_COLORS[1]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="portionSize" name="Portion Size" stroke={CHART_COLORS[2]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="valueForMoney" name="Value For Money" stroke={CHART_COLORS[3]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="presentation" name="Presentation" stroke={CHART_COLORS[4]} strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="overallService" name="Overall Service" stroke="#f8c216" strokeWidth={2} dot={false} />
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
