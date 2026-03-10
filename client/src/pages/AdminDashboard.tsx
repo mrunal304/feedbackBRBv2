@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
+import RatingStars from "@/components/RatingStars";
 import {
   LineChart,
   Line,
@@ -560,16 +561,7 @@ export default function AdminDashboard() {
                                 {isNaN(Number(getAverageRating(fb.ratings))) ? "N/A" : getAverageRating(fb.ratings)}
                               </div>
                               {!isNaN(Number(getAverageRating(fb.ratings))) && (
-                                <div className="flex gap-0.5">
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star
-                                      key={star}
-                                      className={`w-2.5 h-2.5 ${
-                                        star <= Math.round(Number(getAverageRating(fb.ratings))) ? "fill-amber-400 text-amber-400" : "text-gray-200"
-                                      }`}
-                                    />
-                                  ))}
-                                </div>
+                                <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xs" />
                               )}
                             </div>
                           </TableCell>
@@ -678,16 +670,7 @@ export default function AdminDashboard() {
                           <div className="flex items-center gap-1">
                             {!isNaN(Number(getAverageRating(fb.ratings))) && (
                               <>
-                                <div className="flex gap-0.5">
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star
-                                      key={star}
-                                      className={`w-2.5 h-2.5 ${
-                                        star <= Math.round(Number(getAverageRating(fb.ratings))) ? "fill-amber-400 text-amber-400" : "text-gray-200"
-                                      }`}
-                                    />
-                                  ))}
-                                </div>
+                                <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xs" />
                                 <span className="font-bold text-base text-[#3D2B1F] ml-1">{getAverageRating(fb.ratings)}</span>
                               </>
                             )}
@@ -793,7 +776,7 @@ export default function AdminDashboard() {
                                 </span>
                                 <div className="flex items-center gap-1">
                                   <span className={`text-sm font-bold ${value <= 2 ? 'text-red-500' : 'text-[#3D2B1F]'}`}>{value}</span>
-                                  <Star className={`w-3 h-3 ${value <= 2 ? 'fill-red-500 text-red-500' : 'fill-amber-400 text-amber-400'}`} />
+                                  <RatingStars rating={value} size="xs" />
                                 </div>
                               </div>
                             ))}
