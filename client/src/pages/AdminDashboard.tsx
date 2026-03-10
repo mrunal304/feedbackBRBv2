@@ -530,11 +530,11 @@ export default function AdminDashboard() {
                     ) : (
                       filteredFeedback.map((fb) => (
                         <TableRow key={fb._id} className="border-b border-gray-100 hover:bg-gray-50/30 transition-colors">
-                          <TableCell className="py-4">
+                          <TableCell className="py-2.5">
                             <div className="flex items-center gap-3">
                               <div>
-                                <p className="font-bold text-[#3D2B1F]">{fb.name}</p>
-                                <p className="text-xs text-gray-500">{fb.phone}</p>
+                                <p className="font-bold text-sm text-[#3D2B1F]">{fb.name}</p>
+                                <p className="text-sm text-gray-500">{fb.phone}</p>
                               </div>
                               <a
                                 href={`tel:${fb.phone}`}
@@ -546,15 +546,15 @@ export default function AdminDashboard() {
                               </a>
                             </div>
                           </TableCell>
-                          <TableCell className="py-4">
-                            <div className="text-xs text-gray-600 space-y-0.5">
+                          <TableCell className="py-2.5">
+                            <div className="text-sm text-gray-600 space-y-0.5">
                               <p className="font-medium text-[#3D2B1F]">{fb.location}</p>
                               <p className="capitalize">{(fb.visitType || "").replace('_', ' ')}</p>
                             </div>
                           </TableCell>
-                          <TableCell className="py-4">
-                            <div className="flex flex-col gap-1">
-                              <div className="text-sm font-bold text-[#3D2B1F]">
+                          <TableCell className="py-2.5">
+                            <div className="flex flex-col gap-1.5">
+                              <div className="text-base font-bold text-[#3D2B1F]">
                                 {isNaN(Number(getAverageRating(fb.ratings))) ? "N/A" : getAverageRating(fb.ratings)}
                               </div>
                               {!isNaN(Number(getAverageRating(fb.ratings))) && (
@@ -562,7 +562,7 @@ export default function AdminDashboard() {
                                   {[1, 2, 3, 4, 5].map((star) => (
                                     <Star
                                       key={star}
-                                      className={`w-3 h-3 ${
+                                      className={`w-2.5 h-2.5 ${
                                         star <= Math.round(Number(getAverageRating(fb.ratings))) ? "fill-amber-400 text-amber-400" : "text-gray-200"
                                       }`}
                                     />
@@ -571,12 +571,12 @@ export default function AdminDashboard() {
                               )}
                             </div>
                           </TableCell>
-                          <TableCell className="py-4 max-w-[200px]">
+                          <TableCell className="py-2.5 max-w-[200px]">
                             {fb.comments ? (
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <p className="text-xs text-gray-500 italic cursor-help line-clamp-1">
+                                    <p className="text-sm text-gray-500 italic cursor-help line-clamp-1">
                                       "{fb.comments.length > 20 ? fb.comments.substring(0, 20) + "..." : fb.comments}"
                                     </p>
                                   </TooltipTrigger>
@@ -586,23 +586,23 @@ export default function AdminDashboard() {
                                 </Tooltip>
                               </TooltipProvider>
                             ) : (
-                              <p className="text-xs text-gray-500 italic">-</p>
+                              <p className="text-sm text-gray-500 italic">-</p>
                             )}
                           </TableCell>
-                          <TableCell className="py-4">
-                            <div className="text-xs text-gray-500 whitespace-nowrap">
+                          <TableCell className="py-2.5">
+                            <div className="text-sm text-gray-500 whitespace-nowrap">
                               <div className="font-medium text-[#3D2B1F] mb-0.5">{fb.visitDate}</div>
                               <div>{fb.visitTime}</div>
                             </div>
                           </TableCell>
-                          <TableCell className="py-4">
+                          <TableCell className="py-2.5">
                             {fb.status === "contacted" ? (
-                              <span className="text-xs font-bold text-green-600 uppercase tracking-tighter">CONTACTED</span>
+                              <span className="text-sm font-bold text-green-600 uppercase tracking-tighter">CONTACTED</span>
                             ) : (
-                              <span className="text-xs font-bold text-[#8B1A1A] uppercase tracking-tighter">PENDING</span>
+                              <span className="text-sm font-bold text-[#8B1A1A] uppercase tracking-tighter">PENDING</span>
                             )}
                           </TableCell>
-                          <TableCell className="py-4">
+                          <TableCell className="py-2.5">
                             <div className="flex items-center gap-2">
                               <Button
                                 size="sm"
@@ -664,13 +664,13 @@ export default function AdminDashboard() {
                             {fb.status === "contacted" ? 'CONTACTED' : 'PENDING'}
                           </div>
                         </div>
-                        <p className="text-xs text-white/80">{fb.phone}</p>
+                        <p className="text-sm text-white/80">{fb.phone}</p>
                       </div>
                       
                       {/* Content */}
                       <div className="p-4 space-y-2">
                         {/* Visit Type and Rating and Date on same line */}
-                        <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-600 capitalize font-medium">{(fb.visitType || "").replace('_', ' ')}</span>
                           <div className="flex items-center gap-1">
                             {!isNaN(Number(getAverageRating(fb.ratings))) && (
@@ -679,22 +679,22 @@ export default function AdminDashboard() {
                                   {[1, 2, 3, 4, 5].map((star) => (
                                     <Star
                                       key={star}
-                                      className={`w-3 h-3 ${
+                                      className={`w-2.5 h-2.5 ${
                                         star <= Math.round(Number(getAverageRating(fb.ratings))) ? "fill-amber-400 text-amber-400" : "text-gray-200"
                                       }`}
                                     />
                                   ))}
                                 </div>
-                                <span className="font-bold text-[#3D2B1F] ml-1">{getAverageRating(fb.ratings)}</span>
+                                <span className="font-bold text-base text-[#3D2B1F] ml-1">{getAverageRating(fb.ratings)}</span>
                               </>
                             )}
                           </div>
-                          <span className="text-gray-500">{fb.visitDate}</span>
+                          <span className="text-gray-500 font-medium">{fb.visitDate}</span>
                         </div>
 
                         {/* Comments */}
                         {fb.comments && (
-                          <div className="bg-gray-50 p-2 rounded text-xs text-gray-600 italic line-clamp-2">
+                          <div className="bg-gray-50 p-2 rounded text-sm text-gray-600 italic line-clamp-2">
                             "{fb.comments}"
                           </div>
                         )}
@@ -703,7 +703,7 @@ export default function AdminDashboard() {
                         <div className="pt-2 grid grid-cols-2 gap-2">
                           <Button
                             size="sm"
-                            className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 h-8 text-xs"
+                            className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 h-8 text-sm"
                             onClick={() => {
                               setSelectedFeedback(fb);
                               setIsDetailsOpen(true);
@@ -717,7 +717,7 @@ export default function AdminDashboard() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5 h-8 text-xs"
+                              className="border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5 h-8 text-sm"
                               onClick={() => handleContactCustomer(fb)}
                               data-testid={`button-contact-mark-${fb._id}`}
                             >
@@ -725,7 +725,7 @@ export default function AdminDashboard() {
                             </Button>
                           )}
                           {fb.contactedAt && (
-                            <div className="col-span-2 text-center text-[10px] text-green-600 font-medium">
+                            <div className="col-span-2 text-center text-sm text-green-600 font-medium">
                               ✓ Contacted
                             </div>
                           )}

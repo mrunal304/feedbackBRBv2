@@ -475,9 +475,9 @@ export default function AdminPanelMobile() {
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <p className="font-bold text-sm text-[#3D2B1F]">{fb.name}</p>
-                            <p className="text-xs text-gray-500">{fb.phone}</p>
+                            <p className="text-sm text-gray-500">{fb.phone}</p>
                           </div>
-                          <div className="text-xs font-bold uppercase tracking-tight">
+                          <div className="text-sm font-bold uppercase tracking-tight">
                             {fb.contactedAt ? (
                               <span className="text-green-600">CONTACTED</span>
                             ) : (
@@ -486,14 +486,14 @@ export default function AdminPanelMobile() {
                           </div>
                         </div>
 
-                        <div className="text-xs text-gray-600">
+                        <div className="text-sm text-gray-600">
                           <p className="font-medium">{fb.location || "Bomb Rolls and Bowls"} • <span className="capitalize">{fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}</span></p>
                           <p>{fb.visitDate} at {fb.visitTime}</p>
                         </div>
 
                         <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                           <div className="flex items-center gap-1">
-                            <span className="text-sm font-bold text-[#3D2B1F]">
+                            <span className="text-base font-bold text-[#3D2B1F]">
                               {isNaN(Number(getAverageRating(fb.ratings))) ? "N/A" : getAverageRating(fb.ratings)}
                             </span>
                             {!isNaN(Number(getAverageRating(fb.ratings))) && (
@@ -513,7 +513,7 @@ export default function AdminPanelMobile() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-6 px-2 text-xs border-[#8B1A1A] text-[#8B1A1A]"
+                              className="h-6 px-2 text-sm border-[#8B1A1A] text-[#8B1A1A]"
                               onClick={() => {
                                 setSelectedFeedback(fb);
                                 setIsDetailsOpen(true);
@@ -526,7 +526,7 @@ export default function AdminPanelMobile() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-6 px-2 text-xs border-gray-200 text-gray-400"
+                                className="h-6 px-2 text-sm border-gray-200 text-gray-400"
                                 onClick={() => handleContactCustomer(fb)}
                                 data-testid={`button-contact-mark-${fb._id}`}
                               >
