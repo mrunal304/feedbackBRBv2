@@ -296,36 +296,45 @@ export default function AdminPanelMobile() {
             {/* Charts - Full Width */}
             <Card className="border-none shadow-sm rounded-lg">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base font-bold text-[#3D2B1F]">Weekly Trends</CardTitle>
+                <CardTitle className="text-base font-bold text-[#3D2B1F]">Weekly Rating Trends</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-48">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={analytics?.weeklyTrends || []}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
-                      <XAxis 
-                        dataKey="date" 
-                        axisLine={false} 
-                        tickLine={false} 
-                        tick={{fill: '#9CA3AF', fontSize: 13}} 
-                        dy={5}
-                        tickFormatter={(date, index) => {
-                          return parseChartDate(date, index);
-                        }}
-                      />
-                      <YAxis domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 13}} dx={-5} width={40} />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend 
-                        iconType="circle" 
-                        wrapperStyle={{fontSize: '13px'}}
-                        formatter={(value) => formatCamelCase(value)}
-                      />
-                      <Line type="monotone" dataKey="foodTaste" name="Food Taste" stroke={CHART_COLORS[0]} strokeWidth={2} dot={false} />
-                      <Line type="monotone" dataKey="foodTemperature" name="Food Temperature" stroke={CHART_COLORS[1]} strokeWidth={2} dot={false} />
-                      <Line type="monotone" dataKey="portionSize" name="Portion Size" stroke={CHART_COLORS[2]} strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
+                {(analytics?.weeklyTrends || []).length === 0 ? (
+                  <div className="h-[250px] flex items-center justify-center text-gray-400">
+                    <p>No data available for this week</p>
+                  </div>
+                ) : (
+                  <div className="w-full h-[250px] overflow-x-auto">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={300}>
+                      <LineChart data={analytics?.weeklyTrends || []}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+                        <XAxis 
+                          dataKey="date" 
+                          axisLine={false} 
+                          tickLine={false} 
+                          tick={{fill: '#9CA3AF', fontSize: 13}} 
+                          dy={10}
+                          tickFormatter={(date, index) => {
+                            return parseChartDate(date, index);
+                          }}
+                        />
+                        <YAxis domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 13}} dx={-10} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend 
+                          iconType="circle" 
+                          wrapperStyle={{fontSize: '13px'}}
+                          formatter={(value) => formatCamelCase(value)}
+                        />
+                        <Line type="monotone" dataKey="foodTaste" name="Food Taste" stroke={CHART_COLORS[0]} strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="foodTemperature" name="Food Temperature" stroke={CHART_COLORS[1]} strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="portionSize" name="Portion Size" stroke={CHART_COLORS[2]} strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="valueForMoney" name="Value For Money" stroke={CHART_COLORS[3]} strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="presentation" name="Presentation" stroke={CHART_COLORS[4]} strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="overallService" name="Overall Service" stroke="#f8c216" strokeWidth={2} dot={false} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -334,24 +343,33 @@ export default function AdminPanelMobile() {
                 <CardTitle className="text-base font-bold text-[#3D2B1F]">Category Performance</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-48">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart layout="vertical" data={analytics?.categoryPerformance || []}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F0F0F0" />
-                      <XAxis type="number" domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 9}} dy={5} />
-                      <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{fill: '#6B7280', fontSize: 13, fontWeight: 500}} width={140} />
-                      <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                      <Bar dataKey="average" radius={[0, 4, 4, 0]} barSize={20}>
-                        {(analytics?.categoryPerformance || []).map((entry: any, index: number) => {
-                          let color = "#cc2200";
-                          if (entry.average >= 4.0) color = "#22a34a";
-                          else if (entry.average >= 3.0) color = "#f5a623";
-                          return <Cell key={`cell-${index}`} fill={color} />;
-                        })}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+                {(analytics?.categoryPerformance || []).length === 0 ? (
+                  <div className="h-[250px] flex items-center justify-center text-gray-400">
+                    <p>No data available</p>
+                  </div>
+                ) : (
+                  <div className="w-full h-[250px] overflow-x-auto">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={300}>
+                      <BarChart layout="vertical" data={analytics?.categoryPerformance || []}>
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F0F0F0" />
+                        <XAxis type="number" domain={[0, 5]} axisLine={false} tickLine={false} tick={{fill: '#9CA3AF', fontSize: 12}} dy={10} />
+                        <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{fill: '#6B7280', fontSize: 13, fontWeight: 500}} width={150} />
+                        <Tooltip 
+                          cursor={{fill: '#F9FAFB'}}
+                          contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} 
+                        />
+                        <Bar dataKey="average" radius={[0, 4, 4, 0]} barSize={30}>
+                          {(analytics?.categoryPerformance || []).map((entry: any, index: number) => {
+                            let color = "#cc2200";
+                            if (entry.average >= 4.0) color = "#22a34a";
+                            else if (entry.average >= 3.0) color = "#f5a623";
+                            return <Cell key={`cell-${index}`} fill={color} />;
+                          })}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -360,7 +378,7 @@ export default function AdminPanelMobile() {
                 <CardTitle className="text-base font-bold text-[#3D2B1F]">Feedback Volume</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-48">
+                <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -370,8 +388,8 @@ export default function AdminPanelMobile() {
                         ]}
                         cx="50%"
                         cy="50%"
-                        innerRadius={40}
-                        outerRadius={60}
+                        innerRadius={60}
+                        outerRadius={80}
                         paddingAngle={5}
                         dataKey="value"
                       >
@@ -379,6 +397,7 @@ export default function AdminPanelMobile() {
                         <Cell fill="#8B1A1A" />
                       </Pie>
                       <Tooltip />
+                      <Legend />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
