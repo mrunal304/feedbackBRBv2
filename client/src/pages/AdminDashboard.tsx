@@ -533,12 +533,12 @@ export default function AdminDashboard() {
                           <TableCell className="py-2.5">
                             <div className="flex items-center gap-3">
                               <div>
-                                <p className="font-bold text-sm text-[#3D2B1F]">{fb.name}</p>
+                                <p className="font-bold text-sm text-[#3D2B1F] capitalize">{fb.name}</p>
                                 <p className="text-sm text-gray-500">{fb.phone}</p>
                               </div>
                               <a
                                 href={`tel:${fb.phone}`}
-                                className="w-8 h-8 rounded-full bg-[#fdf0f0] flex items-center justify-center text-[#8B1A1A] hover:bg-[#8B1A1A] hover:text-white transition-colors shadow-sm"
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-[#8B1A1A] hover:text-[#8B1A1A]/70 transition-colors"
                                 title={`Call ${fb.name}`}
                                 data-testid={`button-call-${fb._id}`}
                               >
@@ -620,8 +620,7 @@ export default function AdminDashboard() {
                               {!fb.contactedAt && (
                                 <Button
                                   size="sm"
-                                  variant="outline"
-                                  className="h-8 border-gray-200 text-gray-400 hover:bg-gray-50 px-3"
+                                  className="h-8 bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 px-3"
                                   onClick={() => handleContactCustomer(fb)}
                                   data-testid={`button-contact-mark-${fb._id}`}
                                 >
@@ -650,10 +649,10 @@ export default function AdminDashboard() {
                       <div className="bg-[#8B1A1A] px-4 py-3">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <p className="font-bold text-white text-sm">{fb.name}</p>
+                            <p className="font-bold text-white text-sm capitalize">{fb.name}</p>
                             <a
                               href={`tel:${fb.phone}`}
-                              className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-colors flex-shrink-0"
+                              className="w-6 h-6 rounded-full flex items-center justify-center text-white hover:text-white/70 transition-colors flex-shrink-0"
                               title={`Call ${fb.name}`}
                               data-testid={`button-call-${fb._id}`}
                             >
@@ -716,8 +715,7 @@ export default function AdminDashboard() {
                           {!fb.contactedAt && (
                             <Button
                               size="sm"
-                              variant="outline"
-                              className="border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5 h-8 text-sm"
+                              className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 h-8 text-sm"
                               onClick={() => handleContactCustomer(fb)}
                               data-testid={`button-contact-mark-${fb._id}`}
                             >
@@ -757,7 +755,7 @@ export default function AdminDashboard() {
                           <div className="space-y-4">
                             <div>
                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">CUSTOMER NAME</label>
-                              <p className="text-lg font-bold text-[#3D2B1F]">{selectedFeedback.name}</p>
+                              <p className="text-lg font-bold text-[#3D2B1F] capitalize">{selectedFeedback.name}</p>
                             </div>
                             <div>
                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">PHONE NUMBER</label>

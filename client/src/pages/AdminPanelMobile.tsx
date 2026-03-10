@@ -474,7 +474,7 @@ export default function AdminPanelMobile() {
                       <div className="space-y-2">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <p className="font-bold text-sm text-[#3D2B1F]">{fb.name}</p>
+                            <p className="font-bold text-sm text-[#3D2B1F] capitalize">{fb.name}</p>
                             <p className="text-sm text-gray-500">{fb.phone}</p>
                           </div>
                           <div className="text-sm font-bold uppercase tracking-tight">
@@ -525,8 +525,7 @@ export default function AdminPanelMobile() {
                             {!fb.contactedAt && (
                               <Button
                                 size="sm"
-                                variant="outline"
-                                className="h-6 px-2 text-sm border-gray-200 text-gray-400"
+                                className="h-6 px-2 text-sm bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90"
                                 onClick={() => handleContactCustomer(fb)}
                                 data-testid={`button-contact-mark-${fb._id}`}
                               >
@@ -565,7 +564,7 @@ export default function AdminPanelMobile() {
                 <div className="space-y-3">
                   <div>
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">CUSTOMER NAME</label>
-                    <p className="text-base font-bold text-[#3D2B1F]">{selectedFeedback.name}</p>
+                    <p className="text-base font-bold text-[#3D2B1F] capitalize">{selectedFeedback.name}</p>
                   </div>
                   <div>
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">PHONE NUMBER</label>
