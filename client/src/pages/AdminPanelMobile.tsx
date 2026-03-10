@@ -472,7 +472,7 @@ export default function AdminPanelMobile() {
 
                         <div className="text-sm text-gray-600 space-y-1.5">
                           <div className="flex items-center gap-2">
-                            <p className="font-medium">{fb.location || "Bomb Rolls and Bowls"}</p>
+                            {fb.location && <p className="font-medium">{fb.location}</p>}
                             <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
                               {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
                             </span>
@@ -481,12 +481,12 @@ export default function AdminPanelMobile() {
                         </div>
 
                         <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-0.5">
                             <span className="text-base font-bold text-[#3D2B1F]">
                               {isNaN(Number(getAverageRating(fb.ratings))) ? "N/A" : getAverageRating(fb.ratings)}
                             </span>
                             {!isNaN(Number(getAverageRating(fb.ratings))) && (
-                              <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xs" />
+                              <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xxs" />
                             )}
                           </div>
                           <div className="flex gap-1">
@@ -505,11 +505,11 @@ export default function AdminPanelMobile() {
                             {!fb.contactedAt && (
                               <Button
                                 size="sm"
-                                className="h-6 px-2 text-sm bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90"
+                                className="h-6 px-2 text-xs bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90"
                                 onClick={() => handleContactCustomer(fb)}
                                 data-testid={`button-contact-mark-${fb._id}`}
                               >
-                                Mark
+                                Mark Contacted
                               </Button>
                             )}
                           </div>
@@ -569,18 +569,18 @@ export default function AdminPanelMobile() {
                         <span className="text-xs font-medium text-gray-600 capitalize">
                           {key.replace(/([A-Z])/g, ' $1').trim()}
                         </span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-0.5">
                           <span className={`text-xs font-bold ${value <= 2 ? 'text-red-500' : 'text-[#3D2B1F]'}`}>{value}</span>
-                          <RatingStars rating={value} size="xs" />
+                          <RatingStars rating={value} size="xxs" />
                         </div>
                       </div>
                     ))}
                   </div>
                   <div className="bg-white p-3 rounded-lg shadow-sm flex items-center justify-between border-2 border-[#8B1A1A]/10 mt-2">
                     <span className="font-bold text-xs text-[#3D2B1F]">OVERALL AVG</span>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5">
                       <span className="text-lg font-bold text-[#8B1A1A]">{getAverageRating(selectedFeedback.ratings)}</span>
-                      <RatingStars rating={Number(getAverageRating(selectedFeedback.ratings))} size="xs" />
+                      <RatingStars rating={Number(getAverageRating(selectedFeedback.ratings))} size="xxs" />
                     </div>
                   </div>
                 </div>

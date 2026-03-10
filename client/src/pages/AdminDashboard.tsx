@@ -653,10 +653,10 @@ export default function AdminDashboard() {
                           <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
                             {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
                           </span>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-0.5">
                             {!isNaN(Number(getAverageRating(fb.ratings))) && (
                               <>
-                                <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xs" />
+                                <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xxs" />
                                 <span className="font-bold text-base text-[#3D2B1F] ml-1">{getAverageRating(fb.ratings)}</span>
                               </>
                             )}
@@ -760,9 +760,9 @@ export default function AdminDashboard() {
                                 <span className="text-xs font-medium text-gray-600 capitalize">
                                   {key.replace(/([A-Z])/g, ' $1').trim()}
                                 </span>
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-0.5">
                                   <span className={`text-sm font-bold ${value <= 2 ? 'text-red-500' : 'text-[#3D2B1F]'}`}>{value}</span>
-                                  <RatingStars rating={value} size="xs" />
+                                  <RatingStars rating={value} size="xxs" />
                                 </div>
                               </div>
                             ))}
@@ -771,16 +771,7 @@ export default function AdminDashboard() {
                             <span className="font-bold text-[#3D2B1F]">OVERALL AVERAGE RATING</span>
                             <div className="flex items-center gap-2">
                               <span className="text-2xl font-bold text-[#8B1A1A]">{getAverageRating(selectedFeedback.ratings)}</span>
-                              <div className="flex gap-0.5">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <Star
-                                    key={star}
-                                    className={`w-4 h-4 ${
-                                      star <= Math.round(Number(getAverageRating(selectedFeedback.ratings))) ? "fill-amber-400 text-amber-400" : "text-gray-200"
-                                    }`}
-                                  />
-                                ))}
-                              </div>
+                              <RatingStars rating={Number(getAverageRating(selectedFeedback.ratings))} size="sm" />
                             </div>
                           </div>
                         </div>

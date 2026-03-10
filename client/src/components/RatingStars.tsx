@@ -2,12 +2,13 @@ import { Star } from "lucide-react";
 
 interface RatingStarsProps {
   rating: number;
-  size?: "xs" | "sm" | "md" | "compact";
+  size?: "xxs" | "xs" | "sm" | "md" | "compact";
   showLabel?: boolean;
   className?: string;
 }
 
 const sizeMap = {
+  xxs: "w-2 h-2",
   xs: "w-2.5 h-2.5",
   sm: "w-3 h-3",
   md: "w-4 h-4",
