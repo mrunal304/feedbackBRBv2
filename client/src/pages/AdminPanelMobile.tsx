@@ -477,18 +477,19 @@ export default function AdminPanelMobile() {
                             <p className="font-bold text-sm text-[#3D2B1F] capitalize">{fb.name}</p>
                             <p className="text-sm text-gray-500">{fb.phone}</p>
                           </div>
-                          <div className="text-sm font-bold uppercase tracking-tight">
-                            {fb.contactedAt ? (
-                              <span className="text-green-600">CONTACTED</span>
-                            ) : (
-                              <span className="text-[#8B1A1A]">PENDING</span>
-                            )}
-                          </div>
+                          <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest ${fb.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
+                            {fb.contactedAt ? 'CONTACTED' : 'PENDING'}
+                          </span>
                         </div>
 
-                        <div className="text-sm text-gray-600">
-                          <p className="font-medium">{fb.location || "Bomb Rolls and Bowls"} • <span className="capitalize">{fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}</span></p>
-                          <p>{fb.visitDate} at {fb.visitTime}</p>
+                        <div className="text-sm text-gray-600 space-y-1.5">
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium">{fb.location || "Bomb Rolls and Bowls"}</p>
+                            <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                              {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500">{fb.visitDate} at {fb.visitTime}</p>
                         </div>
 
                         <div className="flex items-center justify-between pt-2 border-t border-gray-100">
@@ -572,7 +573,12 @@ export default function AdminPanelMobile() {
                   </div>
                   <div>
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">LOCATION</label>
-                    <p className="text-sm text-[#3D2B1F]">{selectedFeedback.location || "Bomb Rolls and Bowls"} • <span className="capitalize">{selectedFeedback.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}</span></p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-[#3D2B1F] font-medium">{selectedFeedback.location || "Bomb Rolls and Bowls"}</span>
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${selectedFeedback.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                        {selectedFeedback.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -617,9 +623,9 @@ export default function AdminPanelMobile() {
                 )}
 
                 <div className="pt-4 flex items-center justify-between border-t border-gray-100">
-                  <div className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${selectedFeedback.contactedAt ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${selectedFeedback.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
                     {selectedFeedback.contactedAt ? 'CONTACTED' : 'PENDING'}
-                  </div>
+                  </span>
                   {!selectedFeedback.contactedAt && (
                     <Button 
                       onClick={() => handleContactCustomer(selectedFeedback)}

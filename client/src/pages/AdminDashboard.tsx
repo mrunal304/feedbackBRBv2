@@ -549,7 +549,9 @@ export default function AdminDashboard() {
                           <TableCell className="py-2.5">
                             <div className="text-sm text-gray-600 space-y-0.5">
                               <p className="font-medium text-[#3D2B1F]">{fb.location}</p>
-                              <p className="capitalize">{(fb.visitType || "").replace('_', ' ')}</p>
+                              <span className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                                {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
+                              </span>
                             </div>
                           </TableCell>
                           <TableCell className="py-2.5">
@@ -597,9 +599,9 @@ export default function AdminDashboard() {
                           </TableCell>
                           <TableCell className="py-2.5">
                             {fb.status === "contacted" ? (
-                              <span className="text-sm font-bold text-green-600 uppercase tracking-tighter">CONTACTED</span>
+                              <span className="inline-block rounded-full px-3 py-1 text-xs font-bold text-[#166534] bg-[#dcfce7] uppercase tracking-tighter">CONTACTED</span>
                             ) : (
-                              <span className="text-sm font-bold text-[#8B1A1A] uppercase tracking-tighter">PENDING</span>
+                              <span className="inline-block rounded-full px-3 py-1 text-xs font-bold text-[#991b1b] bg-[#fee2e2] uppercase tracking-tighter">PENDING</span>
                             )}
                           </TableCell>
                           <TableCell className="py-2.5">
@@ -659,9 +661,9 @@ export default function AdminDashboard() {
                               <Phone className="w-3 h-3" />
                             </a>
                           </div>
-                          <div className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest ${fb.status === "contacted" ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest ${fb.status === "contacted" ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
                             {fb.status === "contacted" ? 'CONTACTED' : 'PENDING'}
-                          </div>
+                          </span>
                         </div>
                         <p className="text-sm text-white/80">{fb.phone}</p>
                       </div>
@@ -669,8 +671,10 @@ export default function AdminDashboard() {
                       {/* Content */}
                       <div className="p-4 space-y-2">
                         {/* Visit Type and Rating and Date on same line */}
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 capitalize font-medium">{(fb.visitType || "").replace('_', ' ')}</span>
+                        <div className="flex items-center justify-between text-sm flex-wrap gap-2">
+                          <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                            {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
+                          </span>
                           <div className="flex items-center gap-1">
                             {!isNaN(Number(getAverageRating(fb.ratings))) && (
                               <>
@@ -765,7 +769,12 @@ export default function AdminDashboard() {
                           <div className="space-y-4">
                             <div>
                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">LOCATION & OPTION</label>
-                              <p className="text-[#3D2B1F]"><span className="font-bold">{selectedFeedback.location || "Bomb Rolls and Bowls"}</span> • <span className="capitalize">{selectedFeedback.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}</span></p>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-[#3D2B1F]">{selectedFeedback.location || "Bomb Rolls and Bowls"}</span>
+                                <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${selectedFeedback.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                                  {selectedFeedback.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
+                                </span>
+                              </div>
                             </div>
                             <div>
                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">VISIT TIME</label>
@@ -825,9 +834,9 @@ export default function AdminDashboard() {
 
                         <div className="pt-4 flex items-center justify-between border-t border-gray-100">
                           <div className="flex items-center gap-3">
-                            <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${selectedFeedback.contactedAt ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${selectedFeedback.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
                               {selectedFeedback.contactedAt ? 'CONTACTED' : 'PENDING'}
-                            </div>
+                            </span>
                             {selectedFeedback.contactedAt && (
                               <span className="text-xs text-gray-400 italic">
                                 by {selectedFeedback.contactedBy || 'Admin'} on {format(new Date(selectedFeedback.contactedAt), 'MMM d, yyyy')}
