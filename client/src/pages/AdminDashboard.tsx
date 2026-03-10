@@ -178,56 +178,56 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen bg-[#FDF8F6]">
       <Tabs defaultValue="analytics" className="flex w-full">
         {/* STEP 1: Left Sidebar */}
-        <aside className="w-[260px] bg-[#8B1A1A] flex flex-col fixed h-full z-50">
-          <div className="p-6">
-            <h1 className="text-white font-bold text-2xl">Admin Panel</h1>
+        <aside className="w-[240px] bg-[#8B1A1A] flex flex-col fixed h-full z-50">
+          <div className="px-4 py-4">
+            <h1 className="text-white font-bold text-[15px]">Admin Panel</h1>
           </div>
 
-          <nav className="flex-1 px-4 space-y-2 mt-4">
-            <TabsList className="flex flex-col w-full bg-transparent h-auto p-0 space-y-2">
+          <nav className="flex-1 px-0 space-y-0 mt-0">
+            <TabsList className="flex flex-col w-full bg-transparent h-auto p-0 space-y-0">
               <TabsTrigger
                 value="analytics"
-                className="w-full justify-start px-4 py-3 text-white data-[state=active]:bg-[#A52020] data-[state=active]:text-white hover:bg-[#A52020]/50 transition-colors border-none shadow-none"
+                className="w-full justify-start px-4 py-2.5 text-white text-[14px] data-[state=active]:bg-[#A52020] data-[state=active]:text-white hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none"
                 data-testid="tab-analytics"
               >
-                <BarChart3 className="w-5 h-5 mr-3" />
+                <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
                 <span className="font-medium">Overview</span>
               </TabsTrigger>
               <TabsTrigger
                 value="feedback"
-                className="w-full justify-start px-4 py-3 text-white data-[state=active]:bg-[#A52020] data-[state=active]:text-white hover:bg-[#A52020]/50 transition-colors border-none shadow-none"
+                className="w-full justify-start px-4 py-2.5 text-white text-[14px] data-[state=active]:bg-[#A52020] data-[state=active]:text-white hover:bg-[#A52020]/50 transition-colors border-none shadow-none rounded-none"
                 data-testid="tab-feedback"
               >
-                <MessageSquare className="w-5 h-5 mr-3" />
+                <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
                 <span className="font-medium">Feedback</span>
               </TabsTrigger>
             </TabsList>
           </nav>
 
-          <div className="p-4 mt-auto border-t border-white/10">
-            <div className="flex items-center gap-3 px-2 py-3">
-              <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold">
+          <div className="px-4 py-4 mt-auto border-t border-white/10">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0">
                 A
               </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="text-white font-medium truncate">admin</p>
-                <p className="text-pink-100/70 text-xs">Admin</p>
+              <div className="flex-1 overflow-hidden min-w-0">
+                <p className="text-white font-medium text-[13px] truncate">admin</p>
+                <p className="text-pink-100/70 text-[11px]">Admin</p>
               </div>
             </div>
             <Button
               variant="ghost"
-              className="w-full justify-start text-white hover:bg-white/10 mt-2 px-2"
+              className="w-full justify-start text-white hover:bg-white/10 px-4 py-2 h-auto text-[13px]"
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
             >
-              <LogOut className="w-4 h-4 mr-3" />
-              Sign Out
+              <LogOut className="w-4 h-4 mr-3 flex-shrink-0" />
+              <span className="truncate">Sign Out</span>
             </Button>
           </div>
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 ml-[260px] min-h-screen">
+        <main className="flex-1 ml-[240px] min-h-screen">
           <div className="p-8 max-w-7xl mx-auto space-y-8">
             <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
               {/* STEP 2: Overview Page Header */}
@@ -250,16 +250,16 @@ export default function AdminDashboard() {
                   { title: "TOP CATEGORY", value: analytics?.topCategory || "-", icon: TrendingUp, sub: "Highest rated", color: "bg-green-50 text-green-600" },
                   { title: "RESPONSE RATE", value: `${analytics?.responseRate || 0}%`, icon: Phone, sub: "Customers contacted", color: "bg-purple-50 text-purple-600" }
                 ].map((stat, i) => (
-                  <Card key={i} className="border-none shadow-sm rounded-[12px]">
-                    <CardContent className="p-6">
+                  <Card key={i} className="border-none shadow-sm rounded-[12px] overflow-hidden">
+                    <CardContent className="p-3">
                       <div className="flex justify-between items-start mb-4">
-                        <span className="text-[11px] font-bold text-gray-400 tracking-wider">{stat.title}</span>
-                        <div className={`p-2 rounded-full ${stat.color}`}>
+                        <span className="text-[11px] font-bold text-gray-400 tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">{stat.title}</span>
+                        <div className={`p-2 rounded-full flex-shrink-0 ${stat.color}`}>
                           <stat.icon className="w-4 h-4" />
                         </div>
                       </div>
-                      <div className="text-3xl font-bold text-[#3D2B1F] mb-1">{stat.value}</div>
-                      <div className="text-xs text-gray-400">{stat.sub}</div>
+                      <div className="text-[24px] font-bold text-[#3D2B1F] mb-1">{stat.value}</div>
+                      <div className="text-[11px] text-gray-400">{stat.sub}</div>
                     </CardContent>
                   </Card>
                 ))}

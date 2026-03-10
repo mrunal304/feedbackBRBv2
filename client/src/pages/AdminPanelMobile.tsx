@@ -187,29 +187,29 @@ export default function AdminPanelMobile() {
 
       {/* Mobile Menu Dropdown */}
       {showMenu && (
-        <div className="bg-[#8B1A1A] border-b border-white/10 px-4 py-2">
+        <div className="bg-[#8B1A1A] border-b border-white/10 px-4 py-3">
           <div className="flex flex-col gap-2 mb-3">
             <div className="flex items-center gap-3 p-2 border-b border-white/10 pb-3">
-              <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold">
+              <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0">
                 A
               </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="text-white font-medium text-sm truncate">admin</p>
-                <p className="text-pink-100/70 text-xs">Admin</p>
+              <div className="flex-1 overflow-hidden min-w-0">
+                <p className="text-white font-medium text-[13px] truncate">admin</p>
+                <p className="text-pink-100/70 text-[11px]">Admin</p>
               </div>
             </div>
           </div>
           <Button
             variant="ghost"
-            className="w-full justify-start text-white hover:bg-white/10 text-sm px-2"
+            className="w-full justify-start text-white hover:bg-white/10 text-[13px] px-4 py-2 h-auto"
             onClick={() => {
               logoutMutation.mutate();
               setShowMenu(false);
             }}
             data-testid="button-logout"
           >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
+            <LogOut className="w-4 h-4 mr-3 flex-shrink-0" />
+            <span className="truncate">Sign Out</span>
           </Button>
         </div>
       )}
@@ -226,16 +226,16 @@ export default function AdminPanelMobile() {
                 { title: "TOP CATEGORY", value: analytics?.topCategory || "-", icon: TrendingUp, sub: "Highest rated", color: "bg-green-50 text-green-600" },
                 { title: "RESPONSE RATE", value: `${analytics?.responseRate || 0}%`, icon: Phone, sub: "Customers contacted", color: "bg-purple-50 text-purple-600" }
               ].map((stat, i) => (
-                <Card key={i} className="border-none shadow-sm rounded-lg">
-                  <CardContent className="p-4">
+                <Card key={i} className="border-none shadow-sm rounded-lg overflow-hidden">
+                  <CardContent className="p-3">
                     <div className="flex justify-between items-start mb-3">
-                      <span className="text-[10px] font-bold text-gray-400 tracking-wider">{stat.title}</span>
-                      <div className={`p-1.5 rounded-full ${stat.color}`}>
+                      <span className="text-[11px] font-bold text-gray-400 tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">{stat.title}</span>
+                      <div className={`p-1.5 rounded-full flex-shrink-0 ${stat.color}`}>
                         <stat.icon className="w-3 h-3" />
                       </div>
                     </div>
-                    <div className="text-2xl font-bold text-[#3D2B1F] mb-1">{stat.value}</div>
-                    <div className="text-xs text-gray-400">{stat.sub}</div>
+                    <div className="text-[24px] font-bold text-[#3D2B1F] mb-1">{stat.value}</div>
+                    <div className="text-[11px] text-gray-400">{stat.sub}</div>
                   </CardContent>
                 </Card>
               ))}
