@@ -498,13 +498,13 @@ export default function AdminDashboard() {
                 <Table>
                   <TableHeader className="bg-gray-50/50">
                     <TableRow>
-                      <TableHead className="text-[11px] font-bold text-[#3D2B1F] uppercase tracking-wider py-4">Customer</TableHead>
+                      <TableHead className="text-[11px] font-bold text-[#3D2B1F] uppercase tracking-wider py-4 pl-2">Customer</TableHead>
                       <TableHead className="text-[11px] font-bold text-[#3D2B1F] uppercase tracking-wider py-4">Visit Info</TableHead>
                       <TableHead className="text-[11px] font-bold text-[#3D2B1F] uppercase tracking-wider py-4">Ratings</TableHead>
                       <TableHead className="text-[11px] font-bold text-[#3D2B1F] uppercase tracking-wider py-4">Note</TableHead>
                       <TableHead className="text-[11px] font-bold text-[#3D2B1F] uppercase tracking-wider py-4">Date</TableHead>
                       <TableHead className="text-[11px] font-bold text-[#3D2B1F] uppercase tracking-wider py-4">Status</TableHead>
-                      <TableHead className="text-[11px] font-bold text-[#3D2B1F] uppercase tracking-wider py-4">Actions</TableHead>
+                      <TableHead className="text-[11px] font-bold text-[#3D2B1F] uppercase tracking-wider py-4 pr-2">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -517,7 +517,7 @@ export default function AdminDashboard() {
                     ) : (
                       filteredFeedback.map((fb) => (
                         <TableRow key={fb._id} className="border-b border-gray-100 hover:bg-gray-50/30 transition-colors">
-                          <TableCell className="py-2.5">
+                          <TableCell className="py-2.5 pl-2">
                             <div className="flex items-center gap-3">
                               <div>
                                 <p className="font-bold text-sm text-[#3D2B1F] capitalize">{fb.name}</p>
@@ -582,7 +582,7 @@ export default function AdminDashboard() {
                               <span className="inline-block rounded-full px-3 py-1 text-xs font-bold text-[#991b1b] bg-[#fee2e2] uppercase tracking-tighter">PENDING</span>
                             )}
                           </TableCell>
-                          <TableCell className="py-2.5">
+                          <TableCell className="py-2.5 pr-2">
                             <div className="flex items-center gap-2">
                               <Button
                                 size="sm"
