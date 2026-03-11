@@ -279,7 +279,6 @@ export default function AdminDashboard() {
             <SidebarMenu className="space-y-3">
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  asChild
                   variant="outline"
                   size="lg"
                   className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10 border border-white/30"
@@ -299,7 +298,6 @@ export default function AdminDashboard() {
 
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  asChild
                   variant="outline"
                   size="lg"
                   className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10 border border-white/30"
