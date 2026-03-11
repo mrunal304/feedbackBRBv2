@@ -18,6 +18,14 @@ export default function FeedbackForm() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
+  const [ratingErrors, setRatingErrors] = useState({
+    foodTaste: false,
+    foodTemperature: false,
+    portionSize: false,
+    valueForMoney: false,
+    presentation: false,
+    overallService: false,
+  });
 
   const form = useForm<InsertFeedback>({
     resolver: zodResolver(insertFeedbackSchema),
@@ -71,24 +79,27 @@ export default function FeedbackForm() {
   });
 
   const onSubmit = (data: InsertFeedback) => {
-    const hasAllRatings = Object.values(data.ratings).every((r) => r >= 1);
-    if (!hasAllRatings) {
-      const missingRatings = ratingQuestions
-        .filter(({ key }) => !data.ratings[key as keyof typeof data.ratings] || data.ratings[key as keyof typeof data.ratings] < 1)
-        .map(({ label }) => label);
-      
-      toast({
-        title: "Missing Ratings",
-        description: missingRatings.length > 0 
-          ? `Please rate: ${missingRatings.map(l => l.split(' —')[0]).join(", ")}`
-          : "Please rate all categories before submitting",
-        variant: "destructive",
-      });
-      
-      // Scroll to first missing rating
-      const firstMissingKey = ratingQuestions.find(
-        ({ key }) => !data.ratings[key as keyof typeof data.ratings] || data.ratings[key as keyof typeof data.ratings] < 1
-      )?.key;
+    // Check each rating and create error state
+    const newErrors: typeof ratingErrors = {};
+    let hasErrors = false;
+    
+    for (const key of Object.keys(ratingErrors) as Array<keyof typeof ratingErrors>) {
+      const rating = data.ratings[key];
+      if (!rating || rating < 1) {
+        newErrors[key] = true;
+        hasErrors = true;
+      } else {
+        newErrors[key] = false;
+      }
+    }
+    
+    setRatingErrors(newErrors);
+    
+    if (hasErrors) {
+      // Find first missing rating
+      const firstMissingKey = (Object.keys(ratingErrors) as Array<keyof typeof ratingErrors>).find(
+        (key) => newErrors[key]
+      );
       
       if (firstMissingKey) {
         setTimeout(() => {
@@ -101,6 +112,7 @@ export default function FeedbackForm() {
       
       return;
     }
+    
     submitMutation.mutate(data);
   };
 
@@ -315,7 +327,16 @@ export default function FeedbackForm() {
                   {/* All Rating Questions */}
                   <div className="space-y-0">
                     {ratingQuestions.map(({ key, label, icon }, idx) => (
-                      <div key={key} className={idx < ratingQuestions.length - 1 ? "pb-4 border-b border-[#F0F0F0]" : "pb-4"}>
+                      <div 
+                        key={key} 
+                        className={`py-4 transition-all ${
+                          ratingErrors[key as keyof typeof ratingErrors] 
+                            ? "border-l-4 border-l-[#CC1111] bg-red-50/30 px-4 -mx-4" 
+                            : idx < ratingQuestions.length - 1 
+                              ? "pb-4 border-b border-[#F0F0F0]" 
+                              : "pb-4"
+                        }`}
+                      >
                         <FormField
                           control={form.control}
                           name={`ratings.${key}`}
@@ -331,7 +352,14 @@ export default function FeedbackForm() {
                                     <button
                                       key={star}
                                       type="button"
-                                      onClick={() => field.onChange(star)}
+                                      onClick={() => {
+                                        field.onChange(star);
+                                        // Clear error immediately when rating is selected
+                                        setRatingErrors(prev => ({
+                                          ...prev,
+                                          [key]: false
+                                        }));
+                                      }}
                                       className={`star ${star <= field.value ? "star-selected" : "star-empty"}`}
                                       data-testid={`star-${key}-${star}`}
                                       style={{
@@ -370,6 +398,11 @@ export default function FeedbackForm() {
                                   ))}
                                 </div>
                               </FormControl>
+                              {ratingErrors[key as keyof typeof ratingErrors] && (
+                                <p className="text-[13px] font-nunito font-semibold text-[#CC1111] mt-2">
+                                  Please rate this category
+                                </p>
+                              )}
                             </FormItem>
                           )}
                         />
