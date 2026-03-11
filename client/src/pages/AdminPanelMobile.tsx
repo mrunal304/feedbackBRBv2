@@ -164,15 +164,32 @@ export default function AdminPanelMobile() {
       const response = await apiRequest("PATCH", `/api/feedback/${id}/contact`, { staffName });
       return response.json();
     },
+    onMutate: ({ id }) => {
+      // Optimistic update - immediately update UI
+      const newFeedback = feedback.map(fb => 
+        fb._id === id ? { ...fb, status: "contacted" as const } : fb
+      );
+      queryClient.setQueryData([feedbackUrl], newFeedback);
+      
+      if (selectedFeedback && selectedFeedback._id === id) {
+        setSelectedFeedback({ ...selectedFeedback, status: "contacted" });
+      }
+    },
     onSuccess: () => {
       toast({
-        title: "Customer Contacted",
-        description: "The customer has been marked as contacted",
+        title: "✓ Marked as Contacted",
+        description: "",
+        duration: 3000,
       });
       refetchFeedback();
-      if (selectedFeedback) {
-        setSelectedFeedback({ ...selectedFeedback, contactedAt: new Date().toISOString() });
-      }
+    },
+    onError: () => {
+      toast({
+        title: "✗ Failed to update status",
+        description: "Please try again",
+        variant: "destructive",
+        duration: 3000,
+      });
     },
   });
 

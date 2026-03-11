@@ -229,15 +229,25 @@ export class MongoStorage implements IStorage {
     };
   }
 
-  async markAsContacted(customerId: string, visitId: string, staffName: string): Promise<Feedback | null> {
+  async markAsContacted(visitId: string, staffName: string): Promise<Feedback | null> {
     try {
-      const doc = await FeedbackModel.findById(customerId);
-      if (!doc) return null;
-      const visit = doc.visits.id(visitId);
-      if (!visit) return null;
-      visit.status = "contacted";
-      await doc.save();
-      return formatVisitAsFeedback(doc, visit);
+      // Find the customer document containing this visit
+      const customer = await FeedbackModel.findOne({ "visits._id": new mongoose.Types.ObjectId(visitId) });
+      if (!customer) return null;
+
+      // Update that specific visit's status
+      await FeedbackModel.findOneAndUpdate(
+        { "visits._id": new mongoose.Types.ObjectId(visitId) },
+        { $set: { "visits.$.status": "contacted" } },
+        { new: true }
+      );
+
+      // Fetch updated document to return the formatted feedback
+      const updated = await FeedbackModel.findOne({ "visits._id": new mongoose.Types.ObjectId(visitId) });
+      if (!updated) return null;
+      
+      const visit = updated.visits.id(visitId);
+      return visit ? formatVisitAsFeedback(updated, visit) : null;
     } catch {
       return null;
     }

@@ -143,12 +143,12 @@ export async function registerRoutes(
     res.json(feedback);
   });
 
-  // Mark as contacted (using customer ID and visit ID)
+  // Mark as contacted (using visit ID)
   app.patch(api.feedback.contact.path, requireAuth, async (req, res) => {
     try {
-      const { customerId, visitId } = req.params as { customerId: string; visitId: string };
+      const { id: visitId } = req.params as { id: string };
       const { staffName } = api.feedback.contact.input.parse(req.body);
-      const feedback = await storage.markAsContacted(customerId, visitId, staffName);
+      const feedback = await storage.markAsContacted(visitId, staffName);
       
       if (!feedback) {
         return res.status(404).json({ message: "Feedback not found" });
