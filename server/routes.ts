@@ -109,22 +109,22 @@ export async function registerRoutes(
     }
   });
 
-  // Get single feedback
+  // Get single feedback (using customer ID and visit ID)
   app.get(api.feedback.get.path, requireAuth, async (req, res) => {
-    const id = req.params.id as string;
-    const feedback = await storage.getFeedback(id);
+    const { customerId, visitId } = req.params as { customerId: string; visitId: string };
+    const feedback = await storage.getFeedback(customerId, visitId);
     if (!feedback) {
       return res.status(404).json({ message: "Feedback not found" });
     }
     res.json(feedback);
   });
 
-  // Mark as contacted
+  // Mark as contacted (using customer ID and visit ID)
   app.patch(api.feedback.contact.path, requireAuth, async (req, res) => {
     try {
-      const id = req.params.id as string;
+      const { customerId, visitId } = req.params as { customerId: string; visitId: string };
       const { staffName } = api.feedback.contact.input.parse(req.body);
-      const feedback = await storage.markAsContacted(id, staffName);
+      const feedback = await storage.markAsContacted(customerId, visitId, staffName);
       
       if (!feedback) {
         return res.status(404).json({ message: "Feedback not found" });
@@ -137,6 +137,17 @@ export async function registerRoutes(
       } else {
         res.status(500).json({ message: "Server error" });
       }
+    }
+  });
+
+  // Migration endpoint to consolidate old feedback structure
+  app.post('/api/migrate/feedback-structure', async (req, res) => {
+    try {
+      const result = await storage.migrateOldFeedbackStructure();
+      res.json(result);
+    } catch (err) {
+      console.error('Migration error:', err);
+      res.status(500).json({ message: 'Migration failed' });
     }
   });
 

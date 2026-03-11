@@ -9,35 +9,34 @@ export interface IStorage {
     minRating?: number;
     status?: 'all' | 'contacted' | 'pending';
   }): Promise<Feedback[]>;
-  getFeedback(id: string): Promise<Feedback | null>;
+  getFeedback(customerId: string, visitId: string): Promise<Feedback | null>;
   createFeedback(feedback: InsertFeedback): Promise<Feedback>;
-  markAsContacted(id: string, staffName: string): Promise<Feedback | null>;
+  markAsContacted(customerId: string, visitId: string, staffName: string): Promise<Feedback | null>;
   getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics>;
   getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null>;
   getTotalVisits(phoneNumber: string): Promise<number>;
   checkDuplicateFeedbackToday(phoneNumber: string): Promise<boolean>;
+  migrateOldFeedbackStructure(): Promise<{ message: string; merged: number; deleted: number }>;
 }
 
-function formatFeedback(doc: any): Feedback & { dateKey?: string } {
-  const createdDate = new Date(doc.createdAt);
+function formatVisitAsFeedback(customerDoc: any, visit: any): Feedback {
+  const createdDate = new Date(visit.createdAt);
   const visitDate = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   const visitTime = createdDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   const dateKey = createdDate.toISOString().split('T')[0];
   
   return {
-    _id: doc._id.toString(),
-    name: doc.name,
-    phone: doc.phoneNumber,
-    location: doc.location,
-    visitType: doc.visitType,
-    ratings: doc.ratings,
-    comments: doc.comments,
-    status: doc.status || "pending",
-    createdAt: doc.createdAt.toISOString(),
+    _id: visit._id.toString(),
+    name: customerDoc.name,
+    phone: customerDoc.phoneNumber,
+    location: visit.location,
+    visitType: visit.visitType,
+    ratings: visit.ratings,
+    comments: visit.comments,
+    status: visit.status || "pending",
+    createdAt: visit.createdAt.toISOString(),
     visitDate,
     visitTime,
-    contactedAt: doc.contactedAt ? doc.contactedAt.toISOString() : undefined,
-    contactedBy: doc.contactedBy,
     dateKey,
   };
 }
@@ -80,60 +79,63 @@ export class MongoStorage implements IStorage {
     minRating?: number;
     status?: 'all' | 'contacted' | 'pending';
   }): Promise<Feedback[]> {
-    const query: any = {};
-    
-    if (filters?.search) {
-      query.$or = [
-        { name: { $regex: filters.search, $options: 'i' } },
-        { phoneNumber: { $regex: filters.search, $options: 'i' } },
-      ];
-    }
-    
-    if (filters?.startDate || filters?.endDate) {
-      query.createdAt = {};
-      if (filters?.startDate) {
-        const start = new Date(filters.startDate);
-        query.createdAt.$gte = start;
+    const docs = await FeedbackModel.find().lean();
+    let results: Feedback[] = [];
+
+    for (const customerDoc of docs) {
+      for (const visit of customerDoc.visits || []) {
+        // Check search filter
+        if (filters?.search) {
+          const searchLower = filters.search.toLowerCase();
+          const matchesName = customerDoc.name.toLowerCase().includes(searchLower);
+          const matchesPhone = customerDoc.phoneNumber.includes(filters.search);
+          if (!matchesName && !matchesPhone) continue;
+        }
+
+        // Check date filter
+        if (filters?.startDate || filters?.endDate) {
+          const visitDate = new Date(visit.createdAt);
+          if (filters?.startDate) {
+            const start = new Date(filters.startDate);
+            if (visitDate < start) continue;
+          }
+          if (filters?.endDate) {
+            const end = new Date(filters.endDate);
+            end.setHours(23, 59, 59, 999);
+            if (visitDate > end) continue;
+          }
+        }
+
+        // Check status filter
+        if (filters?.status === 'contacted' && visit.status !== 'contacted') continue;
+        if (filters?.status === 'pending' && visit.status !== 'pending') continue;
+
+        // Check rating filter
+        if (filters?.minRating) {
+          const avg = (
+            visit.ratings.foodTaste + 
+            visit.ratings.foodTemperature + 
+            visit.ratings.portionSize + 
+            visit.ratings.valueForMoney + 
+            visit.ratings.presentation + 
+            visit.ratings.overallService
+          ) / 6;
+          if (avg < filters.minRating) continue;
+        }
+
+        results.push(formatVisitAsFeedback(customerDoc, visit));
       }
-      if (filters?.endDate) {
-        const end = new Date(filters.endDate);
-        end.setHours(23, 59, 59, 999);
-        query.createdAt.$lte = end;
-      }
     }
-    
-    if (filters?.status === 'contacted') {
-      query.status = 'contacted';
-    } else if (filters?.status === 'pending') {
-      query.status = 'pending';
-    }
-    
-    const docs = await FeedbackModel.find(query).sort({ createdAt: -1 });
-    
-    let results = docs.map(formatFeedback);
-    
-    if (filters?.minRating) {
-      const minRating = Number(filters.minRating);
-      results = results.filter(f => {
-        const avg = (
-          f.ratings.foodTaste + 
-          f.ratings.foodTemperature + 
-          f.ratings.portionSize + 
-          f.ratings.valueForMoney + 
-          f.ratings.presentation + 
-          f.ratings.overallService
-        ) / 6;
-        return avg >= minRating;
-      });
-    }
-    
-    return results;
+
+    return results.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
-  async getFeedback(id: string): Promise<Feedback | null> {
+  async getFeedback(customerId: string, visitId: string): Promise<Feedback | null> {
     try {
-      const doc = await FeedbackModel.findById(id);
-      return doc ? formatFeedback(doc) : null;
+      const doc = await FeedbackModel.findById(customerId);
+      if (!doc) return null;
+      const visit = doc.visits.id(visitId);
+      return visit ? formatVisitAsFeedback(doc, visit) : null;
     } catch {
       return null;
     }
@@ -141,65 +143,58 @@ export class MongoStorage implements IStorage {
 
   async createFeedback(feedback: InsertFeedback): Promise<Feedback> {
     const dateKey = getDateKey();
-    
-    const feedbackDoc = await FeedbackModel.create({
-      name: feedback.name,
-      phoneNumber: feedback.phone,
+    const visit = {
+      _id: new (require('mongoose').Types.ObjectId)(),
       location: feedback.location,
       visitType: feedback.visitType,
       ratings: feedback.ratings,
       comments: feedback.comments,
-      status: "pending",
+      status: "pending" as const,
+      createdAt: new Date(),
       dateKey,
-    });
+    };
 
-    // Upsert customer card
-    const existingCard = await CustomerCardModel.findOne({ phoneNumber: feedback.phone });
-    if (existingCard) {
-      // Update existing card
-      existingCard.totalVisits += 1;
-      existingCard.lastVisitDate = new Date();
-      await existingCard.save();
+    let customerDoc = await FeedbackModel.findOne({ phoneNumber: feedback.phone });
+    
+    if (customerDoc) {
+      customerDoc.visits.push(visit);
+      await customerDoc.save();
     } else {
-      // Create new card
-      await CustomerCardModel.create({
+      customerDoc = await FeedbackModel.create({
         phoneNumber: feedback.phone,
         name: feedback.name,
-        totalVisits: 1,
-        firstVisitDate: new Date(),
-        lastVisitDate: new Date(),
-        visits: [],
+        visits: [visit],
       });
     }
 
-    return formatFeedback(feedbackDoc);
+    return formatVisitAsFeedback(customerDoc, visit);
   }
 
   async getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null> {
-    const docs = await FeedbackModel.find({ name: { $regex: normalizedName, $options: 'i' } })
-      .sort({ createdAt: -1 });
+    const doc = await FeedbackModel.findOne({ name: { $regex: normalizedName, $options: 'i' } });
     
-    if (docs.length === 0) {
+    if (!doc) {
       return null;
     }
     
-    const feedbacks = docs.map(formatFeedback);
+    const feedbacks = doc.visits.map(visit => formatVisitAsFeedback(doc, visit));
     
     return {
-      customerName: feedbacks[0].name,
+      customerName: doc.name,
       totalVisits: feedbacks.length,
       feedbackHistory: feedbacks,
     };
   }
 
-  async markAsContacted(id: string, staffName: string): Promise<Feedback | null> {
+  async markAsContacted(customerId: string, visitId: string, staffName: string): Promise<Feedback | null> {
     try {
-      const doc = await FeedbackModel.findByIdAndUpdate(
-        id,
-        { status: "contacted" },
-        { new: true }
-      );
-      return doc ? formatFeedback(doc) : null;
+      const doc = await FeedbackModel.findById(customerId);
+      if (!doc) return null;
+      const visit = doc.visits.id(visitId);
+      if (!visit) return null;
+      visit.status = "contacted";
+      await doc.save();
+      return formatVisitAsFeedback(doc, visit);
     } catch {
       return null;
     }
@@ -207,8 +202,8 @@ export class MongoStorage implements IStorage {
 
   async getTotalVisits(phoneNumber: string): Promise<number> {
     try {
-      const count = await FeedbackModel.countDocuments({ phoneNumber });
-      return count;
+      const doc = await FeedbackModel.findOne({ phoneNumber });
+      return doc ? doc.visits.length : 0;
     } catch {
       return 0;
     }
@@ -217,11 +212,19 @@ export class MongoStorage implements IStorage {
   async getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics> {
     const { start, end } = getDateRange(period);
     
-    const docs = await FeedbackModel.find({
-      createdAt: { $gte: start, $lte: end }
-    }).sort({ createdAt: 1 });
+    const docs = await FeedbackModel.find().lean();
+    const feedbacks: Feedback[] = [];
     
-    const feedbacks = docs.map(formatFeedback);
+    for (const customerDoc of docs) {
+      for (const visit of customerDoc.visits || []) {
+        if (new Date(visit.createdAt) >= start && new Date(visit.createdAt) <= end) {
+          feedbacks.push(formatVisitAsFeedback(customerDoc, visit));
+        }
+      }
+    }
+    
+    feedbacks.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    
     const total = feedbacks.length;
     const contacted = feedbacks.filter(f => f.status === "contacted").length;
     
@@ -336,15 +339,75 @@ export class MongoStorage implements IStorage {
     const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
     
-    const existingFeedback = await FeedbackModel.findOne({
-      phoneNumber,
-      createdAt: {
-        $gte: startOfDay,
-        $lte: endOfDay,
-      },
-    });
+    const doc = await FeedbackModel.findOne({ phoneNumber });
+    if (!doc) return false;
     
-    return !!existingFeedback;
+    for (const visit of doc.visits || []) {
+      if (new Date(visit.createdAt) >= startOfDay && new Date(visit.createdAt) <= endOfDay) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  async migrateOldFeedbackStructure(): Promise<{ message: string; merged: number; deleted: number }> {
+    const allDocs = await FeedbackModel.find().lean();
+    const phoneToVisits: Record<string, any> = {};
+    const docsToDelete: string[] = [];
+
+    // Group visits by phone number
+    for (const doc of allDocs) {
+      if (doc.phoneNumber && (doc.visits?.length > 0 || doc.location)) {
+        if (!phoneToVisits[doc.phoneNumber]) {
+          phoneToVisits[doc.phoneNumber] = {
+            name: doc.name,
+            phoneNumber: doc.phoneNumber,
+            visits: [],
+          };
+        }
+        if (doc.visits?.length > 0) {
+          phoneToVisits[doc.phoneNumber].visits.push(...doc.visits);
+        } else if (doc.location) {
+          // Convert old flat structure to visit
+          phoneToVisits[doc.phoneNumber].visits.push({
+            _id: doc._id,
+            location: doc.location,
+            visitType: doc.visitType,
+            ratings: doc.ratings,
+            comments: doc.comments,
+            status: doc.status || "pending",
+            createdAt: doc.createdAt,
+            dateKey: doc.dateKey,
+          });
+        }
+        if (doc._id !== phoneToVisits[doc.phoneNumber]._id && doc.location) {
+          docsToDelete.push(doc._id);
+        }
+      }
+    }
+
+    // Upsert consolidated documents
+    let merged = 0;
+    for (const [phone, data] of Object.entries(phoneToVisits)) {
+      if (data.visits.length > 0) {
+        await FeedbackModel.findOneAndUpdate(
+          { phoneNumber: phone },
+          { name: data.name, visits: data.visits },
+          { upsert: true }
+        );
+        merged++;
+      }
+    }
+
+    // Delete duplicates
+    for (const id of docsToDelete) {
+      try {
+        await FeedbackModel.findByIdAndDelete(id);
+      } catch {}
+    }
+
+    return { message: 'Migration completed', merged, deleted: docsToDelete.length };
   }
 }
 

@@ -30,7 +30,14 @@ const visitSchema = new mongoose.Schema({
   dateKey: { type: String },
 });
 
-// Define Customer Card Schema
+// Define Feedback Schema (one document per customer with visits array)
+const feedbackSchema = new mongoose.Schema({
+  phoneNumber: { type: String, required: true, unique: true, index: true },
+  name: { type: String, required: true },
+  visits: [visitSchema],
+});
+
+// Define Customer Card Schema (deprecated, kept for backwards compatibility)
 const customerCardSchema = new mongoose.Schema({
   phoneNumber: { type: String, required: true, unique: true, index: true },
   name: { type: String, required: true },
@@ -40,26 +47,6 @@ const customerCardSchema = new mongoose.Schema({
   visits: [visitSchema],
 });
 
-// Define Feedback Schema (flat structure for individual feedback entries)
-const feedbackSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  phoneNumber: { type: String, required: true, index: true },
-  location: { type: String, required: true },
-  visitType: { type: String, enum: ['dine_in', 'take_out'], default: 'dine_in' },
-  ratings: {
-    foodTaste: { type: Number, min: 1, max: 5 },
-    foodTemperature: { type: Number, min: 1, max: 5 },
-    portionSize: { type: Number, min: 1, max: 5 },
-    valueForMoney: { type: Number, min: 1, max: 5 },
-    presentation: { type: Number, min: 1, max: 5 },
-    overallService: { type: Number, min: 1, max: 5 },
-  },
-  comments: { type: String, default: '' },
-  status: { type: String, enum: ['pending', 'contacted'], default: 'pending' },
-  createdAt: { type: Date, default: Date.now },
-  dateKey: { type: String },
-});
-
-export const CustomerCardModel = mongoose.model('CustomerCard', customerCardSchema);
 export const FeedbackModel = mongoose.model('Feedback', feedbackSchema);
+export const CustomerCardModel = mongoose.model('CustomerCard', customerCardSchema);
 export { mongoose };
