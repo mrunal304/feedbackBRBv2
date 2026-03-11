@@ -15,6 +15,7 @@ export interface IStorage {
   getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics>;
   getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null>;
   getTotalVisits(phoneNumber: string): Promise<number>;
+  checkDuplicateFeedbackToday(phoneNumber: string): Promise<boolean>;
 }
 
 function formatFeedback(doc: any): Feedback & { dateKey?: string } {
@@ -328,6 +329,22 @@ export class MongoStorage implements IStorage {
         pending: total - contacted,
       },
     };
+  }
+
+  async checkDuplicateFeedbackToday(phoneNumber: string): Promise<boolean> {
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+    
+    const existingFeedback = await FeedbackModel.findOne({
+      phoneNumber,
+      createdAt: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
+    });
+    
+    return !!existingFeedback;
   }
 }
 

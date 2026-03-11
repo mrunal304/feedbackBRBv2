@@ -62,6 +62,12 @@ export async function registerRoutes(
     try {
       const { name, phone, location, visitType, ratings, comments } = req.body;
       
+      // Check if user already submitted feedback today
+      const hasDuplicateToday = await storage.checkDuplicateFeedbackToday(phone);
+      if (hasDuplicateToday) {
+        return res.status(400).json({ message: 'You have already submitted feedback today. Please try again tomorrow!' });
+      }
+      
       const feedback = await storage.createFeedback({
         name,
         phone,
