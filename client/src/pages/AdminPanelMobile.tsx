@@ -507,7 +507,7 @@ export default function AdminPanelMobile() {
                         </div>
 
                         {/* Row 4: Note section */}
-                        <p className="text-xs text-gray-600 font-medium"><span className="text-gray-500">Note:</span> {fb.note || '-'}</p>
+                        <p className="text-xs text-gray-600 font-medium"><span className="text-gray-500">Note:</span> {fb.comments || '-'}</p>
 
                         {/* Row 5: Rating + Stars (left) + Eye + Mark Contacted buttons (right) */}
                         <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100">
