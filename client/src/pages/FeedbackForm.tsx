@@ -347,6 +347,20 @@ export default function FeedbackForm() {
                 </motion.div>
               )}
 
+              {/* Error Message Display */}
+              {submitMutation.isError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-50 border-2 border-red-300 rounded-[12px] p-4 mb-4"
+                  data-testid="error-message"
+                >
+                  <p className="text-red-700 font-nunito font-semibold text-sm">
+                    ⚠️ {(submitMutation.error as Error)?.message || "Failed to submit feedback. Please try again."}
+                  </p>
+                </motion.div>
+              )}
+
               {/* Buttons */}
               <div className="flex gap-4 pt-6">
                 {step > 1 && (

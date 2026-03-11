@@ -1,4 +1,4 @@
-import { FeedbackModel, CustomerCardModel } from "./db";
+import { FeedbackModel, CustomerCardModel, mongoose } from "./db";
 import type { InsertFeedback, Feedback, Analytics, CustomerHistory } from "@shared/schema";
 
 export interface IStorage {
@@ -144,7 +144,7 @@ export class MongoStorage implements IStorage {
   async createFeedback(feedback: InsertFeedback): Promise<Feedback> {
     const dateKey = getDateKey();
     const visit = {
-      _id: new (require('mongoose').Types.ObjectId)(),
+      _id: new mongoose.Types.ObjectId(),
       location: feedback.location,
       visitType: feedback.visitType,
       ratings: feedback.ratings,
