@@ -131,6 +131,29 @@ export default function FeedbackForm() {
     if (step > 1) setStep(step - 1);
   };
 
+  const handleSubmitClick = () => {
+    const values = form.getValues();
+    const ratings = values.ratings || {};
+    
+    const errors: Record<string, boolean> = {};
+    if (!ratings.foodTaste || ratings.foodTaste === 0) errors.foodTaste = true;
+    if (!ratings.foodTemperature || ratings.foodTemperature === 0) errors.foodTemperature = true;
+    if (!ratings.portionSize || ratings.portionSize === 0) errors.portionSize = true;
+    if (!ratings.valueForMoney || ratings.valueForMoney === 0) errors.valueForMoney = true;
+    if (!ratings.presentation || ratings.presentation === 0) errors.presentation = true;
+    if (!ratings.overallService || ratings.overallService === 0) errors.overallService = true;
+    
+    if (Object.keys(errors).length > 0) {
+      setRatingErrors(errors);
+      const firstErrorEl = document.querySelector('[data-rating-error]');
+      if (firstErrorEl) firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    
+    setRatingErrors({});
+    form.handleSubmit(onSubmit)();
+  };
+
   const ratingQuestions = [
     { key: "foodTaste", label: "Food Taste — How did the food taste overall?", icon: "😋" },
     { key: "foodTemperature", label: "Food Temperature — Was your food served at the right temperature?", icon: "🌡️" },
@@ -187,7 +210,7 @@ export default function FeedbackForm() {
 
         <div className="bg-white rounded-[16px] p-6 shadow-md border border-black/6" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form className="space-y-6">
               {/* STEP 1: Personal Info */}
               {step === 1 && (
                 <motion.div
@@ -382,8 +405,8 @@ export default function FeedbackForm() {
                                 </div>
                               </FormControl>
                               {ratingErrors[key as keyof typeof ratingErrors] && (
-                                <p className="text-[13px] font-nunito font-semibold text-[#CC1111] mt-2">
-                                  Please rate this category
+                                <p data-rating-error className="text-[13px] font-nunito font-semibold text-[#CC1111] mt-2">
+                                  ⚠ Please rate this category
                                 </p>
                               )}
                             </FormItem>
@@ -444,7 +467,8 @@ export default function FeedbackForm() {
                   </Button>
                 ) : (
                   <Button
-                    type="submit"
+                    type="button"
+                    onClick={handleSubmitClick}
                     disabled={submitMutation.isPending}
                     className="flex-1 bg-gradient-to-r from-[#FFD700] to-[#FFC700] text-[#8B0000] font-nunito font-black rounded-[12px] hover:from-yellow-500 hover:to-yellow-400 transition-all duration-200"
                     data-testid="button-submit"

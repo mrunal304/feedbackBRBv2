@@ -1,0 +1,41 @@
+The validation is still not working. The problem is that the form uses react-hook-form with form.handleSubmit(onSubmit) — this means onSubmit is only called if react-hook-form's own validation passes first. The ratings fields may have default value of 0 so react-hook-form thinks they are filled and calls onSubmit, but our check inside onSubmit may not be running.
+Do exactly this:
+
+Open client/src/pages/FeedbackForm.tsx
+Find the Submit button — it likely says form.handleSubmit(onSubmit) in onClick
+Replace the Submit button's onClick with a custom function:
+
+javascriptconst handleSubmitClick = () => {
+  const values = form.getValues();
+  const ratings = values.ratings || {};
+  
+  const errors: Record<string, boolean> = {};
+  if (!ratings.foodTaste || ratings.foodTaste === 0) errors.foodTaste = true;
+  if (!ratings.foodTemperature || ratings.foodTemperature === 0) errors.foodTemperature = true;
+  if (!ratings.portionSize || ratings.portionSize === 0) errors.portionSize = true;
+  if (!ratings.valueForMoney || ratings.valueForMoney === 0) errors.valueForMoney = true;
+  if (!ratings.presentation || ratings.presentation === 0) errors.presentation = true;
+  if (!ratings.overallService || ratings.overallService === 0) errors.overallService = true;
+  
+  if (Object.keys(errors).length > 0) {
+    setRatingErrors(errors);
+    // scroll to first error
+    const firstErrorEl = document.querySelector('[data-rating-error]');
+    if (firstErrorEl) firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  
+  setRatingErrors({});
+  form.handleSubmit(onSubmit)();
+};
+
+Change Submit button to: onClick={handleSubmitClick} (remove form.handleSubmit from button)
+Make sure each rating section has data-rating-error attribute on the error paragraph and the error shows using ratingErrors['fieldName']:
+
+jsx{ratingErrors['presentation'] && (
+  <p data-rating-error style={{color: '#dc2626', fontSize: '13px', marginTop: '4px'}}>
+    ⚠ Please rate this category
+  </p>
+)}
+Add data-rating-error to all 6 error paragraphs.
+Show me the exact final code of the Submit button and one example rating field with its error message after changes.
