@@ -167,6 +167,49 @@ export class MongoStorage implements IStorage {
       });
     }
 
+    // ===== CUSTOMER CARD UPSERT LOGIC =====
+    console.log('[CUSTOMER CARD] Starting customer card upsert for:', {
+      phoneNumber: feedback.phone,
+      name: feedback.name,
+      visitId: visit._id.toString(),
+    });
+
+    try {
+      const existingCard = await CustomerCardModel.findOne({ phoneNumber: feedback.phone });
+
+      if (existingCard) {
+        console.log('[CUSTOMER CARD] Updating existing customer card for:', feedback.phone);
+        await CustomerCardModel.findOneAndUpdate(
+          { phoneNumber: feedback.phone },
+          {
+            $inc: { totalVisits: 1 },
+            $set: { lastVisitDate: new Date(), name: feedback.name },
+            $push: { visits: visit._id }
+          }
+        );
+        console.log('[CUSTOMER CARD] Successfully updated customer card for:', feedback.phone);
+      } else {
+        console.log('[CUSTOMER CARD] Creating new customer card for:', feedback.phone);
+        await CustomerCardModel.create({
+          phoneNumber: feedback.phone,
+          name: feedback.name,
+          totalVisits: 1,
+          firstVisitDate: new Date(),
+          lastVisitDate: new Date(),
+          visits: [visit._id],
+        });
+        console.log('[CUSTOMER CARD] Successfully created new customer card for:', feedback.phone);
+      }
+    } catch (error: any) {
+      console.error('[CUSTOMER CARD ERROR] Failed to upsert customer card:', {
+        phoneNumber: feedback.phone,
+        name: feedback.name,
+        errorMessage: error.message,
+        errorStack: error.stack,
+      });
+    }
+    // ===== END CUSTOMER CARD UPSERT LOGIC =====
+
     return formatVisitAsFeedback(customerDoc, visit);
   }
 
