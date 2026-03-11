@@ -256,56 +256,65 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen bg-[#FDF8F6]">
       <Tabs defaultValue="analytics" className="flex w-full">
         {/* STEP 1: Left Sidebar */}
-        <aside className="w-[220px] min-w-[220px] bg-[#8B1A1A] flex flex-col fixed h-screen z-50 overflow-hidden">
-          <div className="px-4 pt-4">
-            <h1 className="text-white font-bold text-[19px]">Admin Panel</h1>
+        <aside className="w-[240px] bg-[#8B1A1A] flex flex-col fixed h-screen z-50 overflow-hidden px-4 py-6">
+          {/* Title */}
+          <div className="mb-8 text-center">
+            <h1 className="text-white font-bold text-[20px]">Admin Panel</h1>
           </div>
 
-          <nav className="flex-1 space-y-0 mt-2 overflow-y-auto">
+          {/* Navigation Items */}
+          <nav className="space-y-3">
             <TabsList className="flex flex-col w-full bg-transparent h-auto p-0 space-y-0">
               <TabsTrigger
                 value="analytics"
-                className="w-full justify-start px-4 py-2.5 text-white/70 data-[state=active]:bg-[rgba(255,255,255,0.15)] data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:rounded-[8px] hover:bg-white/10 transition-colors border-none shadow-none rounded-[8px] mx-4"
+                className="w-full justify-start px-4 py-3 text-white/80 data-[state=active]:bg-white/15 data-[state=active]:text-white data-[state=active]:font-semibold hover:bg-white/10 transition-colors border border-white/30 shadow-none rounded-lg mx-0"
                 data-testid="tab-analytics"
               >
                 <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
-                <span className="!text-[17px] !font-medium">Overview</span>
+                <span className="text-[15px] font-medium">Overview</span>
               </TabsTrigger>
               <TabsTrigger
                 value="feedback"
-                className="w-full justify-start px-4 py-2.5 text-white/70 data-[state=active]:bg-[rgba(255,255,255,0.15)] data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:rounded-[8px] hover:bg-white/10 transition-colors border-none shadow-none rounded-[8px] mx-4"
+                className="w-full justify-start px-4 py-3 text-white/80 data-[state=active]:bg-white/15 data-[state=active]:text-white data-[state=active]:font-semibold hover:bg-white/10 transition-colors border border-white/30 shadow-none rounded-lg mx-0"
                 data-testid="tab-feedback"
               >
                 <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
-                <span className="!text-[17px] !font-medium">Feedback</span>
+                <span className="text-[15px] font-medium">Feedback</span>
               </TabsTrigger>
             </TabsList>
           </nav>
 
-          <div className="px-4 py-4 border-t border-white/10 pb-4 flex-shrink-0">
-            <div className="flex items-center gap-3 mb-3 px-0">
-              <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0">
+          {/* Flex Spacer */}
+          <div className="flex-1"></div>
+
+          {/* Bottom Section: Admin Info + Sign Out */}
+          <div className="space-y-3">
+            {/* Admin Avatar + Name */}
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0 text-[16px]">
                 A
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white font-medium text-[13px] truncate">admin</p>
-                <p className="text-pink-100/70 text-[11px]">Admin</p>
+                <p className="text-white font-semibold text-[13px] truncate">admin</p>
+                <p className="text-white/60 text-[11px]">Admin</p>
               </div>
             </div>
+
+            {/* Sign Out Button */}
             <Button
               variant="ghost"
-              className="w-full justify-start text-white hover:bg-white/10 py-2 h-auto px-4 pl-4 rounded-[8px] whitespace-nowrap overflow-visible"
+              className="w-full justify-start text-white hover:bg-white/10 py-3 h-auto px-4 border border-white/30 rounded-lg"
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
             >
-              <LogOut className="w-4 h-4 flex-shrink-0" />
-              <span className="text-white font-bold text-[19px] whitespace-nowrap">Sign Out</span>
+              <LogOut className="w-4 h-4 mr-3 flex-shrink-0" />
+              <span className="text-[15px] font-medium">Sign Out</span>
             </Button>
           </div>
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 ml-[220px] min-h-screen">
+        <main className="flex-1 ml-[240px] min-h-screen">
           <div className="p-8 max-w-7xl mx-auto space-y-8">
             <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
               {/* STEP 2: Overview Page Header */}
