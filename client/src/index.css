@@ -110,6 +110,14 @@
     --input: 0 68% 32%;
     --ring: 37 92% 55%;
     --radius: 0.5rem;
+    --sidebar-background: 0 68% 32%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 68% 32%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 50% 25%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 50% 40%;
+    --sidebar-ring: 37 92% 55%;
   }
 }
 
