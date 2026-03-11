@@ -11,20 +11,9 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
-// Define Customer Card Schema
-const customerCardSchema = new mongoose.Schema({
-  phoneNumber: { type: String, required: true, unique: true, index: true },
-  name: { type: String, required: true },
-  totalVisits: { type: Number, default: 1 },
-  firstVisitDate: { type: Date, default: Date.now },
-  lastVisitDate: { type: Date, default: Date.now },
-  visits: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Feedback' }],
-});
-
-// Define Feedback Schema
-const feedbackSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  phoneNumber: { type: String, required: true, index: true },
+// Define Visit Schema (embedded in customer documents)
+const visitSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   location: { type: String, required: true },
   visitType: { type: String, enum: ['dine_in', 'take_out'], default: 'dine_in' },
   ratings: {
@@ -41,10 +30,24 @@ const feedbackSchema = new mongoose.Schema({
   dateKey: { type: String },
 });
 
-// Pre-save middleware to populate dateKey
-feedbackSchema.pre('save', function() {
-  // Use timestamp to make each submission unique, allowing unlimited submissions
-  this.dateKey = new Date().toISOString().split('T')[0] + '-' + Date.now();
+// Define Customer Card Schema
+const customerCardSchema = new mongoose.Schema({
+  phoneNumber: { type: String, required: true, unique: true, index: true },
+  name: { type: String, required: true },
+  totalVisits: { type: Number, default: 1 },
+  firstVisitDate: { type: Date, default: Date.now },
+  lastVisitDate: { type: Date, default: Date.now },
+  visits: [visitSchema],
+});
+
+// Define Feedback Schema (same structure as CustomerCard for consistency)
+const feedbackSchema = new mongoose.Schema({
+  phoneNumber: { type: String, required: true, unique: true, index: true },
+  name: { type: String, required: true },
+  totalVisits: { type: Number, default: 1 },
+  firstVisitDate: { type: Date, default: Date.now },
+  lastVisitDate: { type: Date, default: Date.now },
+  visits: [visitSchema],
 });
 
 export const CustomerCardModel = mongoose.model('CustomerCard', customerCardSchema);
