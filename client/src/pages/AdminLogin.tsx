@@ -70,19 +70,19 @@ export default function AdminLoginPage() {
           <p className="text-base text-muted-foreground">Admin Dashboard</p>
         </div>
 
-        <Card className="shadow-lg md:w-[480px] md:min-h-[420px] md:p-10">
-          <CardHeader>
+        <Card className="shadow-lg md:w-[480px] md:p-6">
+          <CardHeader className="pb-4">
             <div className="flex items-center gap-2">
               <Lock className="w-5 h-5 text-primary" />
               <CardTitle className="text-[1.3rem]">Staff Login</CardTitle>
             </div>
-            <CardDescription>
+            <CardDescription className="mt-1">
               Enter your credentials to access the dashboard
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit((data) => loginMutation.mutate(data))} className="space-y-4">
+              <form onSubmit={form.handleSubmit((data) => loginMutation.mutate(data))} className="space-y-3">
                 <FormField
                   control={form.control}
                   name="username"
