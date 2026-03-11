@@ -171,18 +171,9 @@
   animation: starPop 0.25s ease;
 }
 
-/* Progress bar animation for mobile */
-@keyframes progressBarFill {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
-}
-
+/* Progress bar transition for mobile */
 @media (max-width: 768px) {
   .progress-bar-mobile {
-    animation: progressBarFill 0.8s ease-out forwards;
+    transition: width 0.5s ease;
   }
 }
