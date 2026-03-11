@@ -41,6 +41,30 @@ function formatFeedback(doc: any): Feedback & { dateKey?: string } {
   };
 }
 
+function formatVisitFromCustomer(customerDoc: any, visit: any, totalVisits: number): Feedback & { dateKey?: string; visitId?: string } {
+  const createdDate = new Date(visit.createdAt);
+  const visitDate = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const visitTime = createdDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  const dateKey = createdDate.toISOString().split('T')[0];
+  
+  return {
+    _id: visit._id.toString(),
+    visitId: visit._id.toString(),
+    name: customerDoc.name,
+    phone: customerDoc.phoneNumber,
+    location: visit.location,
+    visitType: visit.visitType,
+    ratings: visit.ratings,
+    comments: visit.comments,
+    status: visit.status || "pending",
+    createdAt: visit.createdAt.toISOString(),
+    visitDate,
+    visitTime,
+    totalVisits,
+    dateKey,
+  };
+}
+
 function normalizeName(name: string): string {
   return name.toLowerCase().trim();
 }
@@ -84,32 +108,49 @@ export class MongoStorage implements IStorage {
     if (filters?.search) {
       query.$or = [
         { name: { $regex: filters.search, $options: 'i' } },
-        { phone: { $regex: filters.search, $options: 'i' } },
+        { phoneNumber: { $regex: filters.search, $options: 'i' } },
       ];
     }
     
-    if (filters?.startDate || filters?.endDate) {
-      query.createdAt = {};
-      if (filters?.startDate) {
-        const start = new Date(filters.startDate);
-        query.createdAt.$gte = start;
-      }
-      if (filters?.endDate) {
-        const end = new Date(filters.endDate);
-        end.setHours(23, 59, 59, 999);
-        query.createdAt.$lte = end;
-      }
-    }
+    const docs = await FeedbackModel.find(query);
     
-    if (filters?.status === 'contacted') {
-      query.status = 'contacted';
-    } else if (filters?.status === 'pending') {
-      query.status = 'pending';
-    }
+    let results: (Feedback & { dateKey?: string; visitId?: string })[] = [];
     
-    const docs = await FeedbackModel.find(query).sort({ createdAt: -1 });
+    docs.forEach(doc => {
+      doc.visits.forEach(visit => {
+        let includeVisit = true;
+        
+        if (filters?.startDate || filters?.endDate) {
+          const visitDate = new Date(visit.createdAt);
+          if (filters?.startDate) {
+            const start = new Date(filters.startDate);
+            if (visitDate < start) includeVisit = false;
+          }
+          if (filters?.endDate && includeVisit) {
+            const end = new Date(filters.endDate);
+            end.setHours(23, 59, 59, 999);
+            if (visitDate > end) includeVisit = false;
+          }
+        }
+        
+        if (filters?.status === 'contacted' && visit.status !== 'contacted') {
+          includeVisit = false;
+        } else if (filters?.status === 'pending' && visit.status !== 'pending') {
+          includeVisit = false;
+        }
+        
+        if (includeVisit) {
+          const formatted = formatVisitFromCustomer(doc, visit, doc.totalVisits);
+          results.push(formatted);
+        }
+      });
+    });
     
-    let results = docs.map(formatFeedback);
+    results.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
     
     if (filters?.minRating) {
       const minRating = Number(filters.minRating);
@@ -174,14 +215,25 @@ export class MongoStorage implements IStorage {
   }
 
   async getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null> {
-    const docs = await FeedbackModel.find({ name: { $regex: normalizedName, $options: 'i' } })
-      .sort({ createdAt: -1 });
+    const docs = await FeedbackModel.find({ name: { $regex: normalizedName, $options: 'i' } });
     
     if (docs.length === 0) {
       return null;
     }
     
-    const feedbacks = docs.map(formatFeedback);
+    let feedbacks: (Feedback & { dateKey?: string; visitId?: string })[] = [];
+    docs.forEach(doc => {
+      doc.visits.forEach(visit => {
+        const formatted = formatVisitFromCustomer(doc, visit, doc.totalVisits);
+        feedbacks.push(formatted);
+      });
+    });
+    
+    feedbacks.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
     
     return {
       customerName: feedbacks[0].name,
@@ -192,12 +244,21 @@ export class MongoStorage implements IStorage {
 
   async markAsContacted(id: string, staffName: string): Promise<Feedback | null> {
     try {
-      const doc = await FeedbackModel.findByIdAndUpdate(
-        id,
-        { status: "contacted" },
-        { new: true }
+      const doc = await FeedbackModel.findOneAndUpdate(
+        { "visits._id": id },
+        { $set: { "visits.$[visit].status": "contacted" } },
+        { 
+          arrayFilters: [{ "visit._id": id }],
+          new: true 
+        }
       );
-      return doc ? formatFeedback(doc) : null;
+      
+      if (!doc) return null;
+      
+      const visit = doc.visits.find(v => v._id.toString() === id);
+      if (!visit) return null;
+      
+      return formatVisitFromCustomer(doc, visit, doc.totalVisits);
     } catch {
       return null;
     }
@@ -215,11 +276,23 @@ export class MongoStorage implements IStorage {
   async getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics> {
     const { start, end } = getDateRange(period);
     
-    const docs = await FeedbackModel.find({
-      createdAt: { $gte: start, $lte: end }
-    }).sort({ createdAt: 1 });
+    const docs = await FeedbackModel.find({});
     
-    const feedbacks = docs.map(formatFeedback);
+    let feedbacks: (Feedback & { dateKey?: string })[] = [];
+    docs.forEach(doc => {
+      doc.visits.forEach(visit => {
+        if (new Date(visit.createdAt) >= start && new Date(visit.createdAt) <= end) {
+          const formatted = formatVisitFromCustomer(doc, visit, doc.totalVisits);
+          feedbacks.push(formatted);
+        }
+      });
+    });
+    
+    feedbacks.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateA - dateB;
+    });
     const total = feedbacks.length;
     const contacted = feedbacks.filter(f => f.status === "contacted").length;
     
