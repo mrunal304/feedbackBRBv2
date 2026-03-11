@@ -256,7 +256,7 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen bg-[#FDF8F6]">
       <Tabs defaultValue="analytics" className="flex w-full">
         {/* STEP 1: Left Sidebar */}
-        <aside className="w-[220px] bg-[#8B1A1A] flex flex-col fixed h-screen z-50 overflow-hidden">
+        <aside className="w-[220px] min-w-[220px] bg-[#8B1A1A] flex flex-col fixed h-screen z-50 overflow-hidden">
           <div className="px-4 pt-4">
             <h1 className="text-white font-bold text-[19px]">Admin Panel</h1>
           </div>
@@ -294,12 +294,12 @@ export default function AdminDashboard() {
             </div>
             <Button
               variant="ghost"
-              className="w-full justify-start text-white hover:bg-white/10 py-2 h-auto px-4 rounded-[8px]"
+              className="w-full justify-start text-white hover:bg-white/10 py-2 h-auto px-4 pl-4 rounded-[8px] whitespace-nowrap overflow-visible"
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
             >
               <LogOut className="w-4 h-4 flex-shrink-0" />
-              <span className="text-white font-bold text-[19px] truncate">Sign Out</span>
+              <span className="text-white font-bold text-[19px] whitespace-nowrap">Sign Out</span>
             </Button>
           </div>
         </aside>
