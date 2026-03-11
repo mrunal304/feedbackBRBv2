@@ -534,12 +534,9 @@ export default function AdminDashboard() {
                             </div>
                           </TableCell>
                           <TableCell className="py-2.5">
-                            <div className="text-sm text-gray-600 space-y-0.5">
-                              <p className="font-medium text-[#3D2B1F]">{fb.location}</p>
-                              <span className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
-                                {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
-                              </span>
-                            </div>
+                            <span className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                              {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
+                            </span>
                           </TableCell>
                           <TableCell className="py-2.5">
                             <div className="flex flex-col gap-0.5 items-center">
