@@ -259,7 +259,7 @@ export default function FeedbackForm() {
                         <FormLabel className="text-[13px] font-bold text-[#444444] uppercase tracking-widest font-nunito">Phone Number</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="+1 234 567 8900"
+                            placeholder="+91 99999 00000"
                             {...field}
                             data-testid="input-phone"
                             className={formInputClass}
