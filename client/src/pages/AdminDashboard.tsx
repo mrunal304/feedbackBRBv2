@@ -35,15 +35,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import {
@@ -136,6 +133,7 @@ export default function AdminDashboard() {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("analytics");
 
   const { data: authCheck, isLoading: authLoading } = useQuery({
     queryKey: ["/api/auth/check"],
@@ -274,45 +272,24 @@ export default function AdminDashboard() {
 
           {/* SidebarContent: Menu Items */}
           <SidebarContent className="px-3 py-4">
-            <SidebarMenu className="space-y-3">
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  variant="outline"
-                  size="lg"
-                  className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10 border border-white/30"
-                  onClick={() => {
-                    const tabs = document.querySelector('[role="tablist"]');
-                    if (tabs) {
-                      const button = tabs.querySelector('[data-testid="tab-analytics"]') as HTMLElement;
-                      button?.click();
-                    }
-                  }}
-                  data-testid="tab-analytics"
-                >
-                  <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
-                  <span className="flex-1 min-w-0 text-[15px] font-medium">Overview</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  variant="outline"
-                  size="lg"
-                  className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10 border border-white/30"
-                  onClick={() => {
-                    const tabs = document.querySelector('[role="tablist"]');
-                    if (tabs) {
-                      const button = tabs.querySelector('[data-testid="tab-feedback"]') as HTMLElement;
-                      button?.click();
-                    }
-                  }}
-                  data-testid="tab-feedback"
-                >
-                  <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
-                  <span className="flex-1 min-w-0 text-[15px] font-medium">Feedback</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => setActiveTab("analytics")}
+                data-testid="sidebar-btn-analytics"
+                className={`flex items-center gap-3 w-full px-4 h-12 rounded-md border text-[15px] font-medium transition-colors ${activeTab === "analytics" ? "bg-white/20 text-white border-white/50" : "text-white/80 hover:text-white hover:bg-white/10 border-white/30"}`}
+              >
+                <BarChart3 className="w-4 h-4 shrink-0" />
+                <span>Overview</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("feedback")}
+                data-testid="sidebar-btn-feedback"
+                className={`flex items-center gap-3 w-full px-4 h-12 rounded-md border text-[15px] font-medium transition-colors ${activeTab === "feedback" ? "bg-white/20 text-white border-white/50" : "text-white/80 hover:text-white hover:bg-white/10 border-white/30"}`}
+              >
+                <MessageSquare className="w-4 h-4 shrink-0" />
+                <span>Feedback</span>
+              </button>
+            </div>
           </SidebarContent>
 
           {/* SidebarFooter: Admin Info + Sign Out */}
@@ -344,12 +321,7 @@ export default function AdminDashboard() {
 
         {/* Main Content */}
         <main className="flex-1 min-h-screen">
-          <Tabs defaultValue="analytics" className="w-full">
-            {/* Hidden TabsList needed for tab switching to work */}
-            <TabsList className="hidden">
-              <TabsTrigger value="analytics" data-testid="tab-analytics">Overview</TabsTrigger>
-              <TabsTrigger value="feedback" data-testid="tab-feedback">Feedback</TabsTrigger>
-            </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="p-8 max-w-7xl mx-auto space-y-8">
               <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
               {/* STEP 2: Overview Page Header */}
