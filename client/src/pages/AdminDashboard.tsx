@@ -256,16 +256,16 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen bg-[#FDF8F6]">
       <Tabs defaultValue="analytics" className="flex w-full">
         {/* STEP 1: Left Sidebar */}
-        <aside className="w-[220px] bg-[#8B1A1A] flex flex-col fixed h-full z-50">
+        <aside className="w-[220px] bg-[#8B1A1A] flex flex-col fixed h-screen z-50 overflow-hidden">
           <div className="px-4 pt-4">
             <h1 className="text-white font-bold text-[19px]">Admin Panel</h1>
           </div>
 
-          <nav className="flex-1 px-4 space-y-0 mt-2">
+          <nav className="flex-1 space-y-0 mt-2 overflow-y-auto">
             <TabsList className="flex flex-col w-full bg-transparent h-auto p-0 space-y-0">
               <TabsTrigger
                 value="analytics"
-                className="w-full justify-start px-3 py-2.5 text-white/70 data-[state=active]:bg-[rgba(255,255,255,0.15)] data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:rounded-[8px] hover:bg-white/10 transition-colors border-none shadow-none rounded-[8px] mx-0"
+                className="w-full justify-start px-4 py-2.5 text-white/70 data-[state=active]:bg-[rgba(255,255,255,0.15)] data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:rounded-[8px] hover:bg-white/10 transition-colors border-none shadow-none rounded-[8px] mx-4"
                 data-testid="tab-analytics"
               >
                 <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
@@ -273,7 +273,7 @@ export default function AdminDashboard() {
               </TabsTrigger>
               <TabsTrigger
                 value="feedback"
-                className="w-full justify-start px-3 py-2.5 text-white/70 data-[state=active]:bg-[rgba(255,255,255,0.15)] data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:rounded-[8px] hover:bg-white/10 transition-colors border-none shadow-none rounded-[8px] mx-0"
+                className="w-full justify-start px-4 py-2.5 text-white/70 data-[state=active]:bg-[rgba(255,255,255,0.15)] data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:rounded-[8px] hover:bg-white/10 transition-colors border-none shadow-none rounded-[8px] mx-4"
                 data-testid="tab-feedback"
               >
                 <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
@@ -282,8 +282,8 @@ export default function AdminDashboard() {
             </TabsList>
           </nav>
 
-          <div className="px-4 py-4 mt-auto border-t border-white/10 pb-2 overflow-visible">
-            <div className="flex items-center gap-3 mb-3">
+          <div className="px-4 py-4 border-t border-white/10 pb-4 flex-shrink-0">
+            <div className="flex items-center gap-3 mb-3 px-0">
               <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0">
                 A
               </div>
@@ -294,12 +294,12 @@ export default function AdminDashboard() {
             </div>
             <Button
               variant="ghost"
-              className="w-full justify-start text-white hover:bg-white/10 py-2 h-auto px-4 overflow-visible whitespace-nowrap"
+              className="w-full justify-start text-white hover:bg-white/10 py-2 h-auto px-4 rounded-[8px]"
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
             >
               <LogOut className="w-4 h-4 flex-shrink-0" />
-              <span className="text-white font-bold text-[19px]">Sign Out</span>
+              <span className="text-white font-bold text-[19px] truncate">Sign Out</span>
             </Button>
           </div>
         </aside>
