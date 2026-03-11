@@ -26,7 +26,7 @@ function formatFeedback(doc: any): Feedback & { dateKey?: string } {
   return {
     _id: doc._id.toString(),
     name: doc.name,
-    phone: doc.phone,
+    phone: doc.phoneNumber,
     location: doc.location,
     visitType: doc.visitType,
     ratings: doc.ratings,
@@ -37,30 +37,6 @@ function formatFeedback(doc: any): Feedback & { dateKey?: string } {
     visitTime,
     contactedAt: doc.contactedAt ? doc.contactedAt.toISOString() : undefined,
     contactedBy: doc.contactedBy,
-    dateKey,
-  };
-}
-
-function formatVisitFromCustomer(customerDoc: any, visit: any, totalVisits: number): Feedback & { dateKey?: string; visitId?: string } {
-  const createdDate = new Date(visit.createdAt);
-  const visitDate = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  const visitTime = createdDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-  const dateKey = createdDate.toISOString().split('T')[0];
-  
-  return {
-    _id: visit._id.toString(),
-    visitId: visit._id.toString(),
-    name: customerDoc.name,
-    phone: customerDoc.phoneNumber,
-    location: visit.location,
-    visitType: visit.visitType,
-    ratings: visit.ratings,
-    comments: visit.comments,
-    status: visit.status || "pending",
-    createdAt: visit.createdAt.toISOString(),
-    visitDate,
-    visitTime,
-    totalVisits,
     dateKey,
   };
 }
@@ -112,45 +88,28 @@ export class MongoStorage implements IStorage {
       ];
     }
     
-    const docs = await FeedbackModel.find(query);
+    if (filters?.startDate || filters?.endDate) {
+      query.createdAt = {};
+      if (filters?.startDate) {
+        const start = new Date(filters.startDate);
+        query.createdAt.$gte = start;
+      }
+      if (filters?.endDate) {
+        const end = new Date(filters.endDate);
+        end.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = end;
+      }
+    }
     
-    let results: (Feedback & { dateKey?: string; visitId?: string })[] = [];
+    if (filters?.status === 'contacted') {
+      query.status = 'contacted';
+    } else if (filters?.status === 'pending') {
+      query.status = 'pending';
+    }
     
-    docs.forEach(doc => {
-      doc.visits.forEach(visit => {
-        let includeVisit = true;
-        
-        if (filters?.startDate || filters?.endDate) {
-          const visitDate = new Date(visit.createdAt);
-          if (filters?.startDate) {
-            const start = new Date(filters.startDate);
-            if (visitDate < start) includeVisit = false;
-          }
-          if (filters?.endDate && includeVisit) {
-            const end = new Date(filters.endDate);
-            end.setHours(23, 59, 59, 999);
-            if (visitDate > end) includeVisit = false;
-          }
-        }
-        
-        if (filters?.status === 'contacted' && visit.status !== 'contacted') {
-          includeVisit = false;
-        } else if (filters?.status === 'pending' && visit.status !== 'pending') {
-          includeVisit = false;
-        }
-        
-        if (includeVisit) {
-          const formatted = formatVisitFromCustomer(doc, visit, doc.totalVisits);
-          results.push(formatted);
-        }
-      });
-    });
+    const docs = await FeedbackModel.find(query).sort({ createdAt: -1 });
     
-    results.sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-      return dateB - dateA;
-    });
+    let results = docs.map(formatFeedback);
     
     if (filters?.minRating) {
       const minRating = Number(filters.minRating);
@@ -180,7 +139,8 @@ export class MongoStorage implements IStorage {
   }
 
   async createFeedback(feedback: InsertFeedback): Promise<Feedback> {
-    // Create feedback document
+    const dateKey = getDateKey();
+    
     const feedbackDoc = await FeedbackModel.create({
       name: feedback.name,
       phoneNumber: feedback.phone,
@@ -189,6 +149,7 @@ export class MongoStorage implements IStorage {
       ratings: feedback.ratings,
       comments: feedback.comments,
       status: "pending",
+      dateKey,
     });
 
     // Upsert customer card
@@ -197,7 +158,6 @@ export class MongoStorage implements IStorage {
       // Update existing card
       existingCard.totalVisits += 1;
       existingCard.lastVisitDate = new Date();
-      existingCard.visits.push(feedbackDoc._id);
       await existingCard.save();
     } else {
       // Create new card
@@ -207,7 +167,7 @@ export class MongoStorage implements IStorage {
         totalVisits: 1,
         firstVisitDate: new Date(),
         lastVisitDate: new Date(),
-        visits: [feedbackDoc._id],
+        visits: [],
       });
     }
 
@@ -215,25 +175,14 @@ export class MongoStorage implements IStorage {
   }
 
   async getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null> {
-    const docs = await FeedbackModel.find({ name: { $regex: normalizedName, $options: 'i' } });
+    const docs = await FeedbackModel.find({ name: { $regex: normalizedName, $options: 'i' } })
+      .sort({ createdAt: -1 });
     
     if (docs.length === 0) {
       return null;
     }
     
-    let feedbacks: (Feedback & { dateKey?: string; visitId?: string })[] = [];
-    docs.forEach(doc => {
-      doc.visits.forEach(visit => {
-        const formatted = formatVisitFromCustomer(doc, visit, doc.totalVisits);
-        feedbacks.push(formatted);
-      });
-    });
-    
-    feedbacks.sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-      return dateB - dateA;
-    });
+    const feedbacks = docs.map(formatFeedback);
     
     return {
       customerName: feedbacks[0].name,
@@ -244,21 +193,12 @@ export class MongoStorage implements IStorage {
 
   async markAsContacted(id: string, staffName: string): Promise<Feedback | null> {
     try {
-      const doc = await FeedbackModel.findOneAndUpdate(
-        { "visits._id": id },
-        { $set: { "visits.$[visit].status": "contacted" } },
-        { 
-          arrayFilters: [{ "visit._id": id }],
-          new: true 
-        }
+      const doc = await FeedbackModel.findByIdAndUpdate(
+        id,
+        { status: "contacted" },
+        { new: true }
       );
-      
-      if (!doc) return null;
-      
-      const visit = doc.visits.find(v => v._id.toString() === id);
-      if (!visit) return null;
-      
-      return formatVisitFromCustomer(doc, visit, doc.totalVisits);
+      return doc ? formatFeedback(doc) : null;
     } catch {
       return null;
     }
@@ -266,8 +206,8 @@ export class MongoStorage implements IStorage {
 
   async getTotalVisits(phoneNumber: string): Promise<number> {
     try {
-      const card = await CustomerCardModel.findOne({ phoneNumber });
-      return card?.totalVisits || 0;
+      const count = await FeedbackModel.countDocuments({ phoneNumber });
+      return count;
     } catch {
       return 0;
     }
@@ -276,23 +216,11 @@ export class MongoStorage implements IStorage {
   async getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics> {
     const { start, end } = getDateRange(period);
     
-    const docs = await FeedbackModel.find({});
+    const docs = await FeedbackModel.find({
+      createdAt: { $gte: start, $lte: end }
+    }).sort({ createdAt: 1 });
     
-    let feedbacks: (Feedback & { dateKey?: string })[] = [];
-    docs.forEach(doc => {
-      doc.visits.forEach(visit => {
-        if (new Date(visit.createdAt) >= start && new Date(visit.createdAt) <= end) {
-          const formatted = formatVisitFromCustomer(doc, visit, doc.totalVisits);
-          feedbacks.push(formatted);
-        }
-      });
-    });
-    
-    feedbacks.sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-      return dateA - dateB;
-    });
+    const feedbacks = docs.map(formatFeedback);
     const total = feedbacks.length;
     const contacted = feedbacks.filter(f => f.status === "contacted").length;
     
@@ -374,7 +302,7 @@ export class MongoStorage implements IStorage {
     });
     
     const weeklyTrends = Object.entries(trendMap).map(([date, data]) => {
-      // Extract just the date part from dateKey (format: "2026-03-09-timestamp")
+      // Extract just the date part from dateKey (format: "2026-03-09")
       const dateOnly = date.split('-').slice(0, 3).join('-');
       return {
         date: dateOnly,
