@@ -290,7 +290,7 @@ export default function AdminDashboard() {
                   data-testid="tab-analytics"
                 >
                   <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
-                  <span className="text-[15px] font-medium">Overview</span>
+                  <span className="!block text-[15px] font-medium">Overview</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
@@ -309,7 +309,7 @@ export default function AdminDashboard() {
                   data-testid="tab-feedback"
                 >
                   <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
-                  <span className="text-[15px] font-medium">Feedback</span>
+                  <span className="!block text-[15px] font-medium">Feedback</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
