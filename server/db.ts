@@ -44,7 +44,7 @@ const customerCardSchema = new mongoose.Schema({
   totalVisits: { type: Number, default: 1 },
   firstVisitDate: { type: Date, default: Date.now },
   lastVisitDate: { type: Date, default: Date.now },
-  visits: [visitSchema],
+  visits: [{ type: mongoose.Schema.Types.ObjectId }],
 });
 
 export const FeedbackModel = mongoose.model('Feedback', feedbackSchema);
