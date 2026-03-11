@@ -154,6 +154,15 @@ export default function FeedbackForm() {
     form.handleSubmit(onSubmit)();
   };
 
+  const handleStarClick = (fieldName: string, currentValue: number, clickedValue: number) => {
+    if (currentValue === clickedValue) {
+      form.setValue(fieldName, 0);
+    } else {
+      form.setValue(fieldName, clickedValue);
+    }
+    setRatingErrors(prev => ({ ...prev, [fieldName]: false }));
+  };
+
   const ratingQuestions = [
     { key: "foodTaste", label: "Food Taste — How did the food taste overall?", icon: "😋" },
     { key: "foodTemperature", label: "Food Temperature — Was your food served at the right temperature?", icon: "🌡️" },
@@ -358,14 +367,7 @@ export default function FeedbackForm() {
                                     <button
                                       key={star}
                                       type="button"
-                                      onClick={() => {
-                                        field.onChange(star);
-                                        // Clear error immediately when rating is selected
-                                        setRatingErrors(prev => ({
-                                          ...prev,
-                                          [key]: false
-                                        }));
-                                      }}
+                                      onClick={() => handleStarClick(`ratings.${key}`, field.value, star)}
                                       className={`star ${star <= field.value ? "star-selected" : "star-empty"}`}
                                       data-testid={`star-${key}-${star}`}
                                       style={{
