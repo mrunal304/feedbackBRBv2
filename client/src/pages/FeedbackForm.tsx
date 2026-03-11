@@ -48,11 +48,25 @@ export default function FeedbackForm() {
       navigate(`/thank-you?name=${encodeURIComponent(name)}`);
     },
     onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to submit feedback",
-        variant: "destructive",
-      });
+      // Check if it's a duplicate submission error (409 Conflict)
+      const errorMessage = error.message || "";
+      const isDuplicate = errorMessage.includes("already submitted") || errorMessage.toLowerCase().includes("duplicate");
+      
+      if (isDuplicate) {
+        toast({
+          title: "Already Submitted Today",
+          description: "You have already submitted feedback today.\nPlease try again tomorrow!",
+          variant: "destructive",
+          duration: 4000,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to submit feedback",
+          variant: "destructive",
+          duration: 4000,
+        });
+      }
     },
   });
 
@@ -389,19 +403,6 @@ export default function FeedbackForm() {
                 </motion.div>
               )}
 
-              {/* Error Message Display */}
-              {submitMutation.isError && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-red-50 border-2 border-red-300 rounded-[12px] p-4 mb-4"
-                  data-testid="error-message"
-                >
-                  <p className="text-red-700 font-nunito font-semibold text-sm">
-                    ⚠️ {(submitMutation.error as Error)?.message || "Failed to submit feedback. Please try again."}
-                  </p>
-                </motion.div>
-              )}
 
               {/* Buttons */}
               <div className="flex gap-4 pt-6">
