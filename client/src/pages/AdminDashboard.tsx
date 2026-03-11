@@ -263,12 +263,10 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#FDF8F6]">
-      <SidebarProvider>
-        <div className="flex w-full">
-          <Tabs defaultValue="analytics" className="flex w-full">
-            {/* STEP 1: Left Sidebar */}
-            <Sidebar collapsible="none" className="bg-sidebar border-r">
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-[#FDF8F6]">
+        {/* Sidebar */}
+        <Sidebar collapsible="none" className="bg-sidebar border-r">
           {/* SidebarHeader: Admin Panel Title */}
           <SidebarHeader className="border-b border-white/10 py-4">
             <h1 className="text-white text-xl font-bold text-center">Admin Panel</h1>
@@ -344,10 +342,16 @@ export default function AdminDashboard() {
           </SidebarFooter>
         </Sidebar>
 
-        {/* Main Content Area */}
+        {/* Main Content */}
         <main className="flex-1 min-h-screen">
-          <div className="p-8 max-w-7xl mx-auto space-y-8">
-            <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
+          <Tabs defaultValue="analytics" className="w-full">
+            {/* Hidden TabsList needed for tab switching to work */}
+            <TabsList className="hidden">
+              <TabsTrigger value="analytics" data-testid="tab-analytics">Overview</TabsTrigger>
+              <TabsTrigger value="feedback" data-testid="tab-feedback">Feedback</TabsTrigger>
+            </TabsList>
+            <div className="p-8 max-w-7xl mx-auto space-y-8">
+              <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
               {/* STEP 2: Overview Page Header */}
               <div className="flex items-center justify-between">
                 <div>
@@ -871,11 +875,10 @@ export default function AdminDashboard() {
                 </DialogContent>
               </Dialog>
             </TabsContent>
-          </div>
-        </main>
+            </div>
           </Tabs>
-        </div>
-      </SidebarProvider>
-    </div>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }
