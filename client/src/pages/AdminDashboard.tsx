@@ -37,6 +37,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
+import {
   Table,
   TableBody,
   TableCell,
@@ -256,65 +265,86 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen bg-[#FDF8F6]">
       <Tabs defaultValue="analytics" className="flex w-full">
         {/* STEP 1: Left Sidebar */}
-        <aside className="w-[240px] bg-[#8B1A1A] flex flex-col fixed h-screen z-50 overflow-hidden px-4 py-6">
-          {/* Title */}
-          <div className="mb-8 text-center">
-            <h1 className="text-white font-bold text-[20px]">Admin Panel</h1>
-          </div>
+        <Sidebar className="bg-sidebar border-r">
+          {/* SidebarHeader: Admin Panel Title */}
+          <SidebarHeader className="border-b border-white/10 py-4">
+            <h1 className="text-white text-xl font-bold text-center">Admin Panel</h1>
+          </SidebarHeader>
 
-          {/* Navigation Items */}
-          <nav className="space-y-3">
-            <TabsList className="flex flex-col w-full bg-transparent h-auto p-0 space-y-0">
-              <TabsTrigger
-                value="analytics"
-                className="w-full justify-start px-4 py-3 text-white/80 data-[state=active]:bg-white/15 data-[state=active]:text-white data-[state=active]:font-semibold hover:bg-white/10 transition-colors border border-white/30 shadow-none rounded-lg mx-0"
-                data-testid="tab-analytics"
-              >
-                <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
-                <span className="text-[15px] font-medium">Overview</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="feedback"
-                className="w-full justify-start px-4 py-3 text-white/80 data-[state=active]:bg-white/15 data-[state=active]:text-white data-[state=active]:font-semibold hover:bg-white/10 transition-colors border border-white/30 shadow-none rounded-lg mx-0"
-                data-testid="tab-feedback"
-              >
-                <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
-                <span className="text-[15px] font-medium">Feedback</span>
-              </TabsTrigger>
-            </TabsList>
-          </nav>
+          {/* SidebarContent: Menu Items */}
+          <SidebarContent className="px-3 py-4">
+            <SidebarMenu className="space-y-3">
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10 border border-white/30"
+                  onClick={() => {
+                    const tabs = document.querySelector('[role="tablist"]');
+                    if (tabs) {
+                      const button = tabs.querySelector('[data-testid="tab-analytics"]') as HTMLElement;
+                      button?.click();
+                    }
+                  }}
+                  data-testid="tab-analytics"
+                >
+                  <BarChart3 className="w-4 h-4 mr-3 flex-shrink-0" />
+                  <span className="text-[15px] font-medium">Overview</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
-          {/* Flex Spacer */}
-          <div className="flex-1"></div>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10 border border-white/30"
+                  onClick={() => {
+                    const tabs = document.querySelector('[role="tablist"]');
+                    if (tabs) {
+                      const button = tabs.querySelector('[data-testid="tab-feedback"]') as HTMLElement;
+                      button?.click();
+                    }
+                  }}
+                  data-testid="tab-feedback"
+                >
+                  <MessageSquare className="w-4 h-4 mr-3 flex-shrink-0" />
+                  <span className="text-[15px] font-medium">Feedback</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
 
-          {/* Bottom Section: Admin Info + Sign Out */}
-          <div className="space-y-3">
+          {/* SidebarFooter: Admin Info + Sign Out */}
+          <SidebarFooter className="border-t border-white/10 px-3 py-4 space-y-3">
             {/* Admin Avatar + Name */}
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0 text-[16px]">
                 A
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white font-semibold text-[13px] truncate">admin</p>
+                <p className="text-white font-bold text-[13px] truncate">admin</p>
                 <p className="text-white/60 text-[11px]">Admin</p>
               </div>
             </div>
 
             {/* Sign Out Button */}
             <Button
-              variant="ghost"
-              className="w-full justify-start text-white hover:bg-white/10 py-3 h-auto px-4 border border-white/30 rounded-lg"
+              variant="outline"
+              size="lg"
+              className="w-full justify-start text-white hover:text-white hover:bg-white/10 border border-white/30"
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
             >
               <LogOut className="w-4 h-4 mr-3 flex-shrink-0" />
               <span className="text-[15px] font-medium">Sign Out</span>
             </Button>
-          </div>
-        </aside>
+          </SidebarFooter>
+        </Sidebar>
 
         {/* Main Content Area */}
-        <main className="flex-1 ml-[240px] min-h-screen">
+        <main className="flex-1 min-h-screen">
           <div className="p-8 max-w-7xl mx-auto space-y-8">
             <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
               {/* STEP 2: Overview Page Header */}
