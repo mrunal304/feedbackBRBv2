@@ -182,7 +182,8 @@ export default function AdminDashboard() {
         description: "",
         duration: 3000,
       });
-      refetchFeedback();
+      // Invalidate cache to ensure fresh data from server
+      queryClient.invalidateQueries({ queryKey: [feedbackUrl] });
     },
     onError: () => {
       toast({

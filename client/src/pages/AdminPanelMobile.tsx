@@ -181,7 +181,8 @@ export default function AdminPanelMobile() {
         description: "",
         duration: 3000,
       });
-      refetchFeedback();
+      // Invalidate cache to ensure fresh data from server
+      queryClient.invalidateQueries({ queryKey: [feedbackUrl] });
     },
     onError: () => {
       toast({
@@ -482,8 +483,8 @@ export default function AdminPanelMobile() {
                         {/* Row 1: Customer Name (bold, left) + Status badge (right) */}
                         <div className="flex items-center justify-between gap-3">
                           <p className="font-bold text-sm text-[#3D2B1F] capitalize flex-1">{fb.name}</p>
-                          <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest whitespace-nowrap flex-shrink-0 ${fb.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
-                            {fb.contactedAt ? 'CONTACTED' : 'PENDING'}
+                          <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest whitespace-nowrap flex-shrink-0 ${fb.status === 'contacted' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
+                            {fb.status === 'contacted' ? 'CONTACTED' : 'PENDING'}
                           </span>
                         </div>
 
@@ -524,7 +525,7 @@ export default function AdminPanelMobile() {
                             >
                               <Eye className="w-4 h-4" />
                             </Button>
-                            {!fb.contactedAt && (
+                            {fb.status !== 'contacted' && (
                               <Button
                                 size="sm"
                                 className="h-11 px-3 text-xs font-medium bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 flex-shrink-0"
@@ -644,10 +645,10 @@ export default function AdminPanelMobile() {
 
               {/* Sticky Footer */}
               <div className="bg-white border-t border-gray-200 p-4 flex items-center justify-between gap-3 flex-shrink-0 min-h-[60px]">
-                <span className={`px-3 py-2 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap flex-shrink-0 ${selectedFeedback.contactedAt ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
-                  {selectedFeedback.contactedAt ? 'Contacted' : 'Pending'}
+                <span className={`px-3 py-2 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap flex-shrink-0 ${selectedFeedback.status === 'contacted' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]'}`}>
+                  {selectedFeedback.status === 'contacted' ? 'Contacted' : 'Pending'}
                 </span>
-                {!selectedFeedback.contactedAt && (
+                {selectedFeedback.status !== 'contacted' && (
                   <Button 
                     onClick={() => handleContactCustomer(selectedFeedback)}
                     className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 text-sm h-11 flex-1"
