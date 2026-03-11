@@ -44,6 +44,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarProvider,
 } from "@/components/ui/sidebar";
 import {
   Table,
@@ -263,9 +264,10 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-[#FDF8F6]">
-      <Tabs defaultValue="analytics" className="flex w-full">
-        {/* STEP 1: Left Sidebar */}
-        <Sidebar className="bg-sidebar border-r">
+      <SidebarProvider>
+        <Tabs defaultValue="analytics" className="flex w-full">
+          {/* STEP 1: Left Sidebar */}
+          <Sidebar className="bg-sidebar border-r">
           {/* SidebarHeader: Admin Panel Title */}
           <SidebarHeader className="border-b border-white/10 py-4">
             <h1 className="text-white text-xl font-bold text-center">Admin Panel</h1>
@@ -872,7 +874,8 @@ export default function AdminDashboard() {
             </TabsContent>
           </div>
         </main>
-      </Tabs>
+        </Tabs>
+      </SidebarProvider>
     </div>
   );
 }
