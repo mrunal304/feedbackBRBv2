@@ -1,4 +1,4 @@
-import { FeedbackModel } from "./db";
+import { FeedbackModel, CustomerCardModel } from "./db";
 import type { InsertFeedback, Feedback, Analytics, CustomerHistory } from "@shared/schema";
 
 export interface IStorage {
@@ -14,6 +14,7 @@ export interface IStorage {
   markAsContacted(id: string, staffName: string): Promise<Feedback | null>;
   getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics>;
   getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null>;
+  getTotalVisits(phoneNumber: string): Promise<number>;
 }
 
 function formatFeedback(doc: any): Feedback & { dateKey?: string } {
@@ -138,11 +139,38 @@ export class MongoStorage implements IStorage {
   }
 
   async createFeedback(feedback: InsertFeedback): Promise<Feedback> {
-    const doc = await FeedbackModel.create({
-      ...feedback,
+    // Create feedback document
+    const feedbackDoc = await FeedbackModel.create({
+      name: feedback.name,
+      phoneNumber: feedback.phone,
+      location: feedback.location,
+      visitType: feedback.visitType,
+      ratings: feedback.ratings,
+      comments: feedback.comments,
       status: "pending",
     });
-    return formatFeedback(doc);
+
+    // Upsert customer card
+    const existingCard = await CustomerCardModel.findOne({ phoneNumber: feedback.phone });
+    if (existingCard) {
+      // Update existing card
+      existingCard.totalVisits += 1;
+      existingCard.lastVisitDate = new Date();
+      existingCard.visits.push(feedbackDoc._id);
+      await existingCard.save();
+    } else {
+      // Create new card
+      await CustomerCardModel.create({
+        phoneNumber: feedback.phone,
+        name: feedback.name,
+        totalVisits: 1,
+        firstVisitDate: new Date(),
+        lastVisitDate: new Date(),
+        visits: [feedbackDoc._id],
+      });
+    }
+
+    return formatFeedback(feedbackDoc);
   }
 
   async getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null> {
@@ -172,6 +200,15 @@ export class MongoStorage implements IStorage {
       return doc ? formatFeedback(doc) : null;
     } catch {
       return null;
+    }
+  }
+
+  async getTotalVisits(phoneNumber: string): Promise<number> {
+    try {
+      const card = await CustomerCardModel.findOne({ phoneNumber });
+      return card?.totalVisits || 0;
+    } catch {
+      return 0;
     }
   }
 

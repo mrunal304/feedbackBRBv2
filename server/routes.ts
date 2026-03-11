@@ -60,26 +60,18 @@ export async function registerRoutes(
   // Create feedback
   app.post(api.feedback.create.path, async (req, res) => {
     try {
-      const { name, phone, visitType, ratings, comments } = req.body;
+      const { name, phone, location, visitType, ratings, comments } = req.body;
       
-      const { FeedbackModel } = await import("./db");
-      const feedback = new FeedbackModel({
-        name, phone, visitType, ratings, comments
+      const feedback = await storage.createFeedback({
+        name,
+        phone,
+        location,
+        visitType,
+        ratings,
+        comments,
       });
-      const saved = await feedback.save();
       
-      const response = {
-        _id: saved._id.toString(),
-        name: saved.name,
-        phone: saved.phone,
-        visitType: saved.visitType,
-        ratings: saved.ratings,
-        comments: saved.comments,
-        status: saved.status,
-        createdAt: saved.createdAt.toISOString(),
-      };
-      
-      res.status(201).json(response);
+      res.status(201).json(feedback);
     } catch (error: any) {
       console.error('Feedback save error:', error.message, error.stack);
       res.status(500).json({ message: 'Server error', error: error.message });
