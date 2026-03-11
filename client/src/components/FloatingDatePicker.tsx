@@ -78,6 +78,45 @@ export default function FloatingDatePicker({ selected, onSelect, onClear }: Floa
 
   return (
     <div className="relative" ref={containerRef}>
+      <style>{`
+        @media (min-width: 768px) {
+          .desktop-calendar {
+            max-width: 320px;
+          }
+          .desktop-calendar .calendar-header {
+            font-size: 16px;
+            padding: 12px;
+          }
+          .desktop-calendar .nav-button {
+            width: 28px;
+            height: 28px;
+          }
+          .desktop-calendar .nav-button svg {
+            width: 16px;
+            height: 16px;
+          }
+          .desktop-calendar .day-label {
+            height: 28px;
+            font-size: 12px;
+          }
+          .desktop-calendar .day-cell {
+            height: 36px;
+          }
+          .desktop-calendar .day-button {
+            width: 32px;
+            height: 32px;
+            font-size: 13px;
+          }
+          .desktop-calendar .footer-buttons {
+            padding: 12px;
+          }
+          .desktop-calendar .footer-button {
+            padding: 8px 12px;
+            font-size: 13px;
+            height: 36px;
+          }
+        }
+      `}</style>
       <button
         ref={triggerRef}
         onClick={() => setIsOpen(!isOpen)}
@@ -93,23 +132,23 @@ export default function FloatingDatePicker({ selected, onSelect, onClear }: Floa
 
       {/* Floating Calendar */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-80">
+        <div className="desktop-calendar absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-80">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="calendar-header flex items-center justify-between p-4 border-b border-gray-200">
             <h3 className="text-sm font-semibold text-gray-900">
               {format(currentMonth, "MMMM, yyyy")}
             </h3>
             <div className="flex gap-1">
               <button
                 onClick={handlePrevMonth}
-                className="p-1 hover:bg-[#fef2f2] rounded transition-colors"
+                className="nav-button p-1 hover:bg-[#fef2f2] rounded transition-colors"
                 data-testid="button-prev-month"
               >
                 <ChevronLeft className="w-5 h-5 text-gray-600" />
               </button>
               <button
                 onClick={handleNextMonth}
-                className="p-1 hover:bg-[#fef2f2] rounded transition-colors"
+                className="nav-button p-1 hover:bg-[#fef2f2] rounded transition-colors"
                 data-testid="button-next-month"
               >
                 <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -120,7 +159,7 @@ export default function FloatingDatePicker({ selected, onSelect, onClear }: Floa
           {/* Days of week */}
           <div className="grid grid-cols-7 gap-0 px-4 pt-4">
             {DAYS_OF_WEEK.map((day) => (
-              <div key={day} className="text-center text-xs font-semibold text-gray-600 h-8 flex items-center justify-center">
+              <div key={day} className="day-label text-center text-xs font-semibold text-gray-600 h-8 flex items-center justify-center">
                 {day}
               </div>
             ))}
@@ -134,11 +173,11 @@ export default function FloatingDatePicker({ selected, onSelect, onClear }: Floa
               const isCurrentMonth = day && isSameMonth(day, currentMonth);
 
               return (
-                <div key={index} className="h-10 flex items-center justify-center">
+                <div key={index} className="day-cell h-10 flex items-center justify-center">
                   {day && isCurrentMonth ? (
                     <button
                       onClick={() => handleSelectDate(day)}
-                      className={`w-8 h-8 rounded flex items-center justify-center text-sm font-medium transition-colors ${
+                      className={`day-button w-8 h-8 rounded flex items-center justify-center text-sm font-medium transition-colors ${
                         isSelected
                           ? "bg-[#8B0000] text-white"
                           : isToday
@@ -158,17 +197,17 @@ export default function FloatingDatePicker({ selected, onSelect, onClear }: Floa
           </div>
 
           {/* Footer buttons */}
-          <div className="flex gap-2 p-4 border-t border-gray-200">
+          <div className="footer-buttons flex gap-2 p-4 border-t border-gray-200">
             <button
               onClick={handleClear}
-              className="flex-1 px-3 py-2 text-sm font-medium text-[#8B0000] bg-white border border-[#8B0000] rounded hover:bg-[#fef2f2] transition-colors"
+              className="footer-button flex-1 px-3 py-2 text-sm font-medium text-[#8B0000] bg-white border border-[#8B0000] rounded hover:bg-[#fef2f2] transition-colors"
               data-testid="button-clear-date"
             >
               Clear
             </button>
             <button
               onClick={handleToday}
-              className="flex-1 px-3 py-2 text-sm font-medium text-[#8B0000] bg-white border border-[#8B0000] rounded hover:bg-[#fef2f2] transition-colors"
+              className="footer-button flex-1 px-3 py-2 text-sm font-medium text-[#8B0000] bg-white border border-[#8B0000] rounded hover:bg-[#fef2f2] transition-colors"
               data-testid="button-today-date"
             >
               Today
