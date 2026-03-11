@@ -4,6 +4,7 @@ import MemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { migrateFeedbackStructure } from "./db";
 
 const app = express();
 const httpServer = createServer(app);
@@ -77,6 +78,13 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Run migration to convert flat documents to nested structure
+  try {
+    await migrateFeedbackStructure();
+  } catch (error) {
+    console.error('[Migration] Failed to run migration:', error);
+  }
+
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
