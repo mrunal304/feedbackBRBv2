@@ -170,3 +170,19 @@
 [class*="star"][class*="selected"] {
   animation: starPop 0.25s ease;
 }
+
+/* Progress bar animation for mobile */
+@keyframes progressBarFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .progress-bar-mobile {
+    animation: progressBarFill 0.8s ease-out forwards;
+  }
+}

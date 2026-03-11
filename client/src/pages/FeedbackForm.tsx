@@ -205,7 +205,7 @@ export default function FeedbackForm() {
         {/* Progress Bar */}
         <div className="bg-white/20 rounded-full h-1.5 overflow-hidden" style={{ marginTop: "6px" }}>
           <motion.div
-            className="h-full bg-[#FFD700]"
+            className="h-full bg-[#FFD700] progress-bar-mobile"
             initial={{ width: "50%" }}
             animate={{ width: step === 1 ? "50%" : "100%" }}
             transition={{ duration: 0.3 }}
