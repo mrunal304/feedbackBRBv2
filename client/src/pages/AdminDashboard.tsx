@@ -145,9 +145,10 @@ export default function AdminDashboard() {
   });
 
   const analyticsUrl = `/api/analytics?period=${period}`;
-  const { data: analytics } = useQuery<Analytics>({
+  const { data: analytics, refetch: refetchAnalytics } = useQuery<Analytics>({
     queryKey: [analyticsUrl],
     enabled: !!(authCheck as any)?.authenticated,
+    refetchInterval: 30000,
   });
 
   const logoutMutation = useMutation({
@@ -187,6 +188,9 @@ export default function AdminDashboard() {
       
       // Invalidate cache to ensure fresh data from server
       queryClient.invalidateQueries({ queryKey: [feedbackUrl] });
+      
+      // Instantly refresh analytics to update Feedback Volume, Response Rate, etc.
+      refetchAnalytics();
     },
     onError: () => {
       toast({
