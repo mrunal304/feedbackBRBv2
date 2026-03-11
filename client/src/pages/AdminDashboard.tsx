@@ -306,16 +306,14 @@ export default function AdminDashboard() {
             </div>
 
             {/* Sign Out Button */}
-            <Button
-              variant="outline"
-              size="lg"
-              className="w-full justify-start text-white hover:text-white hover:bg-white/10 border border-white/30"
+            <button
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
+              className="flex items-center gap-3 w-full px-4 h-12 rounded-md border text-[15px] font-medium transition-colors text-white/80 hover:text-white hover:bg-white/10 border-white/30"
             >
-              <LogOut className="w-4 h-4 mr-3 flex-shrink-0" />
-              <span className="text-[15px] font-medium">Sign Out</span>
-            </Button>
+              <LogOut className="w-4 h-4 shrink-0" />
+              <span>Sign Out</span>
+            </button>
           </SidebarFooter>
         </Sidebar>
 
