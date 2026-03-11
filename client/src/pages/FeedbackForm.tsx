@@ -79,37 +79,22 @@ export default function FeedbackForm() {
   });
 
   const onSubmit = (data: InsertFeedback) => {
-    // Check each rating for empty values (0 = not selected)
-    const errors = {
-      foodTaste: !data.ratings.foodTaste || data.ratings.foodTaste === 0,
-      foodTemperature: !data.ratings.foodTemperature || data.ratings.foodTemperature === 0,
-      portionSize: !data.ratings.portionSize || data.ratings.portionSize === 0,
-      valueForMoney: !data.ratings.valueForMoney || data.ratings.valueForMoney === 0,
-      presentation: !data.ratings.presentation || data.ratings.presentation === 0,
-      overallService: !data.ratings.overallService || data.ratings.overallService === 0,
-    };
+    const ratings = data.ratings;
     
-    setRatingErrors(errors);
-    
-    // Block submission if any error exists
-    if (Object.values(errors).some(e => e === true)) {
-      // Find first missing rating for scroll
-      const firstMissingKey = (Object.keys(errors) as Array<keyof typeof errors>).find(
-        (key) => errors[key]
-      );
-      
-      if (firstMissingKey) {
-        setTimeout(() => {
-          const element = document.querySelector(`[data-testid="star-${firstMissingKey}-1"]`);
-          if (element) {
-            element.scrollIntoView({ behavior: "smooth", block: "center" });
-          }
-        }, 0);
-      }
-      
-      return; // Block form submission
+    // Check all 6 ratings
+    const missingRatings = [];
+    if (!ratings.foodTaste || ratings.foodTaste === 0) missingRatings.push('foodTaste');
+    if (!ratings.foodTemperature || ratings.foodTemperature === 0) missingRatings.push('foodTemperature');
+    if (!ratings.portionSize || ratings.portionSize === 0) missingRatings.push('portionSize');
+    if (!ratings.valueForMoney || ratings.valueForMoney === 0) missingRatings.push('valueForMoney');
+    if (!ratings.presentation || ratings.presentation === 0) missingRatings.push('presentation');
+    if (!ratings.overallService || ratings.overallService === 0) missingRatings.push('overallService');
+
+    if (missingRatings.length > 0) {
+      setRatingErrors(missingRatings.reduce((acc, key) => ({ ...acc, [key]: true }), {}));
+      return; // STOP - do not proceed
     }
-    
+
     // All ratings valid - submit form
     submitMutation.mutate(data);
   };
