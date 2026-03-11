@@ -267,7 +267,7 @@ export default function AdminPanelMobile() {
 
       {/* Mobile Menu Dropdown */}
       {showMenu && (
-        <div className="bg-[#8B1A1A] border-b border-white/10 px-4 py-3">
+        <div className="bg-[#8B1A1A] border-b border-white/10 px-4 py-3 pb-4">
           <div className="flex flex-col gap-2 mb-3">
             <div className="flex items-center gap-3 p-2 border-b border-white/10 pb-3">
               <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0">
