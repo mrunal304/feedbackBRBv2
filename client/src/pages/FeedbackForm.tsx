@@ -79,26 +79,23 @@ export default function FeedbackForm() {
   });
 
   const onSubmit = (data: InsertFeedback) => {
-    // Check each rating and create error state
-    const newErrors: typeof ratingErrors = {};
-    let hasErrors = false;
+    // Check each rating for empty values (0 = not selected)
+    const errors = {
+      foodTaste: !data.ratings.foodTaste || data.ratings.foodTaste === 0,
+      foodTemperature: !data.ratings.foodTemperature || data.ratings.foodTemperature === 0,
+      portionSize: !data.ratings.portionSize || data.ratings.portionSize === 0,
+      valueForMoney: !data.ratings.valueForMoney || data.ratings.valueForMoney === 0,
+      presentation: !data.ratings.presentation || data.ratings.presentation === 0,
+      overallService: !data.ratings.overallService || data.ratings.overallService === 0,
+    };
     
-    for (const key of Object.keys(ratingErrors) as Array<keyof typeof ratingErrors>) {
-      const rating = data.ratings[key];
-      if (!rating || rating < 1) {
-        newErrors[key] = true;
-        hasErrors = true;
-      } else {
-        newErrors[key] = false;
-      }
-    }
+    setRatingErrors(errors);
     
-    setRatingErrors(newErrors);
-    
-    if (hasErrors) {
-      // Find first missing rating
-      const firstMissingKey = (Object.keys(ratingErrors) as Array<keyof typeof ratingErrors>).find(
-        (key) => newErrors[key]
+    // Block submission if any error exists
+    if (Object.values(errors).some(e => e === true)) {
+      // Find first missing rating for scroll
+      const firstMissingKey = (Object.keys(errors) as Array<keyof typeof errors>).find(
+        (key) => errors[key]
       );
       
       if (firstMissingKey) {
@@ -110,9 +107,10 @@ export default function FeedbackForm() {
         }, 0);
       }
       
-      return;
+      return; // Block form submission
     }
     
+    // All ratings valid - submit form
     submitMutation.mutate(data);
   };
 
