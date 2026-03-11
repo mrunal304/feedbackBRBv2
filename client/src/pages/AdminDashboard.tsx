@@ -165,23 +165,26 @@ export default function AdminDashboard() {
       const response = await apiRequest("PATCH", `/api/feedback/${id}/contact`, { staffName });
       return response.json();
     },
-    onMutate: ({ id }) => {
-      // Optimistic update - immediately update UI
-      const newFeedback = feedback.map(fb => 
-        fb._id === id ? { ...fb, status: "contacted" as const } : fb
-      );
-      queryClient.setQueryData([feedbackUrl], newFeedback);
-      
-      if (selectedFeedback && selectedFeedback._id === id) {
-        setSelectedFeedback({ ...selectedFeedback, status: "contacted" });
-      }
-    },
-    onSuccess: () => {
+    onSuccess: ({ _id: id }) => {
+      // Show toast first
       toast({
         title: "✓ Marked as Contacted",
-        description: "",
+        description: "Customer has been marked as contacted.\nStatus updated from Pending to Contacted.",
         duration: 3000,
       });
+      
+      // Then update status after toast appears
+      setTimeout(() => {
+        const newFeedback = feedback.map(fb => 
+          fb._id === id ? { ...fb, status: "contacted" as const } : fb
+        );
+        queryClient.setQueryData([feedbackUrl], newFeedback);
+        
+        if (selectedFeedback && selectedFeedback._id === id) {
+          setSelectedFeedback({ ...selectedFeedback, status: "contacted" });
+        }
+      }, 50);
+      
       // Invalidate cache to ensure fresh data from server
       queryClient.invalidateQueries({ queryKey: [feedbackUrl] });
     },
