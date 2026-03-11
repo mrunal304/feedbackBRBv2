@@ -282,7 +282,7 @@ export default function AdminDashboard() {
             </TabsList>
           </nav>
 
-          <div className="px-4 py-4 mt-auto border-t border-white/10">
+          <div className="px-4 py-4 mt-auto border-t border-white/10 pb-2 overflow-visible">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0">
                 A
@@ -294,16 +294,7 @@ export default function AdminDashboard() {
             </div>
             <Button
               variant="ghost"
-              className="w-full justify-start text-white hover:bg-white/10 py-2 h-auto text-[19px]"
-              style={{
-                width: '100%',
-                paddingLeft: '16px',
-                boxSizing: 'border-box',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                overflow: 'visible'
-              }}
+              className="w-full justify-start text-white hover:bg-white/10 py-2 h-auto px-4 overflow-visible whitespace-nowrap"
               onClick={() => logoutMutation.mutate()}
               data-testid="button-logout"
             >

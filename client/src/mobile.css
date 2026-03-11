@@ -1,0 +1,21 @@
+/* Mobile Styles (max-width: 768px) */
+
+/* Star Rating Styles - Mobile */
+@media (max-width: 480px) {
+  .star, .star-filled, .star-empty, [class*="star"] {
+    font-size: 26px !important;
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .rating-question, [class*="question"], .question-label {
+    font-size: 14px !important;
+  }
+}
+
+/* Progress bar transition for mobile */
+@media (max-width: 768px) {
+  .progress-bar-mobile {
+    transition: width 0.5s ease;
+  }
+}
