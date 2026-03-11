@@ -59,11 +59,32 @@ export default function FeedbackForm() {
   const onSubmit = (data: InsertFeedback) => {
     const hasAllRatings = Object.values(data.ratings).every((r) => r >= 1);
     if (!hasAllRatings) {
+      const missingRatings = ratingQuestions
+        .filter(({ key }) => !data.ratings[key as keyof typeof data.ratings] || data.ratings[key as keyof typeof data.ratings] < 1)
+        .map(({ label }) => label);
+      
       toast({
         title: "Missing Ratings",
-        description: "Please rate all categories before submitting",
+        description: missingRatings.length > 0 
+          ? `Please rate: ${missingRatings.map(l => l.split(' —')[0]).join(", ")}`
+          : "Please rate all categories before submitting",
         variant: "destructive",
       });
+      
+      // Scroll to first missing rating
+      const firstMissingKey = ratingQuestions.find(
+        ({ key }) => !data.ratings[key as keyof typeof data.ratings] || data.ratings[key as keyof typeof data.ratings] < 1
+      )?.key;
+      
+      if (firstMissingKey) {
+        setTimeout(() => {
+          const element = document.querySelector(`[data-testid="star-${firstMissingKey}-1"]`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 0);
+      }
+      
       return;
     }
     submitMutation.mutate(data);
@@ -71,8 +92,29 @@ export default function FeedbackForm() {
 
   const handleNextStep = async () => {
     if (step === 1) {
-      const valid = await form.trigger(["name", "phone", "location", "visitType"]);
-      if (valid) setStep(2);
+      // Validate all Step 1 fields
+      const isValid = await form.trigger(["name", "phone", "location", "visitType"]);
+      
+      // Get current errors
+      const errors = form.formState.errors;
+      
+      // Show toast if there are errors
+      if (!isValid && (errors.name || errors.phone)) {
+        const errorMessages = [];
+        if (errors.name) {
+          errorMessages.push(`Name: ${errors.name.message}`);
+        }
+        if (errors.phone) {
+          errorMessages.push(`Phone: ${errors.phone.message}`);
+        }
+        toast({
+          title: "Please fix the errors below",
+          description: errorMessages.join("\n"),
+          variant: "destructive",
+        });
+      } else if (isValid) {
+        setStep(2);
+      }
     }
   };
 

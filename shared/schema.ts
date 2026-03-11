@@ -35,8 +35,15 @@ export const customerHistorySchema = z.object({
 });
 
 export const insertFeedbackSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  phone: z.string().regex(/^\+?[\d\s-]{10,15}$/, "Invalid phone number format"),
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters"),
+  phone: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(/^\d+$/, "Phone number can only contain digits")
+    .length(10, "Phone number must be 10 digits"),
   location: z.string().min(1, "Location is required"),
   visitType: z.enum(["dine_in", "take_out"]),
   ratings: ratingsSchema,
