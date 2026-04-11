@@ -94,15 +94,23 @@ export class MongoStorage implements IStorage {
         }
 
         // Check date filter
+        // Dates from frontend are "YYYY-MM-DD" representing IST dates.
+        // IST is UTC+5:30, so IST midnight = UTC-5h30m.
+        // We shift the UTC boundary by -5h30m so the full IST day is captured.
         if (filters?.startDate || filters?.endDate) {
           const visitDate = new Date(visit.createdAt);
+          const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000; // 5h30m in ms
+
           if (filters?.startDate) {
-            const start = new Date(filters.startDate);
+            const [y, m, d] = filters.startDate.split('-').map(Number);
+            // 00:00:00.000 IST = UTC 00:00:00.000 - 5h30m
+            const start = new Date(Date.UTC(y, m - 1, d, 0, 0, 0, 0) - IST_OFFSET_MS);
             if (visitDate < start) continue;
           }
           if (filters?.endDate) {
-            const end = new Date(filters.endDate);
-            end.setHours(23, 59, 59, 999);
+            const [y, m, d] = filters.endDate.split('-').map(Number);
+            // 23:59:59.999 IST = UTC 23:59:59.999 - 5h30m
+            const end = new Date(Date.UTC(y, m - 1, d, 23, 59, 59, 999) - IST_OFFSET_MS);
             if (visitDate > end) continue;
           }
         }
