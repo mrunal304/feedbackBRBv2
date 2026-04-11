@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertFeedbackSchema, type InsertFeedback } from "@shared/schema";
@@ -32,7 +33,8 @@ export default function FeedbackForm() {
     defaultValues: {
       name: "",
       phone: "",
-      location: "Bomb Rolls and Bowls",
+      location: "Ambarnath" as const,
+      locationDetail: "",
       visitType: "dine_in",
       ratings: {
         foodTaste: 0,
@@ -45,6 +47,8 @@ export default function FeedbackForm() {
       comments: "",
     },
   });
+
+  const selectedLocation = useWatch({ control: form.control, name: "location" });
 
   const submitMutation = useMutation({
     mutationFn: async (data: InsertFeedback) => {
@@ -287,14 +291,44 @@ export default function FeedbackForm() {
                       <FormItem>
                         <FormLabel className="text-[13px] font-bold text-[#444444] uppercase tracking-widest font-nunito">Location</FormLabel>
                         <FormControl>
-                          <div className="px-4 py-3 rounded-[12px] bg-[#FAFAFA] text-[#333333] font-nunito font-semibold border-2 border-[#EEEEEE]" data-testid="text-location">
-                            Bomb Rolls and Bowls
-                          </div>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            data-testid="select-location"
+                          >
+                            <SelectTrigger className={formInputClass + " w-full"}>
+                              <SelectValue placeholder="Select location" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Ambarnath">Ambarnath</SelectItem>
+                              <SelectItem value="Kalyan">Kalyan</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
+                  {selectedLocation === "Kalyan" && (
+                    <FormField
+                      control={form.control}
+                      name="locationDetail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              placeholder="Where did you taste us? (e.g. Near Station, Shil Phata...)"
+                              {...field}
+                              data-testid="input-location-detail"
+                              className={formInputClass}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
                   <FormField
                     control={form.control}

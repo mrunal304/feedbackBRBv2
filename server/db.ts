@@ -15,6 +15,7 @@ mongoose.connect(process.env.MONGODB_URI)
 const visitSchema = new mongoose.Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   location: { type: String, required: true },
+  locationDetail: { type: String, default: '' },
   visitType: { type: String, enum: ['dine_in', 'take_out'], default: 'dine_in' },
   ratings: {
     foodTaste: { type: Number, min: 1, max: 5 },

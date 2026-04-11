@@ -16,6 +16,7 @@ export const feedbackSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phone: z.string().regex(/^\+?[\d\s-]{10,15}$/, "Invalid phone number format"),
   location: z.string().min(1, "Location is required"),
+  locationDetail: z.string().optional(),
   visitType: z.enum(["dine_in", "take_out"]),
   ratings: ratingsSchema,
   comments: z.string().optional(),
@@ -44,7 +45,8 @@ export const insertFeedbackSchema = z.object({
     .min(1, "Please enter a valid 10-digit phone number")
     .regex(/^\d+$/, "Please enter a valid 10-digit phone number")
     .length(10, "Please enter a valid 10-digit phone number"),
-  location: z.string().min(1, "Location is required"),
+  location: z.enum(["Ambarnath", "Kalyan"], { required_error: "Location is required" }),
+  locationDetail: z.string().optional(),
   visitType: z.enum(["dine_in", "take_out"]),
   ratings: ratingsSchema,
   comments: z.string().optional(),

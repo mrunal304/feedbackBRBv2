@@ -30,6 +30,7 @@ function formatVisitAsFeedback(customerDoc: any, visit: any): Feedback {
     name: customerDoc.name,
     phone: customerDoc.phoneNumber,
     location: visit.location,
+    locationDetail: visit.locationDetail || undefined,
     visitType: visit.visitType,
     ratings: visit.ratings,
     comments: visit.comments,
@@ -146,6 +147,7 @@ export class MongoStorage implements IStorage {
     const visit = {
       _id: new mongoose.Types.ObjectId(),
       location: feedback.location,
+      locationDetail: feedback.locationDetail || '',
       visitType: feedback.visitType,
       ratings: feedback.ratings,
       comments: feedback.comments,

@@ -60,21 +60,17 @@ export async function registerRoutes(
   // Create feedback
   app.post(api.feedback.create.path, async (req, res) => {
     try {
-      const { name, phone, location, visitType, ratings, comments } = req.body;
+      const { name, phone, location, locationDetail, visitType, ratings, comments } = req.body;
       
       console.log('[FEEDBACK CREATE] Incoming request:', {
         name,
         phone,
         location,
+        locationDetail,
         visitType,
         ratingsKeys: Object.keys(ratings || {}),
         comments,
       });
-      
-      // Enforce location to always be "Bomb Rolls and Bowls" for feedbackqr database
-      if (location !== "Bomb Rolls and Bowls") {
-        console.warn('[FEEDBACK CREATE] WARNING: Location mismatch. Received:', location, 'Expected: Bomb Rolls and Bowls');
-      }
       
       // Check if user already submitted feedback today
       const hasDuplicateToday = await storage.checkDuplicateFeedbackToday(phone);
@@ -85,7 +81,8 @@ export async function registerRoutes(
       const feedback = await storage.createFeedback({
         name,
         phone,
-        location: "Bomb Rolls and Bowls", // Force correct location for this database
+        location,
+        locationDetail,
         visitType,
         ratings,
         comments,
