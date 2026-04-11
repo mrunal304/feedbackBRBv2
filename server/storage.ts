@@ -21,9 +21,16 @@ export interface IStorage {
 
 function formatVisitAsFeedback(customerDoc: any, visit: any): Feedback {
   const createdDate = new Date(visit.createdAt);
-  const visitDate = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  const visitTime = createdDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-  const dateKey = createdDate.toISOString().split('T')[0];
+  // Always format display dates in IST so admin sees Indian time
+  const visitDate = createdDate.toLocaleDateString('en-IN', {
+    month: 'short', day: 'numeric', year: 'numeric',
+    timeZone: 'Asia/Kolkata',
+  });
+  const visitTime = createdDate.toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: '2-digit', hour12: true,
+    timeZone: 'Asia/Kolkata',
+  });
+  const dateKey = toISTDateKey(createdDate);
   
   return {
     _id: visit._id.toString(),
@@ -46,8 +53,19 @@ function normalizeName(name: string): string {
   return name.toLowerCase().trim();
 }
 
+// IST is UTC+5:30
+const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000;
+
+/** Returns today's date string (YYYY-MM-DD) in IST */
 function getDateKey(): string {
-  return new Date().toISOString().split('T')[0];
+  const istDate = new Date(Date.now() + IST_OFFSET_MS);
+  return istDate.toISOString().split('T')[0];
+}
+
+/** Converts a UTC Date to IST YYYY-MM-DD */
+function toISTDateKey(date: Date): string {
+  const istDate = new Date(date.getTime() + IST_OFFSET_MS);
+  return istDate.toISOString().split('T')[0];
 }
 
 function getDateRange(period: 'week' | 'lastWeek' | 'month'): { start: Date; end: Date } {
@@ -398,19 +416,23 @@ export class MongoStorage implements IStorage {
   }
 
   async checkDuplicateFeedbackToday(phoneNumber: string): Promise<boolean> {
-    const today = new Date();
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
-    
+    // Determine today's date in IST
+    const todayIST = getDateKey(); // "YYYY-MM-DD" in IST
+    const [y, m, d] = todayIST.split('-').map(Number);
+    // Convert IST day boundaries to UTC for comparison with stored createdAt (UTC)
+    const startOfDayUTC = new Date(Date.UTC(y, m - 1, d, 0, 0, 0, 0) - IST_OFFSET_MS);
+    const endOfDayUTC = new Date(Date.UTC(y, m - 1, d, 23, 59, 59, 999) - IST_OFFSET_MS);
+
     const doc = await FeedbackModel.findOne({ phoneNumber });
     if (!doc) return false;
-    
+
     for (const visit of doc.visits || []) {
-      if (new Date(visit.createdAt) >= startOfDay && new Date(visit.createdAt) <= endOfDay) {
+      const visitTime = new Date(visit.createdAt);
+      if (visitTime >= startOfDayUTC && visitTime <= endOfDayUTC) {
         return true;
       }
     }
-    
+
     return false;
   }
 
