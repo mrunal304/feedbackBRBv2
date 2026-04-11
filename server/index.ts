@@ -4,7 +4,7 @@ import MemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
-import { migrateFeedbackStructure } from "./db";
+import { migrateFeedbackStructure, seedAdminUser } from "./db";
 
 const app = express();
 const httpServer = createServer(app);
@@ -83,6 +83,13 @@ app.use((req, res, next) => {
     await migrateFeedbackStructure();
   } catch (error) {
     console.error('[Migration] Failed to run migration:', error);
+  }
+
+  // Seed admin user if not present
+  try {
+    await seedAdminUser();
+  } catch (error) {
+    console.error('[Admin] Failed to seed admin user:', error);
   }
 
   await registerRoutes(httpServer, app);

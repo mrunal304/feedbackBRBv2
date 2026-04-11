@@ -51,6 +51,25 @@ const customerCardSchema = new mongoose.Schema({
 export const FeedbackModel = mongoose.model('Feedback', feedbackSchema);
 export const CustomerCardModel = mongoose.model('CustomerCard', customerCardSchema);
 
+// Define Admin User Schema
+const adminUserSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  passwordHash: { type: String, required: true },
+});
+
+export const AdminUserModel = mongoose.model('AdminUser', adminUserSchema);
+
+// Seed default admin user if none exists
+export async function seedAdminUser() {
+  const bcrypt = await import('bcryptjs');
+  const existing = await AdminUserModel.findOne({ username: 'admin' });
+  if (!existing) {
+    const hash = await bcrypt.hash('bomb123', 12);
+    await AdminUserModel.create({ username: 'admin', passwordHash: hash });
+    console.log('[Admin] Default admin user created');
+  }
+}
+
 // Migration function to convert flat documents to nested structure
 export async function migrateFeedbackStructure() {
   try {

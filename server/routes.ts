@@ -3,10 +3,8 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
-
-// Simple admin credentials (in production, use proper auth)
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "bomb123";
+import bcrypt from "bcryptjs";
+import { AdminUserModel } from "./db";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -26,13 +24,19 @@ export async function registerRoutes(
   app.post(api.auth.login.path, async (req, res) => {
     try {
       const { username, password } = api.auth.login.input.parse(req.body);
-      
-      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        (req.session as any).isAdmin = true;
-        res.json({ success: true });
-      } else {
-        res.status(401).json({ message: "Invalid credentials" });
+
+      const adminUser = await AdminUserModel.findOne({ username });
+      if (!adminUser) {
+        return res.status(401).json({ message: "Invalid credentials" });
       }
+
+      const passwordMatches = await bcrypt.compare(password, adminUser.passwordHash);
+      if (!passwordMatches) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      (req.session as any).isAdmin = true;
+      res.json({ success: true });
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400).json({ message: err.errors[0].message });
