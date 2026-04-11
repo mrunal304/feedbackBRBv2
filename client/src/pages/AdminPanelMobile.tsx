@@ -556,7 +556,7 @@ export default function AdminPanelMobile() {
 
       {/* Feedback Details Modal */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="max-w-sm bg-[#FDF8F6] border-none overflow-hidden p-0 rounded-2xl flex flex-col max-h-[90vh]">
+        <DialogContent className="max-w-sm bg-[#FDF8F6] border-none overflow-hidden p-0 rounded-2xl flex flex-col max-h-[90vh] [&>button]:hidden">
           {selectedFeedback && (
             <>
               {/* Header - Dark Red Background */}
