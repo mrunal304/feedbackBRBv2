@@ -263,6 +263,16 @@ export default function FeedbackForm() {
                             {...field}
                             data-testid="input-phone"
                             className={formInputClass}
+                            inputMode="numeric"
+                            onKeyPress={(e) => {
+                              if (!/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                              }
+                            }}
+                            onChange={(e) => {
+                              const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                              field.onChange(digits);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />

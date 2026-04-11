@@ -41,9 +41,9 @@ export const insertFeedbackSchema = z.object({
     .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters"),
   phone: z
     .string()
-    .min(1, "Phone number is required")
-    .regex(/^\d+$/, "Phone number can only contain digits")
-    .length(10, "Phone number must be 10 digits"),
+    .min(1, "Please enter a valid 10-digit phone number")
+    .regex(/^\d+$/, "Please enter a valid 10-digit phone number")
+    .length(10, "Please enter a valid 10-digit phone number"),
   location: z.string().min(1, "Location is required"),
   visitType: z.enum(["dine_in", "take_out"]),
   ratings: ratingsSchema,
