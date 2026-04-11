@@ -301,10 +301,10 @@ export default function AdminPanelMobile() {
             {/* Dashboard Cards - 2x2 Grid */}
             <div className="grid grid-cols-2 gap-3">
               {[
-                { title: "TOTAL FEEDBACK", value: analytics?.totalFeedback || 0, icon: MessageSquare, sub: "Responses received", color: "bg-blue-50 text-blue-600" },
-                { title: "AVERAGE RATING", value: `${analytics?.averageRating || 0}/5`, icon: Star, sub: "Overall satisfaction", color: "bg-yellow-50 text-yellow-600" },
-                { title: "TOP CATEGORY", value: analytics?.topCategory || "-", icon: TrendingUp, sub: "Highest rated", color: "bg-green-50 text-green-600" },
-                { title: "RESPONSE RATE", value: `${analytics?.responseRate || 0}%`, icon: Phone, sub: "Customers contacted", color: "bg-purple-50 text-purple-600" }
+                { title: "TOTAL FEEDBACK", value: analytics?.totalFeedback || 0, icon: MessageSquare, sub: "Responses received", color: "bg-blue-50 text-blue-600", valueClass: "text-[24px] font-bold text-[#3D2B1F]" },
+                { title: "AVERAGE RATING", value: `${analytics?.averageRating || 0}/5`, icon: Star, sub: "Overall satisfaction", color: "bg-yellow-50 text-yellow-600", valueClass: "text-[24px] font-bold text-[#3D2B1F]" },
+                { title: "TOP CATEGORY", value: analytics?.topCategory || "-", icon: TrendingUp, sub: "Highest rated", color: "bg-green-50 text-green-600", valueClass: "text-[15px] font-bold text-[#3D2B1F] break-words leading-tight" },
+                { title: "RESPONSE RATE", value: `${analytics?.responseRate || 0}%`, icon: Phone, sub: "Customers contacted", color: "bg-purple-50 text-purple-600", valueClass: "text-[24px] font-bold text-[#3D2B1F]" }
               ].map((stat, i) => (
                 <Card key={i} className="border-none shadow-sm rounded-lg overflow-hidden">
                   <CardContent className="p-3 space-y-2">
@@ -312,7 +312,7 @@ export default function AdminPanelMobile() {
                     <div className={`w-8 h-8 p-1.5 rounded-full flex-shrink-0 ${stat.color} flex items-center justify-center`}>
                       <stat.icon className="w-4 h-4" />
                     </div>
-                    <div className="text-[24px] font-bold text-[#3D2B1F]">{stat.value}</div>
+                    <div className={stat.valueClass}>{stat.value}</div>
                     <div className="text-[12px] text-gray-500 font-medium">{stat.sub}</div>
                   </CardContent>
                 </Card>
