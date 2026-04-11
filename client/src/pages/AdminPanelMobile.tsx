@@ -602,6 +602,12 @@ export default function AdminPanelMobile() {
                       </span>
                     </div>
                   </div>
+                  {selectedFeedback.location === "Kalyan" && selectedFeedback.locationDetail && (
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Kalyan Location</label>
+                      <p className="text-sm font-medium text-[#3D2B1F]">{selectedFeedback.locationDetail}</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Section 2: Detailed Ratings */}

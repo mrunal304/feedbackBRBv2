@@ -772,6 +772,12 @@ export default function AdminDashboard() {
                                 </span>
                               </div>
                             </div>
+                            {selectedFeedback.location === "Kalyan" && selectedFeedback.locationDetail && (
+                              <div>
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">KALYAN LOCATION</label>
+                                <p className="text-[#3D2B1F]">{selectedFeedback.locationDetail}</p>
+                              </div>
+                            )}
                             <div>
                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">VISIT TIME</label>
                               <p className="text-[#3D2B1F]">{new Date(selectedFeedback.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</p>
