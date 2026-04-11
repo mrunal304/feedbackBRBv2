@@ -510,7 +510,7 @@ export default function AdminPanelMobile() {
                         <p className="text-xs text-gray-600 font-medium"><span className="text-gray-500">Note:</span> {fb.comments || '-'}</p>
 
                         {/* Row 5: Rating + Stars (left) + Eye + Mark Contacted buttons (right) */}
-                        <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100">
+                        <div className="grid grid-cols-[auto_1fr] items-center gap-2 pt-2 border-t border-gray-100">
                           <div className="flex items-center gap-1.5">
                             <span className="text-base font-bold text-[#3D2B1F]">
                               {isNaN(Number(getAverageRating(fb.ratings))) ? "N/A" : getAverageRating(fb.ratings)}
@@ -519,7 +519,7 @@ export default function AdminPanelMobile() {
                               <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xs" />
                             )}
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 justify-end">
                             <Button
                               size="sm"
                               variant="outline"
