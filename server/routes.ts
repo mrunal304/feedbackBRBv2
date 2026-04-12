@@ -196,7 +196,8 @@ export async function registerRoutes(
   // === ANALYTICS ROUTES ===
   app.get(api.analytics.get.path, requireAuth, async (req, res) => {
     try {
-      const period = (req.query.period as 'week' | 'lastWeek' | 'month') || 'week';
+      const period = (req.query.period as 'week' | 'month') || 'week';
+      console.log(`[Analytics Route] Received period="${period}" from query:`, req.query);
       const analytics = await storage.getAnalytics(period);
       res.json(analytics);
     } catch (err) {

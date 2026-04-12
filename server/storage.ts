@@ -12,7 +12,7 @@ export interface IStorage {
   getFeedback(customerId: string, visitId: string): Promise<Feedback | null>;
   createFeedback(feedback: InsertFeedback): Promise<Feedback>;
   markAsContacted(customerId: string, visitId: string, staffName: string): Promise<Feedback | null>;
-  getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics>;
+  getAnalytics(period: 'week' | 'month'): Promise<Analytics>;
   getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null>;
   getTotalVisits(phoneNumber: string): Promise<number>;
   checkDuplicateFeedbackToday(phoneNumber: string): Promise<boolean>;
@@ -68,26 +68,20 @@ function toISTDateKey(date: Date): string {
   return istDate.toISOString().split('T')[0];
 }
 
-function getDateRange(period: 'week' | 'lastWeek' | 'month'): { start: Date; end: Date } {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  
-  if (period === 'week') {
-    const start = new Date(today);
-    start.setDate(today.getDate() - 6);
-    return { start, end: now };
-  } else if (period === 'lastWeek') {
-    const dayOfWeek = today.getDay();
-    const end = new Date(today);
-    end.setDate(today.getDate() - dayOfWeek - 1);
-    const start = new Date(end);
-    start.setDate(end.getDate() - 6);
-    return { start, end };
+function getDateRange(period: 'week' | 'month'): { start: Date; end: Date } {
+  const now = Date.now();
+  let start: Date;
+  const end = new Date(now);
+
+  if (period === 'month') {
+    start = new Date(now - 30 * 24 * 60 * 60 * 1000);
   } else {
-    const start = new Date(today);
-    start.setDate(today.getDate() - 29);
-    return { start, end: now };
+    // default: week — last 7 days
+    start = new Date(now - 7 * 24 * 60 * 60 * 1000);
   }
+
+  console.log(`[Analytics] period="${period}" | start=${start.toISOString()} | end=${end.toISOString()}`);
+  return { start, end };
 }
 
 export class MongoStorage implements IStorage {
@@ -290,7 +284,7 @@ export class MongoStorage implements IStorage {
     }
   }
 
-  async getAnalytics(period: 'week' | 'lastWeek' | 'month'): Promise<Analytics> {
+  async getAnalytics(period: 'week' | 'month'): Promise<Analytics> {
     const { start, end } = getDateRange(period);
     
     const docs = await FeedbackModel.find().lean();
