@@ -271,13 +271,15 @@ export class MongoStorage implements IStorage {
 
   async getAnalytics(period: 'week' | 'month'): Promise<Analytics> {
     const days = period === 'month' ? 30 : 7;
-    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+    startDate.setHours(0, 0, 0, 0);
     const endDate = new Date();
 
     console.log("Period received:", period);
     console.log("Date range:", startDate.toISOString(), "to", endDate.toISOString());
 
-    // Use MongoDB aggregation to filter visits by createdAt at the DB level
+    // $unwind visits array then $match each visit's createdAt against the date range
     const results = await FeedbackModel.aggregate([
       { $unwind: '$visits' },
       {
