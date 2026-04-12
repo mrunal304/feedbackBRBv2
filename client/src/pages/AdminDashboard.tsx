@@ -64,6 +64,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
@@ -127,7 +133,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
 export default function AdminDashboard() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const [period] = useState<"week" | "lastWeek" | "month">("week");
+  const [period, setPeriod] = useState<"week" | "month">("week");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter] = useState<"all" | "contacted" | "pending">("all");
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -328,10 +334,28 @@ export default function AdminDashboard() {
                   <h2 className="text-3xl font-bold text-[#3D2B1F]">Dashboard Overview</h2>
                   <p className="text-gray-500 mt-1">Welcome back, here's what's happening today.</p>
                 </div>
-                <Button variant="outline" className="border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5">
-                  Last 7 Days
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5" data-testid="dropdown-period">
+                      {period === "week" ? "Last 7 Days" : "Last Month"}
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      data-testid="period-option-week"
+                      onClick={() => setPeriod("week")}
+                    >
+                      Last 7 Days
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      data-testid="period-option-month"
+                      onClick={() => setPeriod("month")}
+                    >
+                      Last Month
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               {/* STEP 3: Redesigned 4 Stat Cards */}

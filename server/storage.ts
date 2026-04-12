@@ -73,9 +73,8 @@ function getDateRange(period: 'week' | 'lastWeek' | 'month'): { start: Date; end
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   
   if (period === 'week') {
-    const dayOfWeek = today.getDay();
     const start = new Date(today);
-    start.setDate(today.getDate() - dayOfWeek);
+    start.setDate(today.getDate() - 6);
     return { start, end: now };
   } else if (period === 'lastWeek') {
     const dayOfWeek = today.getDay();
@@ -85,7 +84,8 @@ function getDateRange(period: 'week' | 'lastWeek' | 'month'): { start: Date; end
     start.setDate(end.getDate() - 6);
     return { start, end };
   } else {
-    const start = new Date(today.getFullYear(), today.getMonth(), 1);
+    const start = new Date(today);
+    start.setDate(today.getDate() - 29);
     return { start, end: now };
   }
 }
