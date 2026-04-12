@@ -401,8 +401,16 @@ export default function FeedbackForm() {
                           name={`ratings.${key}`}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="rating-question text-[14px] font-bold text-[#333333] font-nunito flex items-center gap-2">
-                                <span className="text-lg">{icon}</span>
+                              <FormLabel
+                                className="rating-question text-[#333333] flex items-center gap-2"
+                                style={{
+                                  fontFamily: "'Playfair Display', serif",
+                                  fontWeight: 600,
+                                  fontSize: 'clamp(17px, 2vw, 18px)',
+                                  letterSpacing: '0.3px',
+                                }}
+                              >
+                                <span className="text-lg leading-none">{icon}</span>
                                 {label}
                               </FormLabel>
                               <FormControl>
