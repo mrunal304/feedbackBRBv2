@@ -68,21 +68,6 @@ function toISTDateKey(date: Date): string {
   return istDate.toISOString().split('T')[0];
 }
 
-function getDateRange(period: 'week' | 'month'): { start: Date; end: Date } {
-  const now = Date.now();
-  let start: Date;
-  const end = new Date(now);
-
-  if (period === 'month') {
-    start = new Date(now - 30 * 24 * 60 * 60 * 1000);
-  } else {
-    // default: week — last 7 days
-    start = new Date(now - 7 * 24 * 60 * 60 * 1000);
-  }
-
-  console.log(`[Analytics] period="${period}" | start=${start.toISOString()} | end=${end.toISOString()}`);
-  return { start, end };
-}
 
 export class MongoStorage implements IStorage {
   async getAllFeedback(filters?: {
@@ -285,25 +270,56 @@ export class MongoStorage implements IStorage {
   }
 
   async getAnalytics(period: 'week' | 'month'): Promise<Analytics> {
-    const { start, end } = getDateRange(period);
-    
-    const docs = await FeedbackModel.find().lean();
-    const feedbacks: Feedback[] = [];
-    
-    for (const customerDoc of docs) {
-      for (const visit of customerDoc.visits || []) {
-        if (new Date(visit.createdAt) >= start && new Date(visit.createdAt) <= end) {
-          feedbacks.push(formatVisitAsFeedback(customerDoc, visit));
-        }
-      }
+    const days = period === 'month' ? 30 : 7;
+    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const endDate = new Date();
+
+    console.log("Period received:", period);
+    console.log("Date range:", startDate.toISOString(), "to", endDate.toISOString());
+
+    // Use MongoDB aggregation to filter visits by createdAt at the DB level
+    const results = await FeedbackModel.aggregate([
+      { $unwind: '$visits' },
+      {
+        $match: {
+          'visits.createdAt': { $gte: startDate, $lte: endDate },
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          phoneNumber: 1,
+          visit: '$visits',
+        },
+      },
+    ]);
+
+    console.log("Total docs found:", results.length);
+
+    if (results.length === 0) {
+      return {
+        totalFeedback: 0,
+        averageRating: 0,
+        topCategory: '-',
+        responseRate: 0,
+        weeklyTrends: [],
+        categoryPerformance: [],
+        feedbackVolume: { total: 0, contacted: 0, pending: 0 },
+      };
     }
-    
-    feedbacks.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-    
-    const total = feedbacks.length;
-    const contacted = feedbacks.filter(f => f.status === "contacted").length;
-    
-    // Calculate average rating
+
+    const total = results.length;
+    const contacted = results.filter((r: any) => r.visit.status === 'contacted').length;
+
+    const ratingCategories = [
+      'foodTaste',
+      'foodTemperature',
+      'portionSize',
+      'valueForMoney',
+      'presentation',
+      'overallService',
+    ] as const;
+
     let totalRating = 0;
     const categoryTotals: Record<string, number> = {
       foodTaste: 0,
@@ -313,44 +329,37 @@ export class MongoStorage implements IStorage {
       presentation: 0,
       overallService: 0,
     };
-    
-    feedbacks.forEach(f => {
-      const ratingCategories = [
-        'foodTaste', 
-        'foodTemperature', 
-        'portionSize', 
-        'valueForMoney', 
-        'presentation', 
-        'overallService'
-      ] as const;
+
+    results.forEach((r: any) => {
       ratingCategories.forEach(cat => {
-        categoryTotals[cat] += f.ratings[cat];
-        totalRating += f.ratings[cat];
+        const val = Number(r.visit.ratings?.[cat] ?? 0);
+        categoryTotals[cat] += val;
+        totalRating += val;
       });
     });
-    
-    const avgRating = total > 0 ? totalRating / (total * 6) : 0;
-    
-    // Find top category
-    let topCategory = 'foodTaste';
-    let topAvg = 0;
+
+    const avgRating = totalRating / (total * 6);
+
+    // Top category
+    let topCategory = '-';
+    let topAvg = -1;
     Object.entries(categoryTotals).forEach(([cat, sum]) => {
-      const avg = total > 0 ? sum / total : 0;
+      const avg = sum / total;
       if (avg > topAvg) {
         topAvg = avg;
         topCategory = cat;
       }
     });
-    
+
     // Category performance
-    const categoryPerformance = Object.entries(categoryTotals).map(([category, sum]) => ({
-      category: category.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
-      average: total > 0 ? Math.round((sum / total) * 10) / 10 : 0,
+    const categoryPerformance = ratingCategories.map(cat => ({
+      category: cat.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()),
+      average: Math.round((categoryTotals[cat] / total) * 10) / 10,
     }));
-    
-    // Weekly trends (group by date)
-    const trendMap: Record<string, { 
-      count: number; 
+
+    // Trends: group by IST date key
+    const trendMap: Record<string, {
+      count: number;
       foodTaste: number;
       foodTemperature: number;
       portionSize: number;
@@ -358,54 +367,38 @@ export class MongoStorage implements IStorage {
       presentation: number;
       overallService: number;
     }> = {};
-    
-    feedbacks.forEach(f => {
-      if (!trendMap[f.dateKey]) {
-        trendMap[f.dateKey] = { 
-          count: 0, 
-          foodTaste: 0,
-          foodTemperature: 0,
-          portionSize: 0,
-          valueForMoney: 0,
-          presentation: 0,
-          overallService: 0
-        };
+
+    results.forEach((r: any) => {
+      const dateKey = r.visit.dateKey || toISTDateKey(new Date(r.visit.createdAt));
+      if (!trendMap[dateKey]) {
+        trendMap[dateKey] = { count: 0, foodTaste: 0, foodTemperature: 0, portionSize: 0, valueForMoney: 0, presentation: 0, overallService: 0 };
       }
-      trendMap[f.dateKey].count++;
-      trendMap[f.dateKey].foodTaste += f.ratings.foodTaste;
-      trendMap[f.dateKey].foodTemperature += f.ratings.foodTemperature;
-      trendMap[f.dateKey].portionSize += f.ratings.portionSize;
-      trendMap[f.dateKey].valueForMoney += f.ratings.valueForMoney;
-      trendMap[f.dateKey].presentation += f.ratings.presentation;
-      trendMap[f.dateKey].overallService += f.ratings.overallService;
+      trendMap[dateKey].count++;
+      ratingCategories.forEach(cat => {
+        trendMap[dateKey][cat] += Number(r.visit.ratings?.[cat] ?? 0);
+      });
     });
-    
-    const weeklyTrends = Object.entries(trendMap).map(([date, data]) => {
-      // Extract just the date part from dateKey (format: "2026-03-09")
-      const dateOnly = date.split('-').slice(0, 3).join('-');
-      return {
-        date: dateOnly,
+
+    const weeklyTrends = Object.entries(trendMap)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, data]) => ({
+        date,
         foodTaste: Math.round((data.foodTaste / data.count) * 10) / 10,
         foodTemperature: Math.round((data.foodTemperature / data.count) * 10) / 10,
         portionSize: Math.round((data.portionSize / data.count) * 10) / 10,
         valueForMoney: Math.round((data.valueForMoney / data.count) * 10) / 10,
         presentation: Math.round((data.presentation / data.count) * 10) / 10,
         overallService: Math.round((data.overallService / data.count) * 10) / 10,
-      };
-    });
-    
+      }));
+
     return {
       totalFeedback: total,
       averageRating: Math.round(avgRating * 10) / 10,
       topCategory: topCategory.charAt(0).toUpperCase() + topCategory.slice(1),
-      responseRate: total > 0 ? Math.round((contacted / total) * 100) : 0,
+      responseRate: Math.round((contacted / total) * 100),
       weeklyTrends,
       categoryPerformance,
-      feedbackVolume: {
-        total,
-        contacted,
-        pending: total - contacted,
-      },
+      feedbackVolume: { total, contacted, pending: total - contacted },
     };
   }
 
