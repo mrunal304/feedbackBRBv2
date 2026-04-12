@@ -162,7 +162,6 @@ export default function AdminDashboard() {
   const { data: analytics, refetch: refetchAnalytics } = useQuery<Analytics>({
     queryKey: [analyticsUrl],
     enabled: !!(authCheck as any)?.authenticated,
-    refetchInterval: false,
   });
 
   const logoutMutation = useMutation({
