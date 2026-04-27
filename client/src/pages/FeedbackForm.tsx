@@ -414,7 +414,7 @@ export default function FeedbackForm() {
                                 {label}
                               </FormLabel>
                               <FormControl>
-                                <div className="flex gap-2 max-[480px]:gap-2.5 mt-2">
+                                <div className="flex gap-2 max-[768px]:gap-3 mt-2">
                                   {[1, 2, 3, 4, 5].map((star) => (
                                     <button
                                       key={star}

@@ -1,13 +1,15 @@
 /* Mobile Styles (max-width: 768px) */
 
 /* Star Rating Styles - Mobile */
-@media (max-width: 480px) {
-  .star, .star-filled, .star-empty, [class*="star"] {
-    font-size: 26px !important;
-    width: 26px !important;
-    height: 26px !important;
+@media (max-width: 768px) {
+  button.star, button.star-selected, button.star-empty {
+    font-size: 40px !important;
+    width: 40px !important;
+    height: 40px !important;
   }
+}
 
+@media (max-width: 480px) {
   .rating-question, [class*="question"], .question-label {
     font-size: 14px !important;
   }
