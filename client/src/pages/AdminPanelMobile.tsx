@@ -534,8 +534,24 @@ export default function AdminPanelMobile() {
                           </span>
                         </div>
 
-                        {/* Row 2: Full phone number */}
-                        <p className="text-xs text-gray-600 font-medium">{fb.phone}</p>
+                        {/* Row 2: Full phone number with call icon */}
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={`tel:${fb.phone}`}
+                            className="w-8 h-8 rounded-full bg-[#8B1A1A]/10 flex items-center justify-center text-[#8B1A1A] hover:bg-[#8B1A1A]/20 transition-colors flex-shrink-0"
+                            title={`Call ${fb.name}`}
+                            data-testid={`button-call-${fb._id}`}
+                          >
+                            <Phone className="w-4 h-4" />
+                          </a>
+                          <a
+                            href={`tel:${fb.phone}`}
+                            className="text-xs text-gray-600 font-medium hover:text-[#8B1A1A] transition-colors"
+                            data-testid={`text-phone-${fb._id}`}
+                          >
+                            {fb.phone}
+                          </a>
+                        </div>
 
                         {/* Row 3: Visit badge (left) + Date & Time (right) */}
                         <div className="flex items-center justify-between gap-2">
