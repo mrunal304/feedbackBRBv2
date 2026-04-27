@@ -279,18 +279,17 @@ export default function AdminPanelMobile() {
               </div>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-white hover:bg-white/10 text-[13px] py-2 h-auto px-2 overflow-visible whitespace-nowrap"
+          <button
             onClick={() => {
               logoutMutation.mutate();
               setShowMenu(false);
             }}
             data-testid="button-logout"
+            className="flex items-center gap-3 w-full px-4 h-12 rounded-md border text-[15px] font-medium transition-colors text-white/80 hover:text-white hover:bg-white/10 border-white/30"
           >
-            <LogOut className="w-4 h-4 flex-shrink-0" />
-            <span className="text-white text-[13px]">Sign Out</span>
-          </Button>
+            <LogOut className="w-4 h-4 shrink-0" />
+            <span>Sign Out</span>
+          </button>
         </div>
       )}
 
