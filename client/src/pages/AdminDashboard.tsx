@@ -328,7 +328,7 @@ export default function AdminDashboard() {
             <div className="p-8 max-w-7xl mx-auto space-y-8">
               <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
               {/* STEP 2: Overview Page Header */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4 items-start sm:flex-row sm:items-center sm:justify-between sm:gap-0">
                 <div>
                   <h2 className="text-3xl font-bold text-[#3D2B1F]">Dashboard Overview</h2>
                   <p className="text-gray-500 mt-1">Welcome back, here's what's happening today.</p>
