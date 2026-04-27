@@ -54,6 +54,12 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
@@ -118,7 +124,7 @@ export default function AdminPanelMobile() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("analytics");
-  const [period] = useState<"week" | "lastWeek" | "month">("week");
+  const [period, setPeriod] = useState<"week" | "lastWeek" | "month">("week");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter] = useState<"all" | "contacted" | "pending">("all");
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -297,6 +303,40 @@ export default function AdminPanelMobile() {
       <main className="flex-1 px-4 py-4 space-y-4">
         {activeTab === "analytics" && (
           <div className="space-y-6">
+            {/* Dashboard Overview Header + Period Filter */}
+            <div className="space-y-3">
+              <div>
+                <h2 className="text-xl font-bold text-[#3D2B1F]">Dashboard Overview</h2>
+                <p className="text-gray-500 text-[13px] mt-1">Welcome back, here's what's happening today.</p>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5"
+                    data-testid="dropdown-period-mobile"
+                  >
+                    {period === "week" ? "Last 7 Days" : "Last Month"}
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[calc(100vw-2rem)]">
+                  <DropdownMenuItem
+                    data-testid="period-option-week-mobile"
+                    onClick={() => setPeriod("week")}
+                  >
+                    Last 7 Days
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    data-testid="period-option-month-mobile"
+                    onClick={() => setPeriod("month")}
+                  >
+                    Last Month
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
             {/* Dashboard Cards - 2x2 Grid */}
             <div className="grid grid-cols-2 gap-3">
               {[
