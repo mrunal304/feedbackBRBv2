@@ -1,0 +1,322 @@
+/* ============================================================
+   Tablet Responsive Styles — Admin Panel Dashboard
+   Target: 768px – 1024px (iPad Mini, iPad Air, iPad Pro, Samsung tablets)
+   NOTE: Does NOT affect mobile (<768px) or desktop (>1024px)
+   ============================================================ */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+
+  /* ──────────────────────────────────────────────────────────
+     Sidebar
+     ────────────────────────────────────────────────────────── */
+
+  [data-sidebar="sidebar"] {
+    width: 200px !important;
+    min-width: 200px !important;
+    max-width: 200px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Sidebar header title */
+  [data-sidebar="sidebar"] h1 {
+    font-size: 1rem !important;
+  }
+
+  /* Sidebar nav buttons — slightly more compact */
+  [data-sidebar="sidebar"] button {
+    font-size: 13px !important;
+    height: 42px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  /* Sidebar footer avatar */
+  [data-sidebar="sidebar"] .w-11 {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Root Layout
+     ────────────────────────────────────────────────────────── */
+
+  /* Outer flex container */
+  .flex.min-h-screen.w-full {
+    overflow-x: hidden !important;
+  }
+
+  /* Main content area — remove excessive horizontal padding */
+  main.flex-1 {
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Main Content Inner Wrapper
+     ────────────────────────────────────────────────────────── */
+
+  /* The padded content container inside <main> */
+  main.flex-1 > div > div > div {
+    padding: 20px !important;
+    max-width: 100% !important;
+  }
+
+  /* Space-y between sections on analytics tab */
+  main.flex-1 .space-y-8 {
+    gap: 20px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Header & Period Selector
+     ────────────────────────────────────────────────────────── */
+
+  /* Dashboard Overview header row */
+  main.flex-1 .flex.items-center.justify-between:first-child {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Dashboard title */
+  main.flex-1 h2.text-3xl {
+    font-size: clamp(1.25rem, 3vw, 1.75rem) !important;
+  }
+
+  /* Subtitle text */
+  main.flex-1 .text-gray-500.mt-1 {
+    font-size: 13px !important;
+  }
+
+  /* Period dropdown button */
+  main.flex-1 [data-testid="dropdown-period"] {
+    font-size: 13px !important;
+    padding: 6px 12px !important;
+    height: 36px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Stat Cards Grid
+     Switch from 4-column to 2-column on tablet
+     ────────────────────────────────────────────────────────── */
+
+  .grid.grid-cols-1.md\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  /* Stat card content padding */
+  .grid.grid-cols-1.md\:grid-cols-4 .p-4 {
+    padding: 14px !important;
+  }
+
+  /* Stat card value font */
+  .grid.grid-cols-1.md\:grid-cols-4 .text-\[24px\] {
+    font-size: 20px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Charts Grid
+     Force 2-column side-by-side on tablet
+     (Tailwind's lg:grid-cols-2 only kicks in at 1024px+,
+      so on tablets the charts stack — this fixes that)
+     ────────────────────────────────────────────────────────── */
+
+  .grid.grid-cols-1.lg\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  /* Chart card headers */
+  .grid.grid-cols-1.lg\:grid-cols-2 .text-xl {
+    font-size: 1rem !important;
+  }
+
+  /* Chart heights — slightly reduced for tablet viewport */
+  .grid.grid-cols-1.lg\:grid-cols-2 .h-\[250px\].md\:h-\[350px\],
+  .grid.grid-cols-1.lg\:grid-cols-2 .w-full.h-\[250px\].md\:h-\[350px\] {
+    height: 260px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Feedback Volume (Pie Chart Card)
+     ────────────────────────────────────────────────────────── */
+
+  .h-64 {
+    height: 220px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Filters Bar (Date picker + Today/Yesterday buttons)
+     ────────────────────────────────────────────────────────── */
+
+  /* Filter row — stay horizontal on tablet */
+  .bg-white.p-4.rounded-xl.shadow-sm.flex {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+  }
+
+  /* Left cluster: label + datepicker + buttons */
+  .bg-white.p-4.rounded-xl.shadow-sm.flex > .flex.items-center.gap-4 {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  /* "FILTER BY DATE:" label */
+  .bg-white.p-4.rounded-xl.shadow-sm .text-\[10px\] {
+    font-size: 9px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  /* Today / Yesterday buttons */
+  .bg-white.p-4.rounded-xl.shadow-sm button {
+    font-size: 12px !important;
+    height: 32px !important;
+    padding: 0 10px !important;
+  }
+
+  /* "Showing feedback for:" text on the right */
+  .bg-white.p-4.rounded-xl.shadow-sm .text-\[\\#8B1A1A\] {
+    font-size: 12px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Feedback Page Header (title + search bar)
+     ────────────────────────────────────────────────────────── */
+
+  /* Customer Feedback heading row */
+  .space-y-6 > .flex.items-center.justify-between {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Page title */
+  .space-y-6 > .flex.items-center.justify-between h2.text-3xl {
+    font-size: clamp(1.2rem, 3vw, 1.6rem) !important;
+  }
+
+  /* Search bar */
+  .space-y-6 > .flex.items-center.justify-between .relative.w-full.max-w-sm {
+    max-width: 240px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Feedback Table
+     ────────────────────────────────────────────────────────── */
+
+  /* Table card — ensure it doesn't overflow */
+  .hidden.md\:block {
+    overflow-x: auto !important;
+  }
+
+  /* Table itself */
+  .hidden.md\:block table {
+    min-width: 680px !important;
+    table-layout: auto !important;
+  }
+
+  /* Table header cells */
+  .hidden.md\:block thead th {
+    font-size: 10px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Table body cells */
+  .hidden.md\:block tbody td {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    font-size: 13px !important;
+  }
+
+  /* Customer name */
+  .hidden.md\:block tbody .font-bold.text-sm {
+    font-size: 12px !important;
+  }
+
+  /* Phone number under name */
+  .hidden.md\:block tbody .text-sm.text-gray-500 {
+    font-size: 11px !important;
+  }
+
+  /* Note/comment cell max-width — tighter on tablet */
+  .hidden.md\:block tbody .max-w-\[200px\] {
+    max-width: 130px !important;
+  }
+
+  /* Action buttons in table */
+  .hidden.md\:block tbody .flex.items-center.gap-2 button {
+    font-size: 11px !important;
+    height: 28px !important;
+    padding: 0 8px !important;
+  }
+
+  /* Status badges */
+  .hidden.md\:block .rounded-full.px-3 {
+    font-size: 9px !important;
+    padding: 2px 8px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Feedback Details Modal
+     ────────────────────────────────────────────────────────── */
+
+  [role="dialog"] .max-w-2xl {
+    max-width: min(90vw, 600px) !important;
+    margin: 0 auto !important;
+  }
+
+  [role="dialog"] .p-8 {
+    padding: 20px !important;
+  }
+
+  [role="dialog"] .grid.grid-cols-2.gap-8 {
+    gap: 16px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Typography — Global Tablet Adjustments
+     ────────────────────────────────────────────────────────── */
+
+  /* Card titles */
+  .text-xl.font-bold {
+    font-size: 1rem !important;
+  }
+
+  /* Card content padding */
+  main.flex-1 .rounded-\[12px\] > div {
+    padding: 14px !important;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     Landscape Mode (e.g. iPad in landscape at ~1024px wide)
+     ────────────────────────────────────────────────────────── */
+
+  @media (orientation: landscape) {
+
+    /* Give a bit more room on landscape */
+    [data-sidebar="sidebar"] {
+      width: 180px !important;
+      min-width: 180px !important;
+    }
+
+    /* Stat cards: keep 4-column in landscape since there's more width */
+    .grid.grid-cols-1.md\:grid-cols-4 {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+
+    /* Reduced chart height in landscape to avoid scroll */
+    .grid.grid-cols-1.lg\:grid-cols-2 .h-\[250px\].md\:h-\[350px\],
+    .grid.grid-cols-1.lg\:grid-cols-2 .w-full.h-\[250px\].md\:h-\[350px\] {
+      height: 220px !important;
+    }
+
+    /* Modal fits better in landscape */
+    [role="dialog"] .max-h-\[70vh\] {
+      max-height: 60vh !important;
+    }
+  }
+
+}

@@ -1,0 +1,184 @@
+Create a new separate CSS file called tablet-responsive.css dedicated only to tablet/iPad responsiveness for the Admin Panel dashboard.
+The project is already responsive for:
+
+
+Mobile devices
+
+
+Laptop/Desktop screens
+
+
+The issue exists only on tablet/iPad screens where:
+
+
+The layout looks compressed
+
+
+Too much empty space appears
+
+
+Sidebar sizing feels unbalanced
+
+
+Content area does not utilize width properly
+
+
+Components alignment looks awkward
+
+
+Your task:
+Improve the UI specifically for tablet devices between 768px and 1024px width without affecting existing mobile or desktop layouts.
+Requirements:
+
+
+Use only tablet-specific media queries
+
+
+Keep existing UI design, colors, and functionality unchanged
+
+
+Ensure clean spacing and alignment
+
+
+Make layout visually balanced in both portrait and landscape modes
+
+
+Prevent horizontal scrolling completely
+
+
+Use responsive Flexbox/Grid layouts where necessary
+
+
+Create responsive improvements for:
+
+
+Sidebar
+
+
+Reduce width slightly
+
+
+Maintain readable navigation
+
+
+Keep icons/text aligned properly
+
+
+
+
+Main Content Area
+
+
+Expand content area efficiently
+
+
+Remove excessive margins/padding
+
+
+Improve overall content distribution
+
+
+
+
+Header & Filters
+
+
+Align date picker and buttons properly
+
+
+Allow wrapping when needed
+
+
+Maintain equal spacing between controls
+
+
+
+
+Feedback Table/Cards
+
+
+Make table responsive
+
+
+Ensure columns resize proportionally
+
+
+Prevent text overflow
+
+
+Improve readability on medium screens
+
+
+
+
+Typography & Spacing
+
+
+Slightly adjust font sizes for tablet screens
+
+
+Improve padding/margins for better visual hierarchy
+
+
+
+
+Technical Requirements:
+
+
+Create a new file:
+
+
+tablet-responsive.css
+
+
+Use:
+
+
+@media (min-width: 768px) and (max-width: 1024px) {   /* tablet responsive styles */}
+
+
+Add clean section comments such as:
+
+
+/* Sidebar *//* Main Content *//* Filters *//* Table *//* Landscape Mode */
+
+
+Use modern responsive CSS practices:
+
+
+flex
+
+
+grid
+
+
+clamp()
+
+
+max-width
+
+
+overflow-x auto (only where necessary)
+
+
+
+
+Ensure compatibility with:
+
+
+iPad Mini
+
+
+iPad Air
+
+
+iPad Pro
+
+
+Samsung tablets
+
+
+
+
+Goal:
+The Admin Panel should feel properly optimized for tablets with a professional dashboard appearance, balanced spacing, smooth responsiveness, and no broken alignment issues.
