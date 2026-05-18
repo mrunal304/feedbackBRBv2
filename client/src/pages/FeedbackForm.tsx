@@ -284,51 +284,12 @@ export default function FeedbackForm() {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="location"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-[13px] font-bold text-[#444444] uppercase tracking-widest font-nunito">Location</FormLabel>
-                        <FormControl>
-                          <Select
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            data-testid="select-location"
-                          >
-                            <SelectTrigger className={formInputClass + " w-full"}>
-                              <SelectValue placeholder="Select location" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Ambarnath">Ambarnath</SelectItem>
-                              <SelectItem value="Kalyan">Kalyan</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {selectedLocation === "Kalyan" && (
-                    <FormField
-                      control={form.control}
-                      name="locationDetail"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder="Where did you taste us? (e.g. Near Station, Shil Phata...)"
-                              {...field}
-                              data-testid="input-location-detail"
-                              className={formInputClass}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
+                  <div>
+                    <p className="text-[13px] font-bold text-[#444444] uppercase tracking-widest font-nunito mb-2">Location</p>
+                    <div className={formInputClass + " w-full flex items-center px-3 py-2 text-gray-700"} data-testid="text-location">
+                      Ambarnath
+                    </div>
+                  </div>
 
                   <FormField
                     control={form.control}
