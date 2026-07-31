@@ -136,6 +136,14 @@ export default function AdminPanelMobile() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter] = useState<"all" | "contacted" | "pending">("all");
   const [selectedDate, setSelectedDate] = useState<string>(localDateStr(new Date()));
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<'thisWeek' | 'thisMonth' | 'lastMonth' | 'selectMonth' | 'customRange' | null>(null);
+  const [filterLabel, setFilterLabel] = useState('');
+  const [selectMonthValue, setSelectMonthValue] = useState({ month: new Date().getMonth(), year: new Date().getFullYear() });
+  const [customRangeStart, setCustomRangeStart] = useState('');
+  const [customRangeEnd, setCustomRangeEnd] = useState('');
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [showCustomRange, setShowCustomRange] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -150,7 +158,50 @@ export default function AdminPanelMobile() {
     }
   }, [authCheck, authLoading, navigate]);
 
-  const feedbackUrl = `/api/feedback?startDate=${selectedDate}&endDate=${selectedDate}&status=${statusFilter}`;
+  // Compute date range based on active filter
+  let filterStartDate = selectedDate;
+  let filterEndDate = selectedDate;
+  if (activeFilter === 'thisWeek') {
+    const now = new Date();
+    const day = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+    filterStartDate = localDateStr(monday);
+    filterEndDate = localDateStr(now);
+  } else if (activeFilter === 'thisMonth') {
+    const now = new Date();
+    filterStartDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+    filterEndDate = localDateStr(now);
+  } else if (activeFilter === 'lastMonth') {
+    const now = new Date();
+    filterStartDate = localDateStr(new Date(now.getFullYear(), now.getMonth() - 1, 1));
+    filterEndDate = localDateStr(new Date(now.getFullYear(), now.getMonth(), 0));
+  } else if (activeFilter === 'selectMonth') {
+    filterStartDate = `${selectMonthValue.year}-${String(selectMonthValue.month + 1).padStart(2, '0')}-01`;
+    filterEndDate = localDateStr(new Date(selectMonthValue.year, selectMonthValue.month + 1, 0));
+  } else if (activeFilter === 'customRange' && customRangeStart && customRangeEnd) {
+    filterStartDate = customRangeStart;
+    filterEndDate = customRangeEnd;
+  }
+
+  // Showing label
+  let showingLabel: string;
+  if (activeFilter === 'thisWeek') {
+    showingLabel = `This Week (${format(new Date(filterStartDate + 'T12:00:00'), 'MMM d')} – ${format(new Date(filterEndDate + 'T12:00:00'), 'MMM d')})`;
+  } else if (activeFilter === 'thisMonth') {
+    showingLabel = `This Month (${format(new Date(), 'MMMM yyyy')})`;
+  } else if (activeFilter === 'lastMonth') {
+    const lm = new Date(); lm.setDate(1); lm.setMonth(lm.getMonth() - 1);
+    showingLabel = format(lm, 'MMMM yyyy');
+  } else if (activeFilter === 'selectMonth') {
+    showingLabel = format(new Date(selectMonthValue.year, selectMonthValue.month, 1), 'MMMM yyyy');
+  } else if (activeFilter === 'customRange' && customRangeStart && customRangeEnd) {
+    showingLabel = `${format(new Date(customRangeStart + 'T12:00:00'), 'MMM d')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'MMM d, yyyy')}`;
+  } else {
+    showingLabel = format(new Date(selectedDate + 'T12:00:00'), 'MMMM d, yyyy');
+  }
+
+  const feedbackUrl = `/api/feedback?startDate=${filterStartDate}&endDate=${filterEndDate}&status=${statusFilter}`;
   const { data: feedback = [], refetch: refetchFeedback } = useQuery<Feedback[]>({
     queryKey: [feedbackUrl],
     enabled: !!(authCheck as any)?.authenticated,
@@ -243,22 +294,38 @@ export default function AdminPanelMobile() {
     return fb.name.toLowerCase().includes(query) || fb.phone.includes(query);
   });
 
+  const clearAdvancedFilter = () => {
+    setActiveFilter(null);
+    setFilterLabel('');
+    setShowMonthPicker(false);
+    setShowCustomRange(false);
+    setSelectedDate(localDateStr(new Date()));
+  };
+
   const handleDateChange = (date: Date) => {
     setSelectedDate(localDateStr(date));
+    setActiveFilter(null);
+    setFilterLabel('');
   };
 
   const handleClearDate = () => {
     setSelectedDate(localDateStr(new Date()));
+    setActiveFilter(null);
+    setFilterLabel('');
   };
 
   const setToday = () => {
     setSelectedDate(localDateStr(new Date()));
+    setActiveFilter(null);
+    setFilterLabel('');
   };
 
   const setYesterday = () => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     setSelectedDate(localDateStr(yesterday));
+    setActiveFilter(null);
+    setFilterLabel('');
   };
 
   if (authLoading || !(authCheck as any)?.authenticated) {
@@ -495,31 +562,156 @@ export default function AdminPanelMobile() {
 
             {/* Date Filter */}
             <div className="bg-white p-3 rounded-lg shadow-sm space-y-2">
-              <div className="flex gap-2 text-xs">
+              {/* Row 1: Date picker + quick buttons + toggle */}
+              <div className="flex flex-wrap items-center gap-2">
                 <FloatingDatePicker
                   selected={new Date(selectedDate + 'T12:00:00')}
                   onSelect={handleDateChange}
                   onClear={handleClearDate}
                 />
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   onClick={setToday}
-                  className={selectedDate === localDateStr(new Date()) ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 h-7 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 h-7 rounded"}
-                  variant={selectedDate === localDateStr(new Date()) ? "default" : "outline"}
+                  className={!activeFilter && selectedDate === localDateStr(new Date()) ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 h-7 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 h-7 rounded"}
+                  variant={!activeFilter && selectedDate === localDateStr(new Date()) ? "default" : "outline"}
                 >
                   Today
                 </Button>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   onClick={setYesterday}
-                  className={selectedDate === localDateStr(new Date(Date.now() - 86400000)) ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 h-7 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 h-7 rounded"}
-                  variant={selectedDate === localDateStr(new Date(Date.now() - 86400000)) ? "default" : "outline"}
+                  className={!activeFilter && selectedDate === localDateStr(new Date(Date.now() - 86400000)) ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 h-7 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 h-7 rounded"}
+                  variant={!activeFilter && selectedDate === localDateStr(new Date(Date.now() - 86400000)) ? "default" : "outline"}
                 >
                   Yesterday
                 </Button>
+                {activeFilter && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#8B0000]/10 text-[#8B0000] text-xs font-semibold rounded-full border border-[#8B0000]/20">
+                    {filterLabel}
+                    <button onClick={clearAdvancedFilter} className="ml-0.5 hover:opacity-70 text-base leading-none">×</button>
+                  </span>
+                )}
+                <button
+                  onClick={() => setShowAdvancedFilters(v => !v)}
+                  className="p-1 rounded border border-gray-200 hover:bg-gray-50 transition-colors"
+                  title={showAdvancedFilters ? "Hide filters" : "More filters"}
+                >
+                  <ChevronDown className="w-4 h-4 text-gray-500 transition-transform duration-200" style={{ transform: showAdvancedFilters ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                </button>
               </div>
-              <div className="text-[#8B1A1A] font-bold text-xs">
-                {format(new Date(selectedDate + 'T12:00:00'), 'MMMM d, yyyy')}
+
+              {/* Row 2: Advanced filter options */}
+              {showAdvancedFilters && (
+                <div className="pt-2 border-t border-gray-100 space-y-2">
+                  <div className="flex flex-wrap gap-1.5">
+                    {(['thisWeek', 'thisMonth', 'lastMonth'] as const).map((f, i) => {
+                      const labels = ['This Week', 'This Month', 'Last Month'];
+                      return (
+                        <Button
+                          key={f}
+                          size="sm"
+                          onClick={() => { setActiveFilter(f); setFilterLabel(labels[i]); setShowAdvancedFilters(false); setShowMonthPicker(false); setShowCustomRange(false); }}
+                          className={`h-7 text-xs px-3 rounded ${activeFilter === f ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5"}`}
+                          variant={activeFilter === f ? "default" : "outline"}
+                        >
+                          {labels[i]}
+                        </Button>
+                      );
+                    })}
+                    <Button
+                      size="sm"
+                      onClick={() => { setShowMonthPicker(v => !v); setShowCustomRange(false); }}
+                      className={`h-7 text-xs px-3 rounded ${showMonthPicker || activeFilter === 'selectMonth' ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5"}`}
+                      variant={showMonthPicker || activeFilter === 'selectMonth' ? "default" : "outline"}
+                    >
+                      Select Month ›
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => { setShowCustomRange(v => !v); setShowMonthPicker(false); }}
+                      className={`h-7 text-xs px-3 rounded ${showCustomRange || activeFilter === 'customRange' ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5"}`}
+                      variant={showCustomRange || activeFilter === 'customRange' ? "default" : "outline"}
+                    >
+                      Custom Range ›
+                    </Button>
+                  </div>
+
+                  {showMonthPicker && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <select
+                        value={selectMonthValue.month}
+                        onChange={(e) => setSelectMonthValue(prev => ({ ...prev, month: Number(e.target.value) }))}
+                        className="text-xs border border-gray-200 rounded px-2 py-1 text-gray-700 focus:outline-none focus:border-[#8B0000]"
+                      >
+                        {['January','February','March','April','May','June','July','August','September','October','November','December'].map((m, i) => (
+                          <option key={m} value={i}>{m}</option>
+                        ))}
+                      </select>
+                      <select
+                        value={selectMonthValue.year}
+                        onChange={(e) => setSelectMonthValue(prev => ({ ...prev, year: Number(e.target.value) }))}
+                        className="text-xs border border-gray-200 rounded px-2 py-1 text-gray-700 focus:outline-none focus:border-[#8B0000]"
+                      >
+                        {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map(y => (
+                          <option key={y} value={y}>{y}</option>
+                        ))}
+                      </select>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          const label = format(new Date(selectMonthValue.year, selectMonthValue.month, 1), 'MMMM yyyy');
+                          setActiveFilter('selectMonth');
+                          setFilterLabel(label);
+                          setShowMonthPicker(false);
+                          setShowAdvancedFilters(false);
+                        }}
+                        className="h-7 text-xs px-3 rounded bg-[#8B0000] text-white hover:bg-[#8B0000]/90"
+                      >
+                        Apply
+                      </Button>
+                    </div>
+                  )}
+
+                  {showCustomRange && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs text-gray-500">From</span>
+                      <input
+                        type="date"
+                        value={customRangeStart}
+                        onChange={(e) => setCustomRangeStart(e.target.value)}
+                        className="text-xs border border-gray-200 rounded px-2 py-1 text-gray-700 focus:outline-none focus:border-[#8B0000]"
+                      />
+                      <span className="text-xs text-gray-400">→</span>
+                      <span className="text-xs text-gray-500">To</span>
+                      <input
+                        type="date"
+                        value={customRangeEnd}
+                        onChange={(e) => setCustomRangeEnd(e.target.value)}
+                        className="text-xs border border-gray-200 rounded px-2 py-1 text-gray-700 focus:outline-none focus:border-[#8B0000]"
+                      />
+                      <Button
+                        size="sm"
+                        disabled={!customRangeStart || !customRangeEnd}
+                        onClick={() => {
+                          if (customRangeStart && customRangeEnd) {
+                            const label = `${format(new Date(customRangeStart + 'T12:00:00'), 'MMM d')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'MMM d, yyyy')}`;
+                            setActiveFilter('customRange');
+                            setFilterLabel(label);
+                            setShowCustomRange(false);
+                            setShowAdvancedFilters(false);
+                          }
+                        }}
+                        className="h-7 text-xs px-3 rounded bg-[#8B0000] text-white hover:bg-[#8B0000]/90 disabled:opacity-50"
+                      >
+                        Apply
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="text-[#8B1A1A] font-bold text-xs pt-1">
+                Showing: <span className="ml-1">{showingLabel}</span>
               </div>
             </div>
 

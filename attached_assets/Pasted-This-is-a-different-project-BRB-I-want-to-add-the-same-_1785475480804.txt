@@ -1,0 +1,52 @@
+This is a different project (BRB). I want to add the same advanced date filter that exists in the Shreerath feedback project.
+
+Please check the current Feedback page component carefully before making changes.
+
+## What to add:
+
+### Current state:
+- Filter bar has: single date picker + "Today" button + "Yesterday" button only
+
+### Required - Add these exactly like Shreerath project:
+
+1. Add an UP/DOWN arrow toggle button after "Yesterday" button
+   - Clicking it shows/hides extra filter options
+   - Arrow points UP when expanded, DOWN when collapsed
+
+2. When arrow is clicked, show these options in a second row:
+   - "This Week" button
+   - "This Month" button  
+   - "Last Month" button
+   - "Select Month ›" button (clicking shows Month + Year dropdowns inline)
+   - "Custom Range ›" button (clicking shows From → To date inputs inline)
+
+3. When any option from second row is selected:
+   - Second row collapses automatically
+   - Selected filter name appears as a badge next to "Yesterday" button with × to clear
+   - Example: [📅 date] [Today] [Yesterday] [July 2026 ×] [↓]
+
+4. "Showing feedback for:" label on right updates correctly for all options
+
+5. Filter logic:
+   - This Week → current week Monday to today
+   - This Month → 1st of current month to today
+   - Last Month → full previous month
+   - Select Month → full selected month (fix timezone: use local time noon, not UTC midnight)
+   - Custom Range → from date 00:00:00 to to-date 23:59:59 local time
+
+6. IMPORTANT - Timezone fix:
+   - All date comparisons must use LOCAL time (IST), NOT UTC
+   - Use 'T12:00:00' for single dates, not 'T00:00:00.000Z'
+   - Backend date range: start = local 00:00:00, end = local 23:59:59
+
+## Design:
+- Match existing BRB project colors, fonts, button styles exactly
+- Works on both desktop and mobile (responsive)
+- On mobile: filter bar stacks vertically
+
+## Rules:
+- First check which files handle the Feedback page and date filtering
+- Show files before editing
+- Do NOT change table columns, modals, Status badges, Actions buttons
+- Do NOT touch Overview page or any other component
+- Do NOT change sidebar design
