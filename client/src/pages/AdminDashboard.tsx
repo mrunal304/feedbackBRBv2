@@ -203,18 +203,27 @@ export default function AdminDashboard() {
   // Showing label
   let showingLabel: string;
   if (activeFilter === 'thisWeek') {
-    showingLabel = `This Week (${format(new Date(filterStartDate + 'T12:00:00'), 'MMM d')} – ${format(new Date(filterEndDate + 'T12:00:00'), 'MMM d')})`;
+    showingLabel = `This Week (${format(new Date(filterStartDate + 'T12:00:00'), 'd MMM')} – ${format(new Date(filterEndDate + 'T12:00:00'), 'd MMM yyyy')})`;
   } else if (activeFilter === 'thisMonth') {
-    showingLabel = `This Month (${format(new Date(), 'MMMM yyyy')})`;
+    showingLabel = format(new Date(), 'MMMM yyyy');
   } else if (activeFilter === 'lastMonth') {
     const lm = new Date(); lm.setDate(1); lm.setMonth(lm.getMonth() - 1);
     showingLabel = format(lm, 'MMMM yyyy');
   } else if (activeFilter === 'selectMonth') {
     showingLabel = format(new Date(selectMonthValue.year, selectMonthValue.month, 1), 'MMMM yyyy');
   } else if (activeFilter === 'customRange' && customRangeStart && customRangeEnd) {
-    showingLabel = `${format(new Date(customRangeStart + 'T12:00:00'), 'MMM d')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'MMM d, yyyy')}`;
+    showingLabel = `${format(new Date(customRangeStart + 'T12:00:00'), 'dd MMM yyyy')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'dd MMM yyyy')}`;
   } else {
-    showingLabel = format(new Date(selectedDate + 'T12:00:00'), 'MMMM d, yyyy');
+    const todayStr = localDateStr(new Date());
+    const yd = new Date(); yd.setDate(yd.getDate() - 1);
+    const yesterdayStr = localDateStr(yd);
+    if (selectedDate === todayStr) {
+      showingLabel = `Today, ${format(new Date(selectedDate + 'T12:00:00'), 'd MMM yyyy')}`;
+    } else if (selectedDate === yesterdayStr) {
+      showingLabel = `Yesterday, ${format(new Date(selectedDate + 'T12:00:00'), 'd MMM yyyy')}`;
+    } else {
+      showingLabel = format(new Date(selectedDate + 'T12:00:00'), 'd MMM yyyy');
+    }
   }
 
   const feedbackUrl = `/api/feedback?startDate=${filterStartDate}&endDate=${filterEndDate}&status=${statusFilter}`;

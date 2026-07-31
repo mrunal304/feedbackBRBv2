@@ -194,18 +194,27 @@ export default function AdminPanelMobile() {
   // Showing label
   let showingLabel: string;
   if (activeFilter === 'thisWeek') {
-    showingLabel = `This Week (${format(new Date(filterStartDate + 'T12:00:00'), 'MMM d')} – ${format(new Date(filterEndDate + 'T12:00:00'), 'MMM d')})`;
+    showingLabel = `This Week (${format(new Date(filterStartDate + 'T12:00:00'), 'd MMM')} – ${format(new Date(filterEndDate + 'T12:00:00'), 'd MMM yyyy')})`;
   } else if (activeFilter === 'thisMonth') {
-    showingLabel = `This Month (${format(new Date(), 'MMMM yyyy')})`;
+    showingLabel = format(new Date(), 'MMMM yyyy');
   } else if (activeFilter === 'lastMonth') {
     const lm = new Date(); lm.setDate(1); lm.setMonth(lm.getMonth() - 1);
     showingLabel = format(lm, 'MMMM yyyy');
   } else if (activeFilter === 'selectMonth') {
     showingLabel = format(new Date(selectMonthValue.year, selectMonthValue.month, 1), 'MMMM yyyy');
   } else if (activeFilter === 'customRange' && customRangeStart && customRangeEnd) {
-    showingLabel = `${format(new Date(customRangeStart + 'T12:00:00'), 'MMM d')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'MMM d, yyyy')}`;
+    showingLabel = `${format(new Date(customRangeStart + 'T12:00:00'), 'dd MMM yyyy')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'dd MMM yyyy')}`;
   } else {
-    showingLabel = format(new Date(selectedDate + 'T12:00:00'), 'MMMM d, yyyy');
+    const todayStr = localDateStr(new Date());
+    const yd = new Date(); yd.setDate(yd.getDate() - 1);
+    const yesterdayStr = localDateStr(yd);
+    if (selectedDate === todayStr) {
+      showingLabel = `Today, ${format(new Date(selectedDate + 'T12:00:00'), 'd MMM yyyy')}`;
+    } else if (selectedDate === yesterdayStr) {
+      showingLabel = `Yesterday, ${format(new Date(selectedDate + 'T12:00:00'), 'd MMM yyyy')}`;
+    } else {
+      showingLabel = format(new Date(selectedDate + 'T12:00:00'), 'd MMM yyyy');
+    }
   }
 
   const feedbackUrl = `/api/feedback?startDate=${filterStartDate}&endDate=${filterEndDate}&status=${statusFilter}`;
@@ -555,6 +564,9 @@ export default function AdminPanelMobile() {
 
         {activeTab === "feedback" && (
           <div className="space-y-3">
+            {/* Page Heading */}
+            <h2 className="text-3xl font-bold text-[#3D2B1F]">Customer Feedback</h2>
+
             {/* Search Bar */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -802,7 +814,7 @@ export default function AdminPanelMobile() {
                             {fb.status !== 'contacted' && (
                               <Button
                                 size="sm"
-                                className="h-11 flex-1 px-2 text-xs font-medium bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 whitespace-nowrap"
+                                className="h-auto py-1.5 px-2 flex-1 text-[11px] font-medium bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 whitespace-nowrap"
                                 onClick={() => handleContactCustomer(fb)}
                                 data-testid={`button-contact-mark-${fb._id}`}
                               >
