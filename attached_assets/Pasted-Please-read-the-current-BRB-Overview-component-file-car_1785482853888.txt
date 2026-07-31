@@ -1,0 +1,48 @@
+Please read the current BRB Overview component file carefully. There are 3 issues to fix:
+
+## Issue 1: Filter bar should be HIDDEN by default, shown on click
+
+Current (wrong): Filter bar with all buttons is always visible below the header
+
+Required (like Shreerath Image 2):
+- Top right corner: single dropdown button showing current selection e.g. "Last 7 Days ↓"
+- Clicking this button opens/shows the filter options
+- Filter options appear as a dropdown or expandable panel below the button
+- After selecting an option, dropdown closes and button label updates
+
+## Issue 2: Mobile view — filters missing completely
+
+On mobile (Image 3), there is no filter option at all.
+
+Fix:
+- Same dropdown button "Last 7 Days ↓" must appear on mobile too
+- Place it below the "Dashboard Overview" heading
+- Clicking opens filter options panel
+- All filter options must work on mobile: Today, Last 7 Days, This Month, Last Month, Select Month, Custom Range
+
+## Issue 3: Filter selection not updating Overview cards and charts
+
+When a filter is selected, the 4 cards (Total Feedback, Average Rating, Response Rate, Top Category) and charts are NOT updating.
+
+Fix:
+- Check what API/query is called when filter changes
+- Make sure dateFrom and dateTo are correctly calculated for each filter option in LOCAL time (IST), not UTC
+- Make sure the query re-fetches when filter changes
+- All 4 cards must show correct data for selected period
+- Rating Trends chart and Category Performance chart should also update for selected period
+
+## Filter options required:
+1. Today → current day 00:00:00 to 23:59:59 local
+2. Last 7 Days → 7 days ago to today local
+3. This Month → 1st of current month to today local
+4. Last Month → full previous month local
+5. Select Month › → shows Year + Month picker, after Done collapses
+6. Custom Range › → shows From → To date inputs, after Done collapses
+
+## Rules:
+- Check how Shreerath Overview filter works and use same pattern
+- First show which files you will edit
+- Do NOT change card UI design, colors, or layout
+- Do NOT change sidebar
+- Do NOT touch Feedback page
+- Works on both desktop and mobile
