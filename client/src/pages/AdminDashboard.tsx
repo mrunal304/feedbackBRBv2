@@ -92,6 +92,13 @@ const localDateStr = (date: Date): string => {
   return `${y}-${m}-${d}`;
 };
 
+/** Returns ordinal string: 1 → "1st", 2 → "2nd", 3 → "3rd", etc. */
+const toOrdinal = (n: number): string => {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
+
 const parseChartDate = (dateStr: any, index: number = 0): string => {
   if (!dateStr) return `Day ${index + 1}`;
   
@@ -786,9 +793,14 @@ export default function AdminDashboard() {
                             </div>
                           </TableCell>
                           <TableCell className="py-2.5">
-                            <span className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
-                              {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
-                            </span>
+                            <div className="flex flex-col items-start gap-1">
+                              <span className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                                {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
+                              </span>
+                              {fb.visitNumber && (
+                                <span className="text-[11px] text-gray-400 font-medium">{toOrdinal(fb.visitNumber)} Visit</span>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell className="py-2.5">
                             <div className="flex flex-col gap-0.5 items-center">

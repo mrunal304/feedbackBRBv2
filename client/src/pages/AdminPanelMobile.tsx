@@ -82,6 +82,13 @@ const localDateStr = (date: Date): string => {
   return `${y}-${m}-${d}`;
 };
 
+/** Returns ordinal string: 1 → "1st", 2 → "2nd", 3 → "3rd", etc. */
+const toOrdinal = (n: number): string => {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
+
 const parseChartDate = (dateStr: any, index: number = 0): string => {
   if (!dateStr) return `Day ${index + 1}`;
   
@@ -753,11 +760,16 @@ export default function AdminPanelMobile() {
                           </a>
                         </div>
 
-                        {/* Row 3: Visit badge (left) + Date & Time (right) */}
+                        {/* Row 3: Visit badge + visit number (left) + Date & Time (right) */}
                         <div className="flex items-center justify-between gap-2">
-                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold flex-shrink-0 ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
-                            {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
-                          </span>
+                          <div className="flex flex-col gap-0.5 flex-shrink-0">
+                            <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
+                              {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
+                            </span>
+                            {fb.visitNumber && (
+                              <span className="text-[11px] text-gray-400 font-medium">{toOrdinal(fb.visitNumber)} Visit</span>
+                            )}
+                          </div>
                           <p className="text-xs text-gray-600 font-medium text-right">{fb.visitDate} {fb.visitTime}</p>
                         </div>
 
@@ -790,7 +802,7 @@ export default function AdminPanelMobile() {
                             {fb.status !== 'contacted' && (
                               <Button
                                 size="sm"
-                                className="h-11 px-3 text-xs font-medium bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 flex-shrink-0"
+                                className="h-11 px-2 text-xs font-medium bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 whitespace-nowrap"
                                 onClick={() => handleContactCustomer(fb)}
                                 data-testid={`button-contact-mark-${fb._id}`}
                               >

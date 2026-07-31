@@ -19,7 +19,7 @@ export interface IStorage {
   migrateOldFeedbackStructure(): Promise<{ message: string; merged: number; deleted: number }>;
 }
 
-function formatVisitAsFeedback(customerDoc: any, visit: any): Feedback {
+function formatVisitAsFeedback(customerDoc: any, visit: any, visitNumber?: number): Feedback {
   const createdDate = new Date(visit.createdAt);
   // Always format display dates in IST so admin sees Indian time
   const visitDate = createdDate.toLocaleDateString('en-IN', {
@@ -46,6 +46,7 @@ function formatVisitAsFeedback(customerDoc: any, visit: any): Feedback {
     visitDate,
     visitTime,
     dateKey,
+    visitNumber,
   };
 }
 
@@ -81,6 +82,12 @@ export class MongoStorage implements IStorage {
     let results: Feedback[] = [];
 
     for (const customerDoc of docs) {
+      // Pre-sort visits chronologically to assign each visit its ordinal position
+      const sortedVisitIds = [...(customerDoc.visits || [])]
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        .map((v, i) => [v._id.toString(), i + 1] as [string, number]);
+      const visitNumberMap = new Map<string, number>(sortedVisitIds);
+
       for (const visit of customerDoc.visits || []) {
         // Check search filter
         if (filters?.search) {
@@ -129,7 +136,8 @@ export class MongoStorage implements IStorage {
           if (avg < filters.minRating) continue;
         }
 
-        results.push(formatVisitAsFeedback(customerDoc, visit));
+        const visitNumber = visitNumberMap.get(visit._id.toString());
+        results.push(formatVisitAsFeedback(customerDoc, visit, visitNumber));
       }
     }
 

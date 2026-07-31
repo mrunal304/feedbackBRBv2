@@ -26,6 +26,7 @@ export const feedbackSchema = z.object({
   visitTime: z.string(),
   contactedAt: z.string().optional(),
   contactedBy: z.string().optional(),
+  visitNumber: z.number().optional(),
 });
 
 // === CUSTOMER HISTORY SCHEMAS ===
