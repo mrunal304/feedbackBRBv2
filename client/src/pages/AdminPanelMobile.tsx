@@ -802,7 +802,7 @@ export default function AdminPanelMobile() {
                             {fb.status !== 'contacted' && (
                               <Button
                                 size="sm"
-                                className="h-11 px-2 text-xs font-medium bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 whitespace-nowrap"
+                                className="h-11 flex-1 px-2 text-xs font-medium bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 whitespace-nowrap"
                                 onClick={() => handleContactCustomer(fb)}
                                 data-testid={`button-contact-mark-${fb._id}`}
                               >

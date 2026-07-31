@@ -792,13 +792,13 @@ export default function AdminDashboard() {
                               </a>
                             </div>
                           </TableCell>
-                          <TableCell className="py-2.5">
+                          <TableCell className="py-2.5 min-w-[90px]">
                             <div className="flex flex-col items-start gap-1">
                               <span className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold ${fb.visitType === 'dine_in' ? 'bg-[#dbeafe] text-[#1e40af]' : 'bg-[#ede9fe] text-[#5b21b6]'}`}>
                                 {fb.visitType === 'dine_in' ? 'Dine In' : 'Take Out'}
                               </span>
                               {fb.visitNumber && (
-                                <span className="text-[11px] text-gray-400 font-medium">{toOrdinal(fb.visitNumber)} Visit</span>
+                                <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">{toOrdinal(fb.visitNumber)} Visit</span>
                               )}
                             </div>
                           </TableCell>
