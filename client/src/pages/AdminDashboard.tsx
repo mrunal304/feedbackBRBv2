@@ -84,6 +84,14 @@ const formatCamelCase = (str: string): string => {
     .trim();
 };
 
+/** Returns a YYYY-MM-DD string in LOCAL time (not UTC) */
+const localDateStr = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
 const parseChartDate = (dateStr: any, index: number = 0): string => {
   if (!dateStr) return `Day ${index + 1}`;
   
@@ -136,7 +144,7 @@ export default function AdminDashboard() {
   const [period, setPeriod] = useState<"week" | "month">("week");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter] = useState<"all" | "contacted" | "pending">("all");
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState<string>(localDateStr(new Date()));
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("analytics");
@@ -244,21 +252,21 @@ export default function AdminDashboard() {
   });
 
   const handleDateChange = (date: Date) => {
-    setSelectedDate(date.toISOString().split('T')[0]);
+    setSelectedDate(localDateStr(date));
   };
 
   const handleClearDate = () => {
-    setSelectedDate(new Date().toISOString().split('T')[0]);
+    setSelectedDate(localDateStr(new Date()));
   };
 
   const setToday = () => {
-    setSelectedDate(new Date().toISOString().split('T')[0]);
+    setSelectedDate(localDateStr(new Date()));
   };
 
   const setYesterday = () => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    setSelectedDate(yesterday.toISOString().split('T')[0]);
+    setSelectedDate(localDateStr(yesterday));
   };
 
   if (authLoading || !(authCheck as any)?.authenticated) {
@@ -518,7 +526,7 @@ export default function AdminDashboard() {
                 <div className="flex items-center gap-4">
                   <span className="text-[10px] font-bold text-gray-400 tracking-tighter uppercase">FILTER BY DATE:</span>
                   <FloatingDatePicker
-                    selected={new Date(selectedDate)}
+                    selected={new Date(selectedDate + 'T12:00:00')}
                     onSelect={handleDateChange}
                     onClear={handleClearDate}
                   />
@@ -526,23 +534,23 @@ export default function AdminDashboard() {
                     <Button 
                       size="sm" 
                       onClick={setToday}
-                      className={selectedDate === new Date().toISOString().split('T')[0] ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 px-4 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 px-4 rounded"}
-                      variant={selectedDate === new Date().toISOString().split('T')[0] ? "default" : "outline"}
+                      className={selectedDate === localDateStr(new Date()) ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 px-4 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 px-4 rounded"}
+                      variant={selectedDate === localDateStr(new Date()) ? "default" : "outline"}
                     >
                       Today
                     </Button>
                     <Button 
                       size="sm" 
                       onClick={setYesterday}
-                      className={selectedDate === new Date(Date.now() - 86400000).toISOString().split('T')[0] ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 px-4 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 px-4 rounded"}
-                      variant={selectedDate === new Date(Date.now() - 86400000).toISOString().split('T')[0] ? "default" : "outline"}
+                      className={selectedDate === localDateStr(new Date(Date.now() - 86400000)) ? "bg-[#8B0000] text-white hover:bg-[#8B0000]/90 px-4 rounded" : "bg-white border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000]/5 px-4 rounded"}
+                      variant={selectedDate === localDateStr(new Date(Date.now() - 86400000)) ? "default" : "outline"}
                     >
                       Yesterday
                     </Button>
                   </div>
                 </div>
                 <div className="text-[#8B1A1A] font-bold text-sm">
-                  Showing feedback for: <span className="ml-1">{format(new Date(selectedDate), 'MMMM d, yyyy')}</span>
+                  Showing feedback for: <span className="ml-1">{format(new Date(selectedDate + 'T12:00:00'), 'MMMM d, yyyy')}</span>
                 </div>
               </div>
 
