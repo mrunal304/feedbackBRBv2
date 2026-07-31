@@ -729,8 +729,8 @@ export default function AdminPanelMobile() {
                 </div>
               )}
 
-              <div className="text-[#8B1A1A] font-bold text-xs pt-1">
-                Showing: <span className="ml-1">{showingLabel}</span>
+              <div className="text-[#8B1A1A] font-bold text-xs pt-1 leading-5">
+                Showing feedback for: <span className="ml-1">{showingLabel}</span>
               </div>
             </div>
 
@@ -788,8 +788,8 @@ export default function AdminPanelMobile() {
                         {/* Row 4: Note section */}
                         <p className="text-xs text-gray-600 font-medium"><span className="text-gray-500">Note:</span> {fb.comments || '-'}</p>
 
-                        {/* Row 5: Rating + Stars (left) + Eye + Mark Contacted buttons (right) */}
-                        <div className="grid grid-cols-[auto_1fr] items-center gap-2 pt-2 border-t border-gray-100">
+                        {/* Row 5: Rating + Stars (left) + Eye button (right) */}
+                        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                           <div className="flex items-center gap-1.5">
                             <span className="text-base font-bold text-[#3D2B1F]">
                               {isNaN(Number(getAverageRating(fb.ratings))) ? "N/A" : getAverageRating(fb.ratings)}
@@ -798,31 +798,30 @@ export default function AdminPanelMobile() {
                               <RatingStars rating={Number(getAverageRating(fb.ratings))} size="xs" />
                             )}
                           </div>
-                          <div className="flex gap-2 justify-end">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-11 w-11 px-0 flex items-center justify-center flex-shrink-0 border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5"
-                              onClick={() => {
-                                setSelectedFeedback(fb);
-                                setIsDetailsOpen(true);
-                              }}
-                              data-testid={`button-view-details-${fb._id}`}
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            {fb.status !== 'contacted' && (
-                              <Button
-                                className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 font-medium"
-                                style={{ fontSize: '11px', padding: '4px 8px', whiteSpace: 'nowrap', minWidth: 'fit-content', flexShrink: 0 }}
-                                onClick={() => handleContactCustomer(fb)}
-                                data-testid={`button-contact-mark-${fb._id}`}
-                              >
-                                Mark Contacted
-                              </Button>
-                            )}
-                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-9 w-9 px-0 flex items-center justify-center flex-shrink-0 border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5"
+                            onClick={() => {
+                              setSelectedFeedback(fb);
+                              setIsDetailsOpen(true);
+                            }}
+                            data-testid={`button-view-details-${fb._id}`}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
                         </div>
+
+                        {/* Row 6: Mark Contacted — full width, own row to guarantee text fits */}
+                        {fb.status !== 'contacted' && (
+                          <Button
+                            className="w-full bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 font-medium text-xs h-8"
+                            onClick={() => handleContactCustomer(fb)}
+                            data-testid={`button-contact-mark-${fb._id}`}
+                          >
+                            Mark Contacted
+                          </Button>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
