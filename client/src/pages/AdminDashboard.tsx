@@ -37,13 +37,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
-import {
   Table,
   TableBody,
   TableCell,
@@ -405,16 +398,16 @@ export default function AdminDashboard() {
   }
 
   return (
-    <SidebarProvider className="bg-[#FDF8F6]">
+    <div className="flex w-full min-h-screen bg-[#FDF8F6]">
         {/* Sidebar */}
-        <Sidebar collapsible="none" className="bg-sidebar border-r">
-          {/* SidebarHeader: Admin Panel Title */}
-          <SidebarHeader className="border-b border-white/10 py-4">
+        <div className="w-64 shrink-0 flex flex-col min-h-screen border-r border-white/10" style={{ backgroundColor: 'hsl(0, 68%, 32%)' }}>
+          {/* Sidebar Header */}
+          <div className="border-b border-white/10 py-4">
             <h1 className="text-white text-xl font-bold text-center">Admin Panel</h1>
-          </SidebarHeader>
+          </div>
 
-          {/* SidebarContent: Menu Items */}
-          <SidebarContent className="px-3 py-4">
+          {/* Sidebar Menu Items */}
+          <div className="flex-1 px-3 py-4">
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => setActiveTab("analytics")}
@@ -433,10 +426,10 @@ export default function AdminDashboard() {
                 <span>Feedback</span>
               </button>
             </div>
-          </SidebarContent>
+          </div>
 
-          {/* SidebarFooter: Admin Info + Sign Out */}
-          <SidebarFooter className="border-t border-white/10 px-3 py-4 space-y-3">
+          {/* Sidebar Footer */}
+          <div className="border-t border-white/10 px-3 py-4 space-y-3">
             {/* Admin Avatar + Name */}
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-full bg-pink-200 flex items-center justify-center text-[#8B1A1A] font-bold flex-shrink-0 text-[16px]">
@@ -457,8 +450,8 @@ export default function AdminDashboard() {
               <LogOut className="w-4 h-4 shrink-0" />
               <span>Sign Out</span>
             </button>
-          </SidebarFooter>
-        </Sidebar>
+          </div>
+        </div>
 
         {/* Main Content */}
         <main className="flex-1 min-h-screen min-w-0 overflow-hidden">
@@ -1242,6 +1235,6 @@ export default function AdminDashboard() {
             </div>
           </Tabs>
         </main>
-    </SidebarProvider>
+    </div>
   );
 }
