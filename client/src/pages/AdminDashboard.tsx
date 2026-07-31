@@ -591,9 +591,9 @@ export default function AdminDashboard() {
 
               <div className="bg-white p-4 rounded-xl shadow-sm">
                 {/* Row 1: Date picker + quick buttons + toggle */}
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[10px] font-bold text-gray-400 tracking-tighter uppercase">FILTER BY DATE:</span>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <div className="flex flex-wrap md:flex-nowrap items-center gap-2">
+                    <span className="text-[10px] font-bold text-gray-400 tracking-tighter uppercase shrink-0">FILTER BY DATE:</span>
                     <FloatingDatePicker
                       selected={new Date(selectedDate + 'T12:00:00')}
                       onSelect={handleDateChange}
@@ -629,7 +629,7 @@ export default function AdminDashboard() {
                       <ChevronDown className="w-4 h-4 text-gray-500 transition-transform duration-200" style={{ transform: showAdvancedFilters ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                     </button>
                   </div>
-                  <div className="text-[#8B1A1A] font-bold text-sm">
+                  <div className="text-[#8B1A1A] font-bold text-sm md:shrink-0 md:whitespace-nowrap md:ml-auto">
                     Showing feedback for: <span className="ml-1">{showingLabel}</span>
                   </div>
                 </div>
