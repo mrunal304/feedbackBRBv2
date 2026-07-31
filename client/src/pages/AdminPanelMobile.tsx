@@ -54,12 +54,6 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
@@ -139,7 +133,16 @@ export default function AdminPanelMobile() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("analytics");
-  const [period, setPeriod] = useState<"week" | "lastWeek" | "month">("week");
+  const [overviewFilter, setOverviewFilter] = useState<'last7days' | 'today' | 'thisMonth' | 'lastMonth' | 'selectMonth' | 'customRange'>('last7days');
+  const [overviewMonthValue, setOverviewMonthValue] = useState({ month: new Date().getMonth(), year: new Date().getFullYear() });
+  const [pendingOverviewMonth, setPendingOverviewMonth] = useState({ month: new Date().getMonth(), year: new Date().getFullYear() });
+  const [showOverviewMonthPicker, setShowOverviewMonthPicker] = useState(false);
+  const [showOverviewCustomRange, setShowOverviewCustomRange] = useState(false);
+  const [overviewCustomStart, setOverviewCustomStart] = useState('');
+  const [overviewCustomEnd, setOverviewCustomEnd] = useState('');
+  const [pendingCustomStart, setPendingCustomStart] = useState('');
+  const [pendingCustomEnd, setPendingCustomEnd] = useState('');
+  const [showOverviewFilterPanel, setShowOverviewFilterPanel] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter] = useState<"all" | "contacted" | "pending">("all");
   const [selectedDate, setSelectedDate] = useState<string>(localDateStr(new Date()));
@@ -224,7 +227,46 @@ export default function AdminPanelMobile() {
     refetchInterval: 15000,
   });
 
-  const analyticsUrl = `/api/analytics?period=${period}`;
+  // Overview filter button label
+  const overviewFilterLabel = (() => {
+    if (overviewFilter === 'today') return 'Today';
+    if (overviewFilter === 'thisMonth') return 'This Month';
+    if (overviewFilter === 'lastMonth') return 'Last Month';
+    if (overviewFilter === 'selectMonth') return format(new Date(overviewMonthValue.year, overviewMonthValue.month, 1), 'MMM yyyy');
+    if (overviewFilter === 'customRange' && overviewCustomStart && overviewCustomEnd)
+      return `${format(new Date(overviewCustomStart + 'T12:00:00'), 'dd MMM')} – ${format(new Date(overviewCustomEnd + 'T12:00:00'), 'dd MMM yyyy')}`;
+    return 'Last 7 Days';
+  })();
+
+  // Overview filter date range
+  const todayOverview = localDateStr(new Date());
+  let analyticsStartDate: string;
+  let analyticsEndDate: string;
+  if (overviewFilter === 'today') {
+    analyticsStartDate = todayOverview;
+    analyticsEndDate = todayOverview;
+  } else if (overviewFilter === 'thisMonth') {
+    const now = new Date();
+    analyticsStartDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+    analyticsEndDate = todayOverview;
+  } else if (overviewFilter === 'lastMonth') {
+    const now = new Date();
+    analyticsStartDate = localDateStr(new Date(now.getFullYear(), now.getMonth() - 1, 1));
+    analyticsEndDate = localDateStr(new Date(now.getFullYear(), now.getMonth(), 0));
+  } else if (overviewFilter === 'selectMonth') {
+    analyticsStartDate = `${overviewMonthValue.year}-${String(overviewMonthValue.month + 1).padStart(2, '0')}-01`;
+    analyticsEndDate = localDateStr(new Date(overviewMonthValue.year, overviewMonthValue.month + 1, 0));
+  } else if (overviewFilter === 'customRange' && overviewCustomStart && overviewCustomEnd) {
+    analyticsStartDate = overviewCustomStart;
+    analyticsEndDate = overviewCustomEnd;
+  } else {
+    // last7days (default)
+    const d = new Date(); d.setDate(d.getDate() - 6);
+    analyticsStartDate = localDateStr(d);
+    analyticsEndDate = todayOverview;
+  }
+
+  const analyticsUrl = `/api/analytics?startDate=${analyticsStartDate}&endDate=${analyticsEndDate}`;
   const { data: analytics, refetch: refetchAnalytics } = useQuery<Analytics>({
     queryKey: [analyticsUrl],
     enabled: !!(authCheck as any)?.authenticated,
@@ -400,32 +442,124 @@ export default function AdminPanelMobile() {
                 <h2 className="text-xl font-bold text-[#3D2B1F]">Dashboard Overview</h2>
                 <p className="text-gray-500 text-[13px] mt-1">Welcome back, here's what's happening today.</p>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-between border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5"
-                    data-testid="dropdown-period-mobile"
-                  >
-                    {period === "week" ? "Last 7 Days" : "Last Month"}
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-[calc(100vw-2rem)]">
-                  <DropdownMenuItem
-                    data-testid="period-option-week-mobile"
-                    onClick={() => setPeriod("week")}
-                  >
-                    Last 7 Days
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    data-testid="period-option-month-mobile"
-                    onClick={() => setPeriod("month")}
-                  >
-                    Last Month
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button
+                variant="outline"
+                className="w-full justify-between border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5"
+                onClick={() => { setShowOverviewFilterPanel(v => !v); setShowOverviewMonthPicker(false); setShowOverviewCustomRange(false); }}
+                data-testid="dropdown-period-mobile"
+              >
+                {overviewFilterLabel}
+                <ChevronDown className={`ml-2 h-4 w-4 transition-transform duration-200 ${showOverviewFilterPanel ? 'rotate-180' : ''}`} />
+              </Button>
+
+              {showOverviewFilterPanel && (
+                <div className="bg-white rounded-lg shadow-sm p-3 space-y-2">
+                  {/* Filter option buttons */}
+                  <div className="flex flex-wrap gap-2">
+                    {([
+                      { key: 'today', label: 'Today' },
+                      { key: 'last7days', label: 'Last 7 Days' },
+                      { key: 'thisMonth', label: 'This Month' },
+                      { key: 'lastMonth', label: 'Last Month' },
+                    ] as const).map(({ key, label }) => (
+                      <Button
+                        key={key}
+                        size="sm"
+                        className={`h-8 px-3 text-xs ${overviewFilter === key ? 'bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90' : 'bg-white border border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5'}`}
+                        variant={overviewFilter === key ? 'default' : 'outline'}
+                        onClick={() => { setOverviewFilter(key); setShowOverviewMonthPicker(false); setShowOverviewCustomRange(false); setShowOverviewFilterPanel(false); }}
+                      >
+                        {label}
+                      </Button>
+                    ))}
+                    <Button
+                      size="sm"
+                      className={`h-8 px-3 text-xs ${overviewFilter === 'selectMonth' || showOverviewMonthPicker ? 'bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90' : 'bg-white border border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5'}`}
+                      variant={overviewFilter === 'selectMonth' || showOverviewMonthPicker ? 'default' : 'outline'}
+                      onClick={() => { setShowOverviewMonthPicker(v => !v); setShowOverviewCustomRange(false); setPendingOverviewMonth(overviewMonthValue); }}
+                    >
+                      {overviewFilter === 'selectMonth'
+                        ? `${format(new Date(overviewMonthValue.year, overviewMonthValue.month, 1), 'MMM yyyy')} ${showOverviewMonthPicker ? '↑' : '↓'}`
+                        : `Select Month ${showOverviewMonthPicker ? '↑' : '›'}`}
+                    </Button>
+                    <Button
+                      size="sm"
+                      className={`h-8 px-3 text-xs ${overviewFilter === 'customRange' || showOverviewCustomRange ? 'bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90' : 'bg-white border border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A]/5'}`}
+                      variant={overviewFilter === 'customRange' || showOverviewCustomRange ? 'default' : 'outline'}
+                      onClick={() => { setShowOverviewCustomRange(v => !v); setShowOverviewMonthPicker(false); setPendingCustomStart(overviewCustomStart); setPendingCustomEnd(overviewCustomEnd); }}
+                    >
+                      {overviewFilter === 'customRange' && overviewCustomStart && overviewCustomEnd
+                        ? `${format(new Date(overviewCustomStart + 'T12:00:00'), 'dd MMM')} – ${format(new Date(overviewCustomEnd + 'T12:00:00'), 'dd MMM yyyy')} ${showOverviewCustomRange ? '↑' : '↓'}`
+                        : `Custom Range ${showOverviewCustomRange ? '↑' : '›'}`}
+                    </Button>
+                  </div>
+
+                  {/* Month picker sub-row */}
+                  {showOverviewMonthPicker && (
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
+                      <span className="text-xs font-bold text-gray-500 uppercase tracking-widest w-full">Pick Month:</span>
+                      <select
+                        value={pendingOverviewMonth.year}
+                        onChange={e => setPendingOverviewMonth(v => ({ ...v, year: Number(e.target.value) }))}
+                        className="border border-gray-200 rounded text-sm px-2 py-1.5 focus:outline-none focus:border-[#8B1A1A]"
+                      >
+                        {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 3 + i).map(y => (
+                          <option key={y} value={y}>{y}</option>
+                        ))}
+                      </select>
+                      <select
+                        value={pendingOverviewMonth.month}
+                        onChange={e => setPendingOverviewMonth(v => ({ ...v, month: Number(e.target.value) }))}
+                        className="border border-gray-200 rounded text-sm px-2 py-1.5 focus:outline-none focus:border-[#8B1A1A]"
+                      >
+                        {['January','February','March','April','May','June','July','August','September','October','November','December'].map((m, i) => (
+                          <option key={i} value={i}>{m}</option>
+                        ))}
+                      </select>
+                      <Button
+                        size="sm"
+                        className="h-8 px-4 text-xs bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90"
+                        onClick={() => { setOverviewMonthValue(pendingOverviewMonth); setOverviewFilter('selectMonth'); setShowOverviewMonthPicker(false); setShowOverviewFilterPanel(false); }}
+                      >
+                        Done
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Custom range sub-row */}
+                  {showOverviewCustomRange && (
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
+                      <span className="text-xs font-bold text-gray-500 uppercase tracking-widest w-full">Date Range:</span>
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs text-gray-500">From</label>
+                        <input
+                          type="date"
+                          value={pendingCustomStart}
+                          onChange={e => setPendingCustomStart(e.target.value)}
+                          className="border border-gray-200 rounded text-sm px-2 py-1.5 focus:outline-none focus:border-[#8B1A1A]"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs text-gray-500">To</label>
+                        <input
+                          type="date"
+                          value={pendingCustomEnd}
+                          onChange={e => setPendingCustomEnd(e.target.value)}
+                          className="border border-gray-200 rounded text-sm px-2 py-1.5 focus:outline-none focus:border-[#8B1A1A]"
+                        />
+                      </div>
+                      <Button
+                        size="sm"
+                        className="h-8 px-4 text-xs bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 disabled:opacity-50"
+                        onClick={() => { if (pendingCustomStart && pendingCustomEnd) { setOverviewCustomStart(pendingCustomStart); setOverviewCustomEnd(pendingCustomEnd); setOverviewFilter('customRange'); setShowOverviewCustomRange(false); setShowOverviewFilterPanel(false); } }}
+                        disabled={!pendingCustomStart || !pendingCustomEnd}
+                      >
+                        Done
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Dashboard Cards - 2x2 Grid */}

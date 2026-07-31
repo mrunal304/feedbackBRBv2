@@ -1,0 +1,92 @@
+# Fix BRB Admin Panel - Overview Section (Desktop + Filter + Data)
+
+## IMPORTANT: Read the current Overview component file completely before making any changes. Understand the existing structure first, then make ONLY the fixes listed below.
+
+---
+
+## ISSUE 1 (FIX THIS FIRST - HIGHEST PRIORITY): Desktop Layout Overlap
+
+**Problem:** On desktop view, the heading "Dashboard Overview" and subtitle "Welcome back, here's what's happening today." are overflowing and overlapping ON TOP of the sidebar and the card content area. Text is wrapping badly and covering the "Total Feedback", "Average Rating" cards etc.
+
+**Root Cause:** The main content area does not have proper left margin/padding to account for the fixed/sticky sidebar width. This is purely a CSS/layout spacing issue.
+
+**Fix Required:**
+- Keep the LEFT SIDEBAR (Admin Panel, Overview, Feedback, Sign Out) exactly as it is — DO NOT touch, redesign, or modify the sidebar in any way
+- Add proper left margin or padding to the MAIN CONTENT wrapper/container so it starts clearly after the sidebar ends and never overlaps it
+- The heading "Dashboard Overview" and subtitle text must sit fully inside the main content area with proper width, not wrapping into multiple broken lines
+- Check the parent flex/grid container — likely missing `margin-left` or the sidebar is `position: fixed/absolute` without the content area compensating for it with matching left spacing
+- This must look clean on desktop: sidebar on left (fixed width), main content on right taking remaining width, heading clearly visible in one or two clean lines, cards in a row below, not covered by anything
+
+**Do NOT change:** sidebar design, sidebar width, sidebar colors, card designs, icons, or any other visual element. This is layout/spacing only.
+
+---
+
+## ISSUE 2: Replace Filter Bar with Dropdown (Desktop AND Mobile)
+
+**Current problem:** Filter shows as an expanded bar/button always visible, not a proper dropdown.
+
+**Required behavior:**
+- Show a single button in the TOP RIGHT corner of the Overview section, labeled with the currently active filter, e.g. "Last 7 Days ⌄"
+- Clicking this button opens a dropdown menu with these options:
+  1. Today
+  2. Last 7 Days
+  3. This Month
+  4. Last Month
+  5. Select Month — when clicked, show an inline Month + Year picker below the dropdown (do not close dropdown until a month/year is chosen)
+  6. Custom Range — when clicked, show inline "From" and "To" date input fields below the dropdown (do not close dropdown until both dates are chosen and applied)
+- After a selection is made, the dropdown closes automatically and the button label updates to reflect the active selection (e.g. "This Month ⌄" or "12 Jan - 20 Jan ⌄")
+- This exact same dropdown behavior must work on BOTH desktop and mobile:
+  - Desktop: dropdown button positioned top-right of the Overview heading area
+  - Mobile: dropdown button positioned below the heading, full width or centered as appropriate, same options and same behavior
+
+**Do NOT change:** the visual style/colors of cards, icons — only replace the filter bar UI with this dropdown UI and behavior.
+
+---
+
+## ISSUE 3: All Overview Data Must Update When Filter Changes
+
+**Requirement:** When any filter option is selected (Today / Last 7 Days / This Month / Last Month / Select Month / Custom Range), ALL of the following must refetch fresh data from the database for that selected date range and update on screen:
+
+1. **Total Feedback card** — count of responses in selected period
+2. **Average Rating card** — average rating in selected period
+3. **Response Rate card** — (contacted count ÷ total count) × 100 for selected period
+4. **Top Category card** — highest rated category in selected period
+5. **Weekly Rating Trends chart** — rating data for selected period
+6. **Category Performance chart** — category averages for selected period
+
+**Before making changes, check and report back:**
+- Which API endpoint currently handles the overview/analytics data
+- Whether `dateFrom` and `dateTo` (or similar params) are being correctly sent to the backend when the filter changes
+- Whether all 6 elements above (4 cards + 2 charts) are using this same filtered API response, or if any of them are using hardcoded/dummy data instead
+
+Fix any of the 6 elements found to be using hardcoded data so they all use the same live filtered data source.
+
+---
+
+## TIMEZONE FIX (IMPORTANT — apply wherever dates are calculated)
+
+- All date range calculations must use LOCAL time (IST), NOT UTC
+- Start of day should be constructed as: `new Date(dateStr + 'T00:00:00')` — no `Z` suffix
+- End of day should be constructed as: `new Date(dateStr + 'T23:59:59')` — no `Z` suffix
+- Apply this consistently in both frontend filter logic and backend query logic if backend also does date parsing
+
+---
+
+## STRICT RULES — DO NOT DEVIATE
+
+1. Fix Issue 1 (layout overlap) FIRST, completely, before touching the filter dropdown
+2. Before writing code, list out exactly which file(s) you are going to edit
+3. Do NOT change card UI design, card colors, or icons
+4. Do NOT touch or modify the Feedback page/section at all
+5. Do NOT change the sidebar (Admin Panel / Overview / Feedback / Sign Out) in any way — layout, width, colors, position all stay exactly the same
+6. Do NOT add any new features beyond what is listed above
+7. Do NOT rename any existing components, files, or routes unless absolutely required for the fix
+
+---
+
+## Summary of what should be true after the fix
+
+- Desktop: Sidebar stays fixed on left exactly as before. "Dashboard Overview" heading and subtitle are fully visible in the main content area with no overlap, in one clean readable line/block, cards and charts appear normally below it, not hidden
+- Filter is a single dropdown button top-right (desktop) / below heading (mobile) showing current selection, opens to show 6 options as described
+- Selecting any filter option updates all 4 stat cards and both charts with real data for that period
+- All date math uses local IST time, not UTC

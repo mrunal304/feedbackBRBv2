@@ -462,7 +462,7 @@ export default function AdminDashboard() {
         </Sidebar>
 
         {/* Main Content */}
-        <main className="flex-1 min-h-screen">
+        <main className="flex-1 min-h-screen min-w-0 overflow-hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="p-8 max-w-7xl mx-auto space-y-8">
               <TabsContent value="analytics" className="mt-0 space-y-8 focus-visible:outline-none">
