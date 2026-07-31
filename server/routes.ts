@@ -196,9 +196,35 @@ export async function registerRoutes(
   // === ANALYTICS ROUTES ===
   app.get(api.analytics.get.path, requireAuth, async (req, res) => {
     try {
-      const period = (req.query.period as 'week' | 'month') || 'week';
-      console.log(`[Analytics Route] Received period="${period}" from query:`, req.query);
-      const analytics = await storage.getAnalytics(period);
+      const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000;
+      const toISTDateStr = (d: Date) => new Date(d.getTime() + IST_OFFSET_MS).toISOString().split('T')[0];
+
+      let startDateStr: string;
+      let endDateStr: string;
+
+      if (typeof req.query.startDate === 'string' && typeof req.query.endDate === 'string') {
+        startDateStr = req.query.startDate;
+        endDateStr = req.query.endDate;
+      } else {
+        // Legacy period-based fallback (used by mobile)
+        const period = (req.query.period as string) || 'week';
+        const now = new Date();
+        endDateStr = toISTDateStr(now);
+        if (period === 'lastWeek') {
+          const start = new Date(now); start.setDate(start.getDate() - 14);
+          const end = new Date(now); end.setDate(end.getDate() - 7);
+          startDateStr = toISTDateStr(start);
+          endDateStr = toISTDateStr(end);
+        } else if (period === 'month') {
+          const start = new Date(now); start.setDate(start.getDate() - 29);
+          startDateStr = toISTDateStr(start);
+        } else {
+          const start = new Date(now); start.setDate(start.getDate() - 6);
+          startDateStr = toISTDateStr(start);
+        }
+      }
+
+      const analytics = await storage.getAnalytics(startDateStr, endDateStr);
       res.json(analytics);
     } catch (err) {
       console.error(err);

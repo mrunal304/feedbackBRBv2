@@ -12,7 +12,7 @@ export interface IStorage {
   getFeedback(customerId: string, visitId: string): Promise<Feedback | null>;
   createFeedback(feedback: InsertFeedback): Promise<Feedback>;
   markAsContacted(customerId: string, visitId: string, staffName: string): Promise<Feedback | null>;
-  getAnalytics(period: 'week' | 'month'): Promise<Analytics>;
+  getAnalytics(startDate: string, endDate: string): Promise<Analytics>;
   getCustomerHistory(normalizedName: string): Promise<CustomerHistory | null>;
   getTotalVisits(phoneNumber: string): Promise<number>;
   checkDuplicateFeedbackToday(phoneNumber: string): Promise<boolean>;
@@ -277,14 +277,12 @@ export class MongoStorage implements IStorage {
     }
   }
 
-  async getAnalytics(period: 'week' | 'month'): Promise<Analytics> {
-    const days = period === 'month' ? 30 : 7;
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
-    startDate.setHours(0, 0, 0, 0);
-    const endDate = new Date();
+  async getAnalytics(startDateStr: string, endDateStr: string): Promise<Analytics> {
+    const [sy, sm, sd] = startDateStr.split('-').map(Number);
+    const [ey, em, ed] = endDateStr.split('-').map(Number);
+    const startDate = new Date(Date.UTC(sy, sm - 1, sd, 0, 0, 0, 0) - IST_OFFSET_MS);
+    const endDate = new Date(Date.UTC(ey, em - 1, ed, 23, 59, 59, 999) - IST_OFFSET_MS);
 
-    console.log("Period received:", period);
     console.log("Date range:", startDate.toISOString(), "to", endDate.toISOString());
 
     // $unwind visits array then $match each visit's createdAt against the date range

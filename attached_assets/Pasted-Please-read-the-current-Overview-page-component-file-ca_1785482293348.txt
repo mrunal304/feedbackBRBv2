@@ -1,0 +1,52 @@
+Please read the current Overview page component file carefully before making any changes. I want to add the same advanced filter to the BRB Overview page that exists in the Shreerath project.
+
+## Current State (BRB Overview):
+- Has a simple "Last 7 Days / Last Month" dropdown only (Image 1)
+
+## Required State (like Shreerath Overview - Image 2):
+- A filter bar with these buttons in one horizontal row:
+  [ PERIOD: ] [ Today ] [ Last 7 Days ] [ This Month ] [ Last Month ] [ Select Month › ] [ Custom Range › ]
+
+## Detailed Requirements:
+
+### Filter bar layout:
+- Label "PERIOD:" on the left
+- All filter buttons in one horizontal row
+- Active/selected button has dark filled background (like "Last 7 Days" in Image 2)
+- Other buttons are outlined style
+
+### Select Month › behavior:
+- Clicking shows "PICK MONTH:" label with Year dropdown first, then Month dropdown, then "Done" button — in a second row below (like Shreerath Image 3)
+- After clicking Done, second row collapses
+- Button label in top row updates to show selected month e.g. "April 2026 ↑"
+
+### Custom Range › behavior:
+- Clicking shows "DATE RANGE:" label with From date input → To date input → Done button in a second row (like Shreerath Image 4)
+- Use a simple date input (dd-mm-yyyy format with calendar picker)
+- After both dates selected and Done clicked, second row collapses
+- Button label updates to show range
+
+### All 4 cards must update for selected period:
+- Total Feedback → count for selected period
+- Average Rating → average for selected period
+- Response Rate → (contacted / total) × 100 for selected period
+- Top Category → highest rated category for selected period
+
+### Timezone fix:
+- All date ranges must use LOCAL time (IST), not UTC
+- Start of period: local 00:00:00
+- End of period: local 23:59:59
+- For month selections use local noon T12:00:00 not UTC midnight
+
+### Responsive:
+- On mobile, filter buttons wrap to next line if needed
+- Select Month and Custom Range sub-rows stack properly on mobile
+
+## Rules:
+- Check how existing Shreerath Overview filter works and replicate the same pattern
+- First show which files you will edit
+- Do NOT change card UI design, colors, icons, or layout
+- Do NOT change Rating Trends or Category Performance charts
+- Do NOT touch Feedback page
+- Do NOT change sidebar
+- Remove the old simple dropdown completely and replace with new filter bar
