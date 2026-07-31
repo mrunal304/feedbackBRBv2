@@ -405,8 +405,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-[#FDF8F6]">
+    <SidebarProvider className="bg-[#FDF8F6]">
         {/* Sidebar */}
         <Sidebar collapsible="none" className="bg-sidebar border-r">
           {/* SidebarHeader: Admin Panel Title */}
@@ -1243,7 +1242,6 @@ export default function AdminDashboard() {
             </div>
           </Tabs>
         </main>
-      </div>
     </SidebarProvider>
   );
 }
