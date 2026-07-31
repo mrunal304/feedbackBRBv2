@@ -1,0 +1,54 @@
+CRITICAL LAYOUT BUG FIX — Admin Panel Dashboard
+
+The admin panel dashboard layout is BROKEN. It used to look correct 
+(reference Image 2) but now looks wrong (current Image 1).
+
+CURRENT BROKEN STATE (Image 1):
+- Left sidebar is overlapping the main content
+- Sidebar is rendering ON TOP of the dashboard content
+- The main content area (Dashboard Overview, stats cards) is hidden 
+  behind the sidebar
+- Layout is not splitting correctly into sidebar + main content
+
+EXPECTED CORRECT STATE (Image 2):
+- Left sidebar: fixed width ~250px, stays on the LEFT only
+- Main content area: takes up remaining width to the RIGHT of sidebar
+- NO overlap between sidebar and content
+- Dashboard Overview heading, stats cards (Total Feedback, Average 
+  Rating, Top Category, Response Rate), Weekly Rating Trends, 
+  Category Performance, Feedback Volume — all fully visible in the 
+  right content area
+
+HOW TO FIX:
+1. First, check the current CSS/layout code for the admin panel wrapper
+2. The layout should use either:
+   - CSS Flexbox: wrapper with display:flex, sidebar fixed width, 
+     main content flex:1
+   - OR CSS Grid: grid-template-columns: 250px 1fr
+3. Check if sidebar has position:absolute or position:fixed accidentally 
+   causing it to float over content — if so, change to position:relative 
+   or keep it in normal flow
+4. Check if main content area has margin-left: 250px or padding-left 
+   to account for sidebar width
+5. Look at git history or previous versions of the layout component 
+   to see what changed — restore the working layout structure
+
+SIDEBAR SPECS (from reference Image 2):
+- Background: dark red/maroon (#8B1A1A or similar)
+- Width: ~250px
+- Contains: "Admin Panel" title, Overview link, Feedback link, 
+  admin user info at bottom, Sign Out button
+- Should NOT overlap main content
+
+MAIN CONTENT SPECS (from reference Image 2):
+- Background: light cream/off-white
+- Full remaining width to the right of sidebar
+- Top: "Dashboard Overview" heading + "Welcome back" subtitle
+- Top right: "Last 7 Days" dropdown button
+- Below: 4 stat cards in a row
+- Below that: Weekly Rating Trends + Category Performance side by side
+- Below that: Feedback Volume full width
+
+DO NOT change any colors, data, functionality, or content.
+ONLY fix the layout/positioning so sidebar and content sit 
+side by side correctly like Image 2.
