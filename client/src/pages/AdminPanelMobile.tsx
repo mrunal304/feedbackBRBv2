@@ -194,7 +194,7 @@ export default function AdminPanelMobile() {
   // Showing label
   let showingLabel: string;
   if (activeFilter === 'thisWeek') {
-    showingLabel = `This Week (${format(new Date(filterStartDate + 'T12:00:00'), 'd MMM')} – ${format(new Date(filterEndDate + 'T12:00:00'), 'd MMM yyyy')})`;
+    showingLabel = `${format(new Date(filterStartDate + 'T12:00:00'), 'd MMM')} – ${format(new Date(filterEndDate + 'T12:00:00'), 'd MMM yyyy')}`;
   } else if (activeFilter === 'thisMonth') {
     showingLabel = format(new Date(), 'MMMM yyyy');
   } else if (activeFilter === 'lastMonth') {
@@ -203,7 +203,7 @@ export default function AdminPanelMobile() {
   } else if (activeFilter === 'selectMonth') {
     showingLabel = format(new Date(selectMonthValue.year, selectMonthValue.month, 1), 'MMMM yyyy');
   } else if (activeFilter === 'customRange' && customRangeStart && customRangeEnd) {
-    showingLabel = `${format(new Date(customRangeStart + 'T12:00:00'), 'dd MMM yyyy')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'dd MMM yyyy')}`;
+    showingLabel = `${format(new Date(customRangeStart + 'T12:00:00'), 'dd MMM')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'dd MMM yyyy')}`;
   } else {
     const todayStr = localDateStr(new Date());
     const yd = new Date(); yd.setDate(yd.getDate() - 1);
@@ -813,8 +813,8 @@ export default function AdminPanelMobile() {
                             </Button>
                             {fb.status !== 'contacted' && (
                               <Button
-                                size="sm"
-                                className="h-auto py-1.5 px-2 flex-1 text-[11px] font-medium bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 whitespace-nowrap"
+                                className="bg-[#8B1A1A] text-white hover:bg-[#8B1A1A]/90 font-medium"
+                                style={{ fontSize: '11px', padding: '4px 8px', whiteSpace: 'nowrap', minWidth: 'fit-content', flexShrink: 0 }}
                                 onClick={() => handleContactCustomer(fb)}
                                 data-testid={`button-contact-mark-${fb._id}`}
                               >

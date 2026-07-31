@@ -203,7 +203,7 @@ export default function AdminDashboard() {
   // Showing label
   let showingLabel: string;
   if (activeFilter === 'thisWeek') {
-    showingLabel = `This Week (${format(new Date(filterStartDate + 'T12:00:00'), 'd MMM')} – ${format(new Date(filterEndDate + 'T12:00:00'), 'd MMM yyyy')})`;
+    showingLabel = `${format(new Date(filterStartDate + 'T12:00:00'), 'd MMM')} – ${format(new Date(filterEndDate + 'T12:00:00'), 'd MMM yyyy')}`;
   } else if (activeFilter === 'thisMonth') {
     showingLabel = format(new Date(), 'MMMM yyyy');
   } else if (activeFilter === 'lastMonth') {
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
   } else if (activeFilter === 'selectMonth') {
     showingLabel = format(new Date(selectMonthValue.year, selectMonthValue.month, 1), 'MMMM yyyy');
   } else if (activeFilter === 'customRange' && customRangeStart && customRangeEnd) {
-    showingLabel = `${format(new Date(customRangeStart + 'T12:00:00'), 'dd MMM yyyy')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'dd MMM yyyy')}`;
+    showingLabel = `${format(new Date(customRangeStart + 'T12:00:00'), 'dd MMM')} – ${format(new Date(customRangeEnd + 'T12:00:00'), 'dd MMM yyyy')}`;
   } else {
     const todayStr = localDateStr(new Date());
     const yd = new Date(); yd.setDate(yd.getDate() - 1);
